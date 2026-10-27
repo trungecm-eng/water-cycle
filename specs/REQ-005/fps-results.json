@@ -1,0 +1,60 @@
+[
+  {
+    "quality": "high",
+    "panel": {
+      "collapsed": false,
+      "groups": {
+        "controls": true,
+        "statistics": true,
+        "legend": true
+      }
+    },
+    "browser": "140.0.7339.16",
+    "viewport": "1280x1000",
+    "particles": 1000,
+    "start": {
+      "time": 35.43333333333333,
+      "counts": {
+        "water": 635,
+        "vapor": 64,
+        "cloud": 278,
+        "rain": 21,
+        "runoff": 2
+      },
+      "speed": 1
+    },
+    "frames": 74,
+    "seconds": 10.049599999999998,
+    "fps": 7.363477153319536,
+    "errors": []
+  },
+  {
+    "quality": "low",
+    "panel": {
+      "collapsed": false,
+      "groups": {
+        "controls": true,
+        "statistics": true,
+        "legend": true
+      }
+    },
+    "browser": "140.0.7339.16",
+    "viewport": "1280x1000",
+    "particles": 1000,
+    "start": {
+      "time": 35.416666666666664,
+      "counts": {
+        "water": 635,
+        "vapor": 64,
+        "cloud": 278,
+        "rain": 21,
+        "runoff": 2
+      },
+      "speed": 1
+    },
+    "frames": 124,
+    "seconds": 10.016199999999998,
+    "fps": 12.379944489926322,
+    "errors": []
+  }
+]

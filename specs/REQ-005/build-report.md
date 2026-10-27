@@ -79,3 +79,22 @@ Phát hiện và sửa Space trên `summary`: giữ hành vi gập/mở nguyên 
 | Mưa sau 60 giây, gió 100 | [08-rain-wind-100.png](screenshots/08-rain-wind-100.png) |
 
 Kết quả bước 7: `node --test` đạt 51/51 trong 203,593 giây; `ui-flow` cả hai biến thể, `ui-panel`, `ui-quality`, `ui-controls`, `ui-statistics`, `ui-views`, `panel-foundation`, `core-3d`, `scenery`, `scene` và `ui-screenshots` đều đạt, không lỗi console. [Kết quả luồng](ui-flow-results.json): mặc định Biển 90% ở gió 0 → Núi 85% ở gió 100; gián đoạn Biển 92% → Núi 81%. [Số liệu ảnh](screenshots/evidence.json): gió 0 ở 61,88 giây có 281 giọt xuống Biển (100%); gió 100 ở 62,03 giây có 244 giọt xuống Núi (100%), hai lần khởi tạo riêng. Đã xem ảnh góc biển và ảnh thẻ mưa để kiểm nội dung không bị cắt. `git diff --check` đạt. Đo FPS và lượt rà toàn bộ thuộc bước 8.
+
+## Bước 8: kiểm tra tổng
+
+Các kịch bản được chạy trong phiên chốt: `core-3d`, `cycle-flow`, `scenery`, `scene`, `screenshots` (REQ-004), `panel-foundation`, `ui-controls`, `ui-statistics`, `ui-views`, `ui-quality`, `ui-panel`, `ui-flow`, `ui-screenshots`, `measure-fps`. Các ảnh REQ-004 được sao lưu trước khi chạy script ảnh cũ và phục hồi sau khi kiểm tra; tám ảnh mới nằm riêng trong REQ-005. `package.json` được so chính xác với `{type: "module", scripts: {test: "node --test"}}`, đạt; README đã rà đủ các mục AC-11.
+
+Lượt cycle-flow đầu qua hai luồng nhưng server local bị kết thúc (mã 143) giữa nhóm URL, gây `ERR_CONNECTION_REFUSED`; đã khởi động lại server, chuyển log server vào `/tmp/req005-http.log` và chạy lại nguyên kịch bản. Không đổi selector, không nới điều kiện kiểm tra để xử lý sự cố môi trường.
+
+Kết quả kiểm tra tổng: `node --test` đạt 51/51, 0 lỗi/skip, thời gian thực **140,370 giây** (Node báo 140.334 ms), không cần mạng/trình duyệt cho bộ test logic. Cycle-flow chạy lại đạt ×1, biến thể gián đoạn và toàn bộ URL, console không lỗi. Tất cả 13 kịch bản chức năng/ảnh kể trên đã đạt; phép đo FPS ghi riêng bên dưới. `git diff --check` đạt. Không có thay đổi test cũ nào ngoài bố cục/tiêu đề đã liệt kê ở bước 1 và mở rộng phép đo FPS.
+
+### FPS tham khảo
+
+Chromium 140.0.7339.16 headless, WebGL2 phần mềm, cửa sổ 1280 × 1000, 1000 hạt, ×1, bảng mở và cả ba nhóm mở. Chạy riêng trình duyệt sau khi các phép kiểm khác kết thúc; mỗi mức đo khoảng 10 giây sau khi đủ năm trạng thái.
+
+| Mức | Khung hình | Thời gian đo | FPS |
+| --- | ---: | ---: | ---: |
+| Cao | 74 | 10,050 giây | 7,36 |
+| Thấp | 124 | 10,016 giây | 12,38 |
+
+[Số đo đầy đủ](fps-results.json), console không lỗi. Đây là kết quả tham khảo của môi trường phần mềm, không dùng làm ngưỡng nghiệm thu phần cứng. AC-12 (giao diện/dễ hiểu/thí nghiệm/chuyển góc nhìn và Cao ≥45 FPS trên máy người dùng) chưa kết luận tự động, dành cho người kiểm tay ở pha nghiệm thu. Build đã hoàn thành toàn bộ tám bước, không còn lỗi kiểm thử đang mở.
