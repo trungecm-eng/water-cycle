@@ -3,11 +3,8 @@ import { config } from '../config.js';
 import { content } from '../content.js';
 
 export const stateLabels = content.states;
-const stages = content.stages;
-
-export function activeStages(counts) {
-  return Object.entries(stages).filter(([state]) => counts[state] > 0).map(([, label]) => label);
-}
+import { activeStages } from '../stats/stages.js';
+export { activeStages } from '../stats/stages.js';
 
 export function createHud(root) {
   const legend = root.querySelector('#legend');
