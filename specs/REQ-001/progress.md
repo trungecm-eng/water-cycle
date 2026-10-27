@@ -13,3 +13,10 @@
 - Repo chưa có `notes.md`, `eval/` hoặc tiến độ cũ tại thời điểm đọc. Không sửa các tài liệu được bảo vệ.
 - Git chưa có danh tính mặc định. Commit thành công bằng các biến môi trường `GIT_AUTHOR_NAME=ai-dev-team GIT_AUTHOR_EMAIL=ai-dev-team@localhost GIT_COMMITTER_NAME=ai-dev-team GIT_COMMITTER_EMAIL=ai-dev-team@localhost` trước lệnh git, theo danh tính commit có sẵn; không sửa `.git/config`.
 - Các hằng số điều khiển vật lý chỉ là khởi điểm, cần kiểm chứng ở các bước 4–7. Chưa chạy trình duyệt/E2E/FPS vì chưa triển khai các bước liên quan.
+
+## Phiên build ngày 2026-10-27 — bước 3
+- Hoàn thành World (hạt, hồ, bộ đếm, reset giữ thanh trượt, snapshot sao chép và đóng băng sâu), Clock (bước cố định, tốc độ, tạm dừng, giới hạn dồn), bộ đọc URL và renderer Canvas tối thiểu. `index.html` nạp `src/main.js`; getter `window.__sim` trả snapshot chỉ đọc kèm tốc độ/trạng thái tạm dừng.
+- `node --test`: 11/11 test đạt. Bổ sung test URL, giới hạn đồng hồ ở các tốc độ, xen tạm dừng/đổi tốc độ cùng số bước, snapshot và reset. Có epsilon trong cấu hình để tránh mất bước do sai số khi trừ dt nhiều lần.
+- Tiếp theo là bước 4: tia nhiệt, nguội nước, bốc hơi, lực đẩy lên và hiệu ứng rung; sau đó làm lần lượt bước 5–10. World.step hiện chỉ tăng số bước, chưa có chuyển trạng thái. Tính khác biệt theo seed của toàn bộ mô phỏng cần kiểm lại khi có hành vi ngẫu nhiên ở bước 4; RNG riêng đã có test ở bước 1.
+- API dùng tiếp: `world.particles`, `world.lake`, `world.rng`, `world.rays`, `world.clusters`; `world.snapshot()`; `clock.advance(elapsedSeconds)`, `setPaused`, `reset`. Main hiện tự bỏ thời gian giữa các lần đổi visibility. Reset World và Clock cần được gọi cùng nhau khi nối nút ở bước 8.
+- Chưa chạy trình duyệt/E2E/FPS; renderer hiện chỉ có địa hình, hồ, Mặt Trời và hạt ban đầu. Không khẳng định đạt các AC của vòng hoàn chỉnh.
