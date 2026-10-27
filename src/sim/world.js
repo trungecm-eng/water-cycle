@@ -21,13 +21,61 @@ export class World {
     this.evaporations = 0;
     this.returns = 0;
     this.rays = [];
+    this.rayAccumulator = 0;
     this.clusters = [];
     this.particles = Array.from({ length: this.options.n }, (_, id) => ({ id }));
     this.lake = new Lake(this.particles);
   }
 
   get time() { return this.steps * config.clock.dt; }
-  step() { this.steps++; }
+  step() {
+    const dt = config.clock.dt;
+    for (const particle of this.particles) {
+      if (particle.state === 'water') {
+        particle.temperature = Math.max(config.heat.baseline, particle.temperature - config.heat.cooling * dt);
+      } else if (particle.state === 'vapor') {
+        particle.vy = Math.min(config.motion.vaporMaxSpeed, particle.vy + config.motion.buoyancy * dt);
+        particle.y = Math.min(config.world.height, particle.y + particle.vy * dt);
+        if (particle.y === config.world.height) particle.vy = 0;
+      }
+    }
+    if (this.sun === 0) {
+      this.rays = [];
+      this.rayAccumulator = 0;
+    } else {
+      this.rayAccumulator += config.heat.raysPerSecond * this.sun / config.limits.maxControl * dt;
+      while (this.rayAccumulator >= 1) {
+        this.rayAccumulator--;
+        this.rays.push({ column: Math.floor(this.rng() * config.lake.columns), x: config.sun.x, y: config.sun.y });
+      }
+      this.rays = this.rays.filter(ray => {
+        const surface = this.lake.surface(ray.column);
+        const targetX = this.lake.columnX(ray.column);
+        const targetY = surface?.y ?? config.lake.bottom;
+        const dx = targetX - ray.x;
+        const dy = targetY - ray.y;
+        const distance = Math.hypot(dx, dy);
+        const travel = config.heat.raySpeed * dt;
+        if (distance > travel) {
+          ray.x += dx / distance * travel;
+          ray.y += dy / distance * travel;
+          return true;
+        }
+        if (surface) surface.temperature = Math.min(100, surface.temperature + config.heat.rayHeat);
+        return false;
+      });
+      for (let column = 0; column < config.lake.columns; column++) {
+        const particle = this.lake.surface(column);
+        if (!particle || particle.temperature <= config.heat.evaporationTemp) continue;
+        this.lake.remove(particle);
+        particle.state = 'vapor';
+        particle.vy = config.motion.buoyancy * dt;
+        particle.y = Math.max(particle.y, this.lake.level);
+        this.evaporations++;
+      }
+    }
+    this.steps++;
+  }
 
   snapshot() {
     const counts = { water: 0, vapor: 0, cloud: 0, rain: 0, runoff: 0 };

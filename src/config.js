@@ -16,6 +16,6 @@ export const config = deepFreeze({
   motion: { buoyancy: 18, vaporMaxSpeed: 35, windSpeed: 30, gravity: 80, rainMaxSpeed: 150, runoffSpeed: 24 },
   cloud: { clusterRadius: 40, cloudMinSize: 30, rainStartSize: 80, rainRate: 0.15 },
   sun: { x: 840, y: 510, radius: 34 },
-  visual: { particleRadius: 2, vaporOpacity: 0.14, cloudOpacity: 0.12, shakeAmplitude: 1.5 },
+  visual: { particleRadius: 2, vaporOpacity: 0.14, cloudOpacity: 0.12, shakeAmplitude: 1.5, shakeFrequency: 24, rayRadius: 2.5 },
   colors: { sky: '#cdeefa', terrain: '#708756', lake: '#85c9ec', water: '#197bc2', vapor: '#ffffff', cloud: '#ffffff', rain: '#145b98', runoff: '#145b98', sun: '#ffcf50', ray: '#f4b942', text: '#16364c' }
 });

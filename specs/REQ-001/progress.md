@@ -20,3 +20,10 @@
 - Tiếp theo là bước 4: tia nhiệt, nguội nước, bốc hơi, lực đẩy lên và hiệu ứng rung; sau đó làm lần lượt bước 5–10. World.step hiện chỉ tăng số bước, chưa có chuyển trạng thái. Tính khác biệt theo seed của toàn bộ mô phỏng cần kiểm lại khi có hành vi ngẫu nhiên ở bước 4; RNG riêng đã có test ở bước 1.
 - API dùng tiếp: `world.particles`, `world.lake`, `world.rng`, `world.rays`, `world.clusters`; `world.snapshot()`; `clock.advance(elapsedSeconds)`, `setPaused`, `reset`. Main hiện tự bỏ thời gian giữa các lần đổi visibility. Reset World và Clock cần được gọi cùng nhau khi nối nút ở bước 8.
 - Chưa chạy trình duyệt/E2E/FPS; renderer hiện chỉ có địa hình, hồ, Mặt Trời và hạt ban đầu. Không khẳng định đạt các AC của vòng hoàn chỉnh.
+
+## Phiên build ngày 2026-10-27 — bước 4
+- Hoàn thành tia nhiệt phát theo sun, chọn cột bằng RNG có seed, bay tới hạt mặt nước hiện tại rồi truyền nhiệt; nước nguội về nền, chỉ mặt nước vượt 80 mới bốc hơi. Hơi nước có lực đẩy lên và giới hạn trần tạm thời. Renderer vẽ tia và rung mặt nước theo seed/id/thời gian, không đổi tọa độ logic hay tiêu thụ RNG.
+- `node --test`: 15/15 test đạt, gồm test tia chỉ làm nóng đúng mặt nước, ngưỡng nhiệt, hạt bị chôn không bốc hơi, mức nước giảm, lực đẩy, sun=0 trong 120 giây, ngắt tia đang bay khi sun về 0, tính tất định và khác seed.
+- Đã hoàn thành bước 1–4; tiếp theo bước 5: nhiệt độ môi trường, ngưng tụ, gió, va chạm địa hình và cụm mây. World.step hiện chưa có các quy luật đó; không coi trạng thái hiện tại là vòng hoàn chỉnh. Chưa kiểm chứng nhịp/ổn định, E2E hoặc FPS.
+- Khi sun=0, xóa tia đang bay và phần nhịp tích lũy để bảo đảm không có bốc hơi mới ngay sau thao tác. Nước vẫn nguội, hơi đã có vẫn chuyển động. Bước 5 cần thay phần chuyển động vapor hiện tại để xử lý nhiệt và va chạm đầy đủ.
+- Commit dùng danh tính qua biến môi trường như phiên trước, không sửa cấu hình Git.
