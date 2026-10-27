@@ -61,3 +61,9 @@
 - Viết README tiếng Việt: chạy local, điều khiển, URL, trạng thái, hằng số/ý nghĩa, kiểm thử và cấu trúc thư mục. Nêu rõ hạt mây còn dưới ngưỡng dừng mưa và phần kiểm tay của người học.
 - `node --test`: 26/26 đạt (~128 giây). E2E bản cuối đạt cả hai luồng và URL; bốn mốc mặc định giống kiểm thử logic. Lần E2E đầu có race giữa điều kiện chờ và bộ ghi bằng chứng; đã sửa kịch bản chờ chính bằng chứng return trước khi khẳng định, không sửa logic mô phỏng.
 - Đo thử FPS Chromium 140.0.7339.16: 601 frame/10,0162 giây = 60,003 FPS tại viewport 1280×1000, ×1, 600 hạt; không lỗi console. Bước 10 sẽ lưu báo cáo chính thức và kiểm tra cuối.
+
+## Phiên build ngày 2026-10-27 — bước 10, hoàn tất build
+- Toàn bộ bước 1–10 đã hoàn thành. Lượt cuối `node --test`: 26/26 đạt, không skip/lỗi, 125,70 giây. `node e2e/cycle-flow.e2e.mjs` đạt cả mặc định ×1, biến thể gián đoạn và URL; không lỗi console/pageerror. `node e2e/measure-fps.e2e.mjs`: Chromium 140.0.7339.16, 601 frame/10,0163 giây, 60,0022 FPS tại 600 hạt/×1/1280×1000, đủ năm trạng thái lúc bắt đầu đo.
+- Lưu kết quả, môi trường, lệnh, các mốc và giới hạn kiểm chứng trong `specs/REQ-001/build-report.md`. Đã rà `package.json` đúng hợp đồng, README đủ mục, `git diff --check` sạch; không sửa tệp được bảo vệ hay thêm dependency.
+- Tiếp theo: giai đoạn evaluate/QA, đặc biệt người kiểm tay AC-14 và chạy lại FPS trên máy đích nếu cần. Không còn bước build chưa làm. Không khẳng định học sinh đã kiểm tay; lưu ý cách hiểu “mưa hết” so với ngưỡng dừng dưới 30 giọt đã nêu trong README/báo cáo và bàn giao bước 6.
+- Lệnh dùng lại: server `python3 -m http.server 8000`; logic `node --test`; E2E `node e2e/cycle-flow.e2e.mjs`; FPS `node e2e/measure-fps.e2e.mjs`. Playwright tự tìm gói toàn cục (hoặc PLAYWRIGHT_MODULE); hỗ trợ BASE_URL. Commit vẫn dùng danh tính qua biến môi trường, không sửa Git config.
