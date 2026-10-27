@@ -18,7 +18,7 @@ Object.defineProperty(window, '__sim', {
   get: () => {
     camera.reservoirs = world.reservoirs;
     return Object.freeze({ ...world.snapshot(), speed: clock.speed, paused: clock.paused,
-      camera: camera.snapshot(), webgl2: renderer.webgl2 });
+      camera: camera.snapshot(), webgl2: renderer.webgl2, scene: renderer.snapshot?.() ?? Object.freeze({ objects: Object.freeze([]), labels: Object.freeze([]) }) });
   }
 });
 let previous;

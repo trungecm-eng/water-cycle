@@ -1,4 +1,5 @@
 import * as THREE from '../../vendor/three.module.min.js';
+import { decorateScene } from './scenery.js';
 import { config } from '../config.js';
 
 function terrainGeometry(map) {
@@ -13,7 +14,7 @@ function terrainGeometry(map) {
         const region = map.regions[index];
         const color = region === 'mountain'
           ? map.heights[index] > 210 ? config.colors.summit : map.heights[index] > 85 ? config.colors.slope : config.colors.foothill
-          : config.colors[region] ?? config.colors.plain;
+          : region === 'pond' ? config.colors.mud : config.colors[region] ?? config.colors.plain;
         colors.push(...new THREE.Color(color).toArray());
       }
     }
@@ -73,15 +74,34 @@ export function createRenderer(canvas, world, orbit) {
     const mesh = new THREE.Mesh(waterGeometry(world.map, indices, id === 'river' || id === 'stream'),
       new THREE.MeshStandardMaterial({ color: config.colors[id], transparent: true,
         opacity: config.rendering.waterOpacity, roughness: 0.25, side: THREE.DoubleSide }));
+    if (id === 'sea') {
+      const positions = mesh.geometry.attributes.position;
+      const colors = [];
+      for (let i = 0; i < positions.count; i++) {
+        const blend = Math.max(0, Math.min(1, (positions.getX(i) - config.scenery.waveStart) / (world.map.size - config.scenery.waveStart)));
+        colors.push(...new THREE.Color(config.colors.sea).lerp(new THREE.Color(config.colors.seaDeep), blend).toArray());
+      }
+      mesh.geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+      mesh.material.color.set(config.colors.cloud);
+      mesh.material.vertexColors = true;
+    }
     mesh.name = id;
     surfaces[id] = mesh;
     scene.add(mesh);
   }
+  const scenery = decorateScene(scene, canvas, world);
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(world.options.n * 3), 3));
   geometry.setAttribute('color', new THREE.Float32BufferAttribute(new Float32Array(world.options.n * 3), 3));
   const points = new THREE.Points(geometry, new THREE.PointsMaterial({ size: config.rendering.particleSize, vertexColors: true }));
   scene.add(points);
+  const vaporGeometry = new THREE.BufferGeometry();
+  vaporGeometry.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(world.options.n * 3), 3));
+  const vapor = new THREE.Points(vaporGeometry, new THREE.PointsMaterial({ color: config.colors.vapor, size: config.rendering.particleSize, transparent: true, opacity: config.visual.vaporOpacity, depthWrite: false }));
+  scene.add(vapor);
+  const rainGeometry = new THREE.BufferGeometry();
+  rainGeometry.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(world.options.n * 6), 3));
+  scene.add(new THREE.LineSegments(rainGeometry, new THREE.LineBasicMaterial({ color: config.colors.rain })));
   const rayGeometry = new THREE.BufferGeometry();
   rayGeometry.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(3 * config.sunlight.rayCount * 6), 3));
   const rays = new THREE.LineSegments(rayGeometry,
@@ -90,6 +110,7 @@ export function createRenderer(canvas, world, orbit) {
   const camera = new THREE.PerspectiveCamera(config.camera.fov, 1, config.camera.near, config.camera.far);
   return {
     webgl2: true,
+    snapshot: () => scenery.snapshot(),
     render() {
       const width = canvas.clientWidth;
       const height = canvas.clientHeight;
@@ -103,14 +124,30 @@ export function createRenderer(canvas, world, orbit) {
         surfaces[id].position.y = world.reservoirs.level(id);
         surfaces[id].visible = world.reservoirs.count(id) > 0;
       }
-      let count = 0;
+      sunlight.intensity = config.rendering.sunlight * (0.7 + world.sun / 100 * 0.3);
+      let count = 0, vaporCount = 0, rainCount = 0;
+      const clustered = new Set(world.clusters.filter(cluster => cluster.visible).flatMap(cluster => cluster.ids));
       for (const particle of world.particles) {
-        if (particle.state === 'water') continue;
+        if (particle.state === 'water' || (particle.state === 'cloud' && clustered.has(particle.id))) continue;
+        if (particle.state === 'vapor') {
+          vaporGeometry.attributes.position.setXYZ(vaporCount++, particle.x, particle.y, particle.z);
+          continue;
+        }
+        if (particle.state === 'rain') {
+          rainGeometry.attributes.position.setXYZ(rainCount * 2, particle.x, particle.y, particle.z);
+          rainGeometry.attributes.position.setXYZ(rainCount * 2 + 1, particle.x, particle.y + config.scenery.rainLength, particle.z);
+          rainCount++;
+          continue;
+        }
         geometry.attributes.position.setXYZ(count, particle.x, particle.y, particle.z);
         const color = new THREE.Color(config.colors[particle.state]);
         geometry.attributes.color.setXYZ(count, color.r, color.g, color.b);
         count++;
       }
+      vaporGeometry.setDrawRange(0, vaporCount);
+      vaporGeometry.attributes.position.needsUpdate = true;
+      rainGeometry.setDrawRange(0, rainCount * 2);
+      rainGeometry.attributes.position.needsUpdate = true;
       geometry.setDrawRange(0, count);
       geometry.attributes.position.needsUpdate = true;
       geometry.attributes.color.needsUpdate = true;
@@ -122,6 +159,8 @@ export function createRenderer(canvas, world, orbit) {
       rayGeometry.setDrawRange(0, world.rays.length * 2);
       rayGeometry.attributes.position.needsUpdate = true;
       rays.visible = world.sun > 0;
+      camera.updateMatrixWorld();
+      scenery.update(camera);
       renderer.render(scene, camera);
     }
   };

@@ -13,6 +13,11 @@ export const config = deepFreeze({
     fov: 45, near: 1, far: 6000 },
   rendering: { maxPixelRatio: 2, ambientLight: 1.6, sunlight: 2.2, waterOpacity: 0.72,
     particleSize: 4, waterOffset: 0.15 },
+  scenery: { base: -95, soilBottom: -55, seaDepth: 45, seaFaceOpacity: 0.55,
+    fogNear: 2000, fogFar: 4800, skyRadius: 2900, waveSpacing: 60, waveStart: 810,
+    waveLength: 28, waveHeight: 0.7, waveOpacity: 0.32, waveSpeed: 0.45, waveTravel: 8,
+    flowRadius: 2.5, flowOpacity: 0.8, flowsPerChannel: 8, flowSpeed: 1.8, flowHeight: 1,
+    cloudLobes: 9, cloudOffsets: [[-12, 0, 0], [10, 3, 0], [0, 8, 8]], cloudRadius: 20, cloudFlatten: 0.7, rainLength: 7 },
   defaults: { n: 1000, sun: 50, wind: 40, seed: 1, speed: 1, paused: false },
   limits: { minParticles: 100, maxParticles: 2000, minControl: 0, maxControl: 100, minSpeed: 0.5, maxSpeed: 8 },
   clock: { dt: 1 / 60, maxFrame: 0.25, epsilon: 1e-12, speeds: [0.5, 1, 2, 4] },
@@ -23,5 +28,5 @@ export const config = deepFreeze({
   cloud: { clusterRadius: 40, cloudMinSize: 30, rainStartSize: 80, rainRate: 0.15, coldRainFactor: 3 },
   sun: { x: 840, y: 510, radius: 34 },
   visual: { particleRadius: 2, vaporOpacity: 0.14, cloudOpacity: 0.12, shakeAmplitude: 1.5, shakeFrequency: 24, rayRadius: 2.5 },
-  colors: { sky: '#cdeefa', sea: '#63bdbf', beach: '#efdda4', plain: '#91bd79', foothill: '#618765', slope: '#ac947f', summit: '#969aa0', soil: '#997356', rock: '#777d87', mud: '#8a755d', stream: '#72c6e8', pond: '#72c6e8', terrain: '#708756', lake: '#85c9ec', water: '#197bc2', vapor: '#ffffff', cloud: '#ffffff', rain: '#145b98', runoff: '#145b98', sun: '#ffcf50', ray: '#f4b942', text: '#16364c' }
+  colors: { sky: '#cdeefa', skyHigh: '#78b8de', seaDeep: '#338d9f', foam: '#d4f5f5', cloudDark: '#7e8c9e', sea: '#63bdbf', beach: '#efdda4', plain: '#91bd79', foothill: '#618765', slope: '#ac947f', summit: '#969aa0', soil: '#997356', rock: '#777d87', mud: '#8a755d', stream: '#72c6e8', pond: '#72c6e8', terrain: '#708756', lake: '#85c9ec', water: '#197bc2', vapor: '#ffffff', cloud: '#ffffff', rain: '#145b98', runoff: '#145b98', sun: '#ffcf50', ray: '#f4b942', text: '#16364c' }
 });

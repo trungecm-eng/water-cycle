@@ -28,3 +28,7 @@ dd { margin: 4px 0 0; font-variant-numeric: tabular-nums; font-weight: 600; }
 .empty { color: #a13b00; font-weight: 600; }
 .empty:empty { display: none; }
 @media (max-width: 800px) { .controls, .information { grid-template-columns: 1fr; } }
+
+.map-labels { position: absolute; top: 0; left: 0; pointer-events: none; }
+.map-label { position: absolute; transform: translate(-50%, -100%); white-space: nowrap; background: #fffffff0; border: 1px solid #72909a; border-radius: 8px; padding: 3px 9px; font-size: 13px; box-shadow: 0 2px 5px #16364c22; }
+.map-label[hidden] { display: none; }
