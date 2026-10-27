@@ -41,3 +41,9 @@
 - Điểm cần biết: AC-6 có hai câu không đồng nhất nếu hiểu “mưa hết” là còn 0 giọt: quy tắc bắt buộc dừng dưới 30 để lại giọt mây. Triển khai giữ đúng quy tắc ngưỡng; test 60 giây kiểm cụm không bổ sung đã xuống dưới 30 và ngừng mưa, không khẳng định toàn bộ giọt đã thành rain. Cần nêu rõ khi nghiệm thu; không tự sửa requirement/spec.
 - Tiếp theo bước 7: đo và hiệu chỉnh bốn mốc nhịp, ổn định 600 giây và lưới sun × wind; các hằng số chưa được hiệu chỉnh. Sau đó bước 8–10: giao diện điều khiển/HUD, E2E, README và FPS. Chưa chạy trình duyệt, chưa khẳng định toàn bộ AC đạt.
 - Phiên dừng tại bước 6 hoàn chỉnh. Commit dùng biến môi trường danh tính ai-dev-team như phiên trước, không sửa cấu hình Git.
+
+## Phiên build ngày 2026-10-27 — bước 7
+- Kiểm chứng nhịp mặc định: bốc hơi đầu 0,93 giây; đám mây đầu 13,27 giây; mưa đầu 20,13 giây; về hồ đầu 22,08 giây. Trong 600 giây, hồ ít nhất còn 370/600 hạt (61,7%). Hằng số hiện tại đã đạt nên không cần hiệu chỉnh hay nới mốc.
+- Bổ sung `test/stability.test.js`: kiểm mọi cửa sổ 60 giây căn theo bước cố định, bắt đầu từ giây 120; kiểm từng hạt ở từng bước trong 600 giây trên cả chín tổ hợp sun 0/50/100 × wind 0/40/100 (hữu hạn, nhiệt độ, trạng thái, bảo toàn, biên thế giới/địa hình và số hạt hồ); kiểm sun=100 bốc hơi ít nhất 1,5 lần mặc định và ngắt nắng vẫn ngưng tụ/mưa/về hồ, đổi thanh không nhảy vị trí.
+- `node --test`: 26/26 test đạt, khoảng 123 giây trên máy này; phần lưới 600 giây chiếm khoảng 104 giây. Test không có điều kiện phụ thuộc tốc độ máy, trình duyệt hay mạng.
+- Tiếp theo bước 8: controls/HUD/chú giải và bố cục; sau đó bước 9–10: E2E, README, FPS và kiểm tra toàn bộ. Chưa có kiểm chứng trình duyệt hoặc FPS. Lưu ý cách hiểu ngưỡng dừng mưa ở bàn giao bước 6 vẫn giữ nguyên.
