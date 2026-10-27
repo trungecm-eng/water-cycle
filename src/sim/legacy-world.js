@@ -3,9 +3,9 @@
 import { config } from '../config.js';
 import { Lake } from './lake.js';
 import { mulberry32 } from './rng.js';
-import { moveAirParticle } from './air.js';
-import { movePrecipitation, releaseRain } from './precipitation.js';
-import { findClusters } from './clusters.js';
+import { moveAirParticle } from './legacy-air.js';
+import { movePrecipitation, releaseRain } from './legacy-precipitation.js';
+import { findClusters } from './legacy-clusters.js';
 
 function freeze(value) {
   for (const child of Object.values(value)) if (child && typeof child === 'object') freeze(child);

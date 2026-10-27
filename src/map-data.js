@@ -20,6 +20,7 @@ export const mapData = deepFreeze({
     { x: 115, z: 210, height: 205, radiusX: 120, radiusZ: 145 },
     { x: 145, z: 800, height: 220, radiusX: 130, radiusZ: 165 }
   ],
+  windShelterDistance: 100,
   ridge: [[0, 115], [210, 115], [500, 150], [800, 145], [1000, 145]],
   streams: [
     { id: 'north', destination: 'lake', points: [[180, 760], [240, 710], [300, 655], [360, 620]] },

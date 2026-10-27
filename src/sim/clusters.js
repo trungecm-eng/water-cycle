@@ -5,9 +5,9 @@ export function findClusters(particles) {
   const radius = config.cloud.clusterRadius;
   const cells = new Map();
   const clouds = particles.filter(particle => particle.state === 'cloud');
-  const key = (x, y) => `${x},${y}`;
+  const key = (x, y, z) => `${x},${y},${z}`;
   for (const particle of clouds) {
-    const cell = key(Math.floor(particle.x / radius), Math.floor(particle.y / radius));
+    const cell = key(Math.floor(particle.x / radius), Math.floor(particle.y / radius), Math.floor(particle.z / radius));
     if (!cells.has(cell)) cells.set(cell, []);
     cells.get(cell).push(particle);
   }
@@ -21,9 +21,10 @@ export function findClusters(particles) {
       const particle = members[index];
       const cx = Math.floor(particle.x / radius);
       const cy = Math.floor(particle.y / radius);
-      for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) {
-        for (const neighbor of cells.get(key(cx + dx, cy + dy)) ?? []) {
-          if (!seen.has(neighbor) && Math.hypot(particle.x - neighbor.x, particle.y - neighbor.y) <= radius) {
+      const cz = Math.floor(particle.z / radius);
+      for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) for (let dz = -1; dz <= 1; dz++) {
+        for (const neighbor of cells.get(key(cx + dx, cy + dy, cz + dz)) ?? []) {
+          if (!seen.has(neighbor) && Math.hypot(particle.x - neighbor.x, particle.y - neighbor.y, particle.z - neighbor.z) <= radius) {
             seen.add(neighbor);
             members.push(neighbor);
           }

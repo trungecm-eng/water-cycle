@@ -1,3 +1,6 @@
+import { moveAirParticle } from './air.js';
+import { findClusters } from './clusters.js';
+import { releaseRain } from './precipitation.js';
 import { config } from '../config.js';
 import { generateDrainage } from './drainage.js';
 import { Reservoirs } from './reservoirs.js';
@@ -32,6 +35,9 @@ export class World {
   }
   get time() { return this.steps * config.clock.dt; }
   step() {
+    for (const particle of this.particles) moveAirParticle(particle, this.wind, this.map);
+    releaseRain(this.particles, this.rng);
+    this.clusters = findClusters(this.particles);
     this.reservoirs.overflow();
     this.rays = [];
     for (const id of Object.keys(this.reservoirs.members)) {

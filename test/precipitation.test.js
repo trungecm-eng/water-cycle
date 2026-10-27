@@ -1,8 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { config } from '../src/config.js';
-import { findClusters } from '../src/sim/clusters.js';
-import { releaseRain, movePrecipitation } from '../src/sim/precipitation.js';
+import { findClusters } from '../src/sim/legacy-clusters.js';
+import { releaseRain, movePrecipitation } from '../src/sim/legacy-precipitation.js';
 import { terrainHeight } from '../src/sim/terrain.js';
 import { Lake } from '../src/sim/lake.js';
 import { mulberry32 } from '../src/sim/rng.js';
