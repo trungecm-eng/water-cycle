@@ -1,3 +1,4 @@
+import { content } from '../content.js';
 import * as THREE from '../../vendor/three.module.min.js';
 import { config } from '../config.js';
 import { mapData } from '../map-data.js';
@@ -68,7 +69,7 @@ export function decorateScene(scene, canvas, world) {
     const element = document.createElement('span');
     element.className = 'map-label';
     element.dataset.region = data.id;
-    element.textContent = data.text;
+    element.textContent = content.regions[data.id];
     labelLayer.append(element);
     return { ...data, element };
   });
@@ -110,7 +111,7 @@ export function decorateScene(scene, canvas, world) {
       const rect = canvas.getBoundingClientRect();
       labelSnapshot = [];
       for (const label of labels) {
-        label.element.textContent = label.id === 'pond' && !world.reservoirs.count('pond') ? 'Ao (đã cạn)' : label.text;
+        label.element.textContent = label.id === 'pond' && !world.reservoirs.count('pond') ? content.emptyPond : content.regions[label.id];
         const point = new THREE.Vector3(...label.position).project(camera);
         const visible = labelsVisible && point.z >= -1 && point.z <= 1 && Math.abs(point.x) <= 1 && Math.abs(point.y) <= 1;
         label.element.hidden = !visible;

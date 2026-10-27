@@ -10,15 +10,17 @@ try {
   const layout = await page.evaluate(() => {
     const panel = document.querySelector('.simulation-panel').getBoundingClientRect();
     const canvas = document.querySelector('#world').getBoundingClientRect();
-    return { panelRight: panel.right, canvasLeft: canvas.left, canvasWidth: canvas.width,
+    return { panelWidth: panel.width, canvasLeft: canvas.left, canvasWidth: canvas.width,
       canvasHeight: canvas.height, width: innerWidth, height: innerHeight };
   });
-  assert.ok(layout.panelRight <= layout.canvasLeft, 'controls do not cover the scene');
+  assert.ok(layout.panelWidth <= layout.width * 0.3, 'panel covers at most 30%');
+  assert.equal(layout.canvasLeft, 0);
+  assert.equal(layout.canvasWidth, layout.width);
   assert.ok(layout.canvasWidth >= layout.width * 0.7, 'scene occupies most of the window');
   assert.equal(layout.canvasHeight, layout.height);
-  await page.getByText('Chú giải và mô hình', { exact: true }).click();
+  await page.getByText('Chú giải', { exact: true }).click();
   assert.equal(await page.locator('#legend li').count(), 5);
-  await page.getByText('Chú giải và mô hình', { exact: true }).click();
+  await page.getByText('Chú giải', { exact: true }).click();
   const initial = await page.evaluate(() => window.__sim);
   assert.equal(initial.counts.water, 2000);
   assert.equal(initial.reservoirs.sea.count, 1480);

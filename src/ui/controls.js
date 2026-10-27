@@ -1,10 +1,11 @@
+import { content } from '../content.js';
 import { config } from '../config.js';
 
 export function bindControls(root, world, clock, resetFrameTime) {
   const pause = root.querySelector('#pause');
   const speedButtons = [...root.querySelectorAll('[data-speed]')];
   function update() {
-    pause.textContent = clock.paused ? 'Tiếp tục' : 'Tạm dừng';
+    pause.textContent = clock.paused ? content.resume : content.pause;
     pause.setAttribute('aria-pressed', String(clock.paused));
     for (const button of speedButtons) {
       button.setAttribute('aria-pressed', String(Number(button.dataset.speed) === clock.speed));

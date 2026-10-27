@@ -1,3 +1,5 @@
+import { content } from './content.js';
+import { createPanel } from './ui/panel.js';
 import { parseParams } from './sim/params.js';
 import { World } from './sim/world.js';
 import { Clock } from './sim/clock.js';
@@ -7,6 +9,8 @@ import { bindCameraControls } from './ui/camera-controls.js';
 import { bindControls } from './ui/controls.js';
 import { createHud } from './ui/hud.js';
 
+const panel = createPanel(document);
+document.title = content.title;
 const options = parseParams(window.location.search);
 const world = new World(options);
 const clock = new Clock(() => world.step(), options);
@@ -18,7 +22,7 @@ Object.defineProperty(window, '__sim', {
   get: () => {
     camera.reservoirs = world.reservoirs;
     return Object.freeze({ ...world.snapshot(), speed: clock.speed, paused: clock.paused,
-      camera: camera.snapshot(), webgl2: renderer.webgl2, scene: renderer.snapshot?.() ?? Object.freeze({ objects: Object.freeze([]), labels: Object.freeze([]) }) });
+      panel: panel.snapshot(), camera: camera.snapshot(), webgl2: renderer.webgl2, scene: renderer.snapshot?.() ?? Object.freeze({ objects: Object.freeze([]), labels: Object.freeze([]) }) });
   }
 });
 let previous;

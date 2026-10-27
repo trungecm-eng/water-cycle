@@ -34,12 +34,12 @@ export const mapData = deepFreeze({
     pond: { x: 560, z: 280, radiusX: 25, radiusZ: 21, bottom: 8, levelPerParticle: 0.06, initial: 60, capacity: 120, outlet: [585, 280] }
   },
   labels: [
-    { id: 'mountain', text: 'Núi', position: [150, 320, 500] },
-    { id: 'plain', text: 'Đồng bằng', position: [540, 40, 750] },
-    { id: 'stream', text: 'Suối', position: [240, 125, 710] },
-    { id: 'river', text: 'Sông', position: [600, 35, 505] },
-    { id: 'lake', text: 'Hồ', position: [360, 45, 620] },
-    { id: 'pond', text: 'Ao', position: [560, 30, 280] },
-    { id: 'sea', text: 'Biển', position: [880, 25, 650] }
+    { id: 'mountain', position: [150, 320, 500] },
+    { id: 'plain', position: [540, 40, 750] },
+    { id: 'stream', position: [240, 125, 710] },
+    { id: 'river', position: [600, 35, 505] },
+    { id: 'lake', position: [360, 45, 620] },
+    { id: 'pond', position: [560, 30, 280] },
+    { id: 'sea', position: [880, 25, 650] }
   ]
 });

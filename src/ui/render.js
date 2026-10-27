@@ -1,3 +1,4 @@
+import { content } from '../content.js';
 import * as THREE from '../../vendor/three.module.min.js';
 import { decorateScene } from './scenery.js';
 import { config } from '../config.js';
@@ -52,7 +53,7 @@ export function createRenderer(canvas, world, orbit) {
   if (!context) {
     const message = document.createElement('p');
     message.setAttribute('role', 'alert');
-    message.textContent = 'Không thể khởi tạo WebGL2. Hãy bật tăng tốc đồ họa hoặc mở bằng trình duyệt hỗ trợ WebGL2.';
+    message.textContent = content.webglError;
     canvas.replaceWith(message);
     return { webgl2: false, render() {} };
   }
