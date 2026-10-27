@@ -116,6 +116,9 @@ export function createRenderer(canvas, world, orbit) {
       const height = canvas.clientHeight;
       renderer.setSize(width, height, false);
       camera.aspect = width / height;
+      // Preserve the full overview when a tall window narrows the scene.
+      camera.fov = 2 * Math.atan(Math.tan(config.camera.fov * Math.PI / 360)
+        * Math.max(1, config.camera.referenceAspect / camera.aspect)) * 180 / Math.PI;
       camera.updateProjectionMatrix();
       const view = orbit.snapshot();
       camera.position.set(view.position.x, view.position.y, view.position.z);

@@ -10,7 +10,7 @@ export const config = deepFreeze({
   camera: { target: [500, 40, 500], azimuth: 2.35, elevation: 38, distance: 1500,
     minElevation: 10, maxElevation: 85, minDistance: 220, maxDistance: 2400,
     clearance: 20, rotateSpeed: 0.006, keyRotate: 0.08, zoomSpeed: 0.001, keyZoom: 0.1,
-    fov: 45, near: 1, far: 6000 },
+    fov: 45, referenceAspect: 5 / 3, near: 1, far: 6000 },
   rendering: { maxPixelRatio: 2, ambientLight: 1.6, sunlight: 2.2, waterOpacity: 0.72,
     particleSize: 4, waterOffset: 0.15 },
   scenery: { base: -95, soilBottom: -55, seaDepth: 45, seaFaceOpacity: 0.55,

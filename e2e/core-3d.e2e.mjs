@@ -7,6 +7,18 @@ try {
   const errors = trackErrors(page);
   await page.goto(`${baseUrl}/?n=2000&paused=1`);
   await page.waitForFunction(() => window.__sim?.webgl2);
+  const layout = await page.evaluate(() => {
+    const panel = document.querySelector('.simulation-panel').getBoundingClientRect();
+    const canvas = document.querySelector('#world').getBoundingClientRect();
+    return { panelRight: panel.right, canvasLeft: canvas.left, canvasWidth: canvas.width,
+      canvasHeight: canvas.height, width: innerWidth, height: innerHeight };
+  });
+  assert.ok(layout.panelRight <= layout.canvasLeft, 'controls do not cover the scene');
+  assert.ok(layout.canvasWidth >= layout.width * 0.7, 'scene occupies most of the window');
+  assert.equal(layout.canvasHeight, layout.height);
+  await page.getByText('Chú giải và mô hình', { exact: true }).click();
+  assert.equal(await page.locator('#legend li').count(), 5);
+  await page.getByText('Chú giải và mô hình', { exact: true }).click();
   const initial = await page.evaluate(() => window.__sim);
   assert.equal(initial.counts.water, 2000);
   assert.equal(initial.reservoirs.sea.count, 1480);
@@ -31,6 +43,10 @@ try {
   assert.notEqual(dragged.camera.azimuth, rotated.camera.azimuth);
   assert.equal(dragged.time, 0);
   await page.setViewportSize({ width: 1000, height: 800 });
+  await page.waitForFunction(() => {
+    const rect = document.querySelector('#world').getBoundingClientRect();
+    return rect.height === innerHeight && rect.right === innerWidth;
+  });
   await page.locator('#reset').click();
   const reset = await page.evaluate(() => window.__sim);
   assert.deepEqual(reset.camera, dragged.camera);
