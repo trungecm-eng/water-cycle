@@ -57,6 +57,8 @@ export function bindControls(root, world, clock, resetFrameTime) {
   root.addEventListener('keydown', event => {
     if (event.repeat || event.ctrlKey || event.altKey || event.metaKey) return;
     if (event.target.closest('input, textarea, select, [contenteditable="true"]')) return;
+    // Keep native disclosure activation on Space; buttons/canvas use the pause shortcut.
+    if (event.code === 'Space' && event.target.closest('summary')) return;
     if (event.code === 'Space') {
       event.preventDefault();
       togglePause();

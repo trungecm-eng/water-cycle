@@ -56,3 +56,26 @@ Cao vẽ 18.432 tam giác địa hình, sóng biển, bóng Mặt Trời trên �
 Test mới `test/quality.test.js` kiểm URL, FPS giả lập (20/30/60), ngắt chuỗi, tab ẩn, đóng vĩnh viễn, đổi mức và hai World cùng seed/cùng bước. `e2e/ui-quality.e2e.mjs` kiểm đổi mức thật, số tam giác, sóng, bóng, pixel ratio, giữ nguyên hạt/thời gian/camera/phân bố khi tạm dừng, URL low/ultra và console. File này được làm ngay ở bước 6 để kiểm lớp vẽ; bước 7 tiếp tục các kịch bản còn lại.
 
 Kiểm tra bước 6: `node --test` đạt 51/51 trong 143,257 giây. Sau khi gom hằng số đồ họa vào config và thêm kiểm ngưỡng đúng 30 FPS, chạy lại `node --test test/quality.test.js` đạt 4/4 và `ui-quality` đạt. Các e2e `core-3d`, `scenery`, `scene`, `ui-views`, `ui-controls`, `panel-foundation` đều đạt, console không lỗi. `git diff --check` đạt. Chưa có ảnh và số đo FPS REQ-005, chưa nghiệm thu bước 7–8 hoặc AC-12.
+
+## Bước 7: kịch bản giao diện và tài liệu
+
+Thêm `ui-flow` chạy luồng mặc định ×1 và biến thể resize/chọn liên tiếp/thu gọn khi chuyển góc nhìn; mỗi luồng đo 60 giây gió 0 rồi 60 giây gió 100, so tỷ lệ mưa, về mặc định, đổi chất lượng và đặt lại. `ui-panel` kiểm canvas/kích thước bảng ở 1024/1920, thời gian qua từng khung hình khi thu gọn, Tab tới mọi điều khiển, Enter/Space trên ba nhóm và tương phản chữ với nền được trộn từ màu trời qua các lớp nền thực tế. Kết quả tương phản: 110 phần tử chữ, không phần tử nào dưới 4,5:1.
+
+Phát hiện và sửa Space trên `summary`: giữ hành vi gập/mở nguyên bản thay vì bị shortcut tạm dừng chặn. Space trên nút/canvas vẫn tạm dừng như đặc tả. Không sửa World hay hằng số vật lý. Bước này không đổi selector hoặc điều kiện kiểm tra e2e cũ; chỉ mở rộng script đo FPS sang cả hai mức. README bổ sung bố cục, góc nhìn, chất lượng, số liệu/bộ đếm, URL, cách thí nghiệm và cấu trúc mới.
+
+`ui-screenshots` tạo tám ảnh trong `screenshots/`, kèm `evidence.json` ghi thời gian và bộ đếm của hai ảnh mưa. `measure-fps` đo riêng Cao/Thấp với bảng mở, 1000 hạt, ×1, mỗi mức 10 giây sau khi xuất hiện đủ năm trạng thái. Số đo là tham khảo trên Chromium headless; AC-12 vẫn cần người dùng kiểm trên máy thật ở bước nghiệm thu.
+
+### Ảnh giao diện REQ-005
+
+| Nội dung | Ảnh |
+| --- | --- |
+| Bảng mở, toàn cảnh | [01-panel-open.png](screenshots/01-panel-open.png) |
+| Bảng thu gọn | [02-panel-collapsed.png](screenshots/02-panel-collapsed.png) |
+| Góc nhìn toàn cảnh | [03-overview.png](screenshots/03-overview.png) |
+| Từ biển nhìn vào núi | [04-sea.png](screenshots/04-sea.png) |
+| Cận cảnh núi | [05-mountain.png](screenshots/05-mountain.png) |
+| Dọc sông | [06-river.png](screenshots/06-river.png) |
+| Mưa sau 60 giây, gió 0 | [07-rain-wind-0.png](screenshots/07-rain-wind-0.png) |
+| Mưa sau 60 giây, gió 100 | [08-rain-wind-100.png](screenshots/08-rain-wind-100.png) |
+
+Kết quả bước 7: `node --test` đạt 51/51 trong 203,593 giây; `ui-flow` cả hai biến thể, `ui-panel`, `ui-quality`, `ui-controls`, `ui-statistics`, `ui-views`, `panel-foundation`, `core-3d`, `scenery`, `scene` và `ui-screenshots` đều đạt, không lỗi console. [Kết quả luồng](ui-flow-results.json): mặc định Biển 90% ở gió 0 → Núi 85% ở gió 100; gián đoạn Biển 92% → Núi 81%. [Số liệu ảnh](screenshots/evidence.json): gió 0 ở 61,88 giây có 281 giọt xuống Biển (100%); gió 100 ở 62,03 giây có 244 giọt xuống Núi (100%), hai lần khởi tạo riêng. Đã xem ảnh góc biển và ảnh thẻ mưa để kiểm nội dung không bị cắt. `git diff --check` đạt. Đo FPS và lượt rà toàn bộ thuộc bước 8.
