@@ -5,7 +5,10 @@ export function findClusters(particles) {
   const radius = config.cloud.clusterRadius;
   const cells = new Map();
   const clouds = particles.filter(particle => particle.state === 'cloud');
-  const key = (x, y, z) => `${x},${y},${z}`;
+  // Coordinates are bounded by the world; a padded integer grid also covers
+  // the neighboring cells at either edge without allocating string keys.
+  const stride = Math.ceil(Math.max(config.world.width, config.world.depth, config.world.height) / radius) + 3;
+  const key = (x, y, z) => (x + 1) + stride * ((y + 1) + stride * (z + 1));
   for (const particle of clouds) {
     const cell = key(Math.floor(particle.x / radius), Math.floor(particle.y / radius), Math.floor(particle.z / radius));
     if (!cells.has(cell)) cells.set(cell, []);
@@ -24,7 +27,7 @@ export function findClusters(particles) {
       const cz = Math.floor(particle.z / radius);
       for (let dx = -1; dx <= 1; dx++) for (let dy = -1; dy <= 1; dy++) for (let dz = -1; dz <= 1; dz++) {
         for (const neighbor of cells.get(key(cx + dx, cy + dy, cz + dz)) ?? []) {
-          if (!seen.has(neighbor) && Math.hypot(particle.x - neighbor.x, particle.y - neighbor.y, particle.z - neighbor.z) <= radius) {
+          if (!seen.has(neighbor) && (particle.x - neighbor.x) ** 2 + (particle.y - neighbor.y) ** 2 + (particle.z - neighbor.z) ** 2 <= radius ** 2) {
             seen.add(neighbor);
             members.push(neighbor);
           }

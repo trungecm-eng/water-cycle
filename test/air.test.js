@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { config } from '../src/config.js';
+import { mapData } from '../src/map-data.js';
 import { environmentTemperature, moveAirParticle, windFactor } from '../src/sim/air.js';
 import { findClusters } from '../src/sim/clusters.js';
 import { releaseRain, rainTemperatureFactor } from '../src/sim/precipitation.js';
@@ -50,11 +51,12 @@ test('wind scales east to west, affects only air and vanishes behind the ridge',
     assert.deepEqual(particle, before);
   }
   assert.equal(windFactor(150, 500), 1);
-  assert.equal(windFactor(100, 500), 0.5);
-  assert.equal(windFactor(50, 500), 0);
+  assert.equal(windFactor(150 - mapData.windShelterDistance / 2, 500), 0.5);
+  assert.equal(windFactor(150 - mapData.windShelterDistance, 500), 0);
   const particle = { ...droplet(0, 300, 400), state: 'cloud' };
   for (let i = 0; i < 18000; i++) moveAirParticle(particle, 100, map);
-  assert.ok(particle.x >= 50 && particle.x < 51);
+  const calmEdge = 150 - mapData.windShelterDistance;
+  assert.ok(particle.x >= calmEdge && particle.x < calmEdge + 1);
 });
 
 test('clouds slide up the windward slope without penetration and cool at the lifted altitude', () => {

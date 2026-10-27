@@ -13,8 +13,6 @@ export const config = deepFreeze({
     fov: 45, near: 1, far: 6000 },
   rendering: { maxPixelRatio: 2, ambientLight: 1.6, sunlight: 2.2, waterOpacity: 0.72,
     particleSize: 4, waterOffset: 0.15 },
-  terrain: [[0, 340], [100, 340], [250, 250], [420, 150], [560, 85], [640, 60], [1000, 60]],
-  lake: { left: 640, bottom: 60, cellSize: 6, columns: 60, rows: 20, levelPerParticle: 0.1 },
   defaults: { n: 1000, sun: 50, wind: 40, seed: 1, speed: 1, paused: false },
   limits: { minParticles: 100, maxParticles: 2000, minControl: 0, maxControl: 100, minSpeed: 0.5, maxSpeed: 8 },
   clock: { dt: 1 / 60, maxFrame: 0.25, epsilon: 1e-12, speeds: [0.5, 1, 2, 4] },
