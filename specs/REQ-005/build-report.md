@@ -20,3 +20,13 @@
 - `node --test`: 39/39 đạt, 112,25 giây.
 - `node e2e/core-3d.e2e.mjs`, `node e2e/scenery.e2e.mjs`, `node e2e/scene.e2e.mjs`, `node e2e/panel-foundation.e2e.mjs`: đạt, không lỗi console.
 - `git diff --check`: đạt.
+
+## Bước 3: thẻ số liệu và chú giải
+
+Đã nối các module thuần qua `src/ui/statistics.js`: phân bố sáu đoạn cùng số hạt/phần trăm, cột mực hồ/ao có vạch ban đầu và xu hướng, năm bộ đếm mưa cùng nút xóa độc lập, bốn giai đoạn sáng theo trạng thái hạt. Chú giải có mô tả năm loại hạt và màu bảy vùng. Giữ toàn bộ `data-hud` cũ; dòng giai đoạn cũ ẩn vì đã có thẻ riêng. `__sim.rainTally` và `__sim.waterDistribution` là bản chụp đóng băng cả các trường con. Không sửa World hoặc kịch bản cũ ở bước này.
+
+Xu hướng lấy mẫu sau mỗi bước cố định của Clock; thao tác đặt lại lấy mẫu ngay trước khung hình tiếp theo để vạch ban đầu đúng ngay cả khi không tạm dừng. Xóa mưa chỉ đổi mốc trong RainTally.
+
+Kiểm tra: `node --test` đạt 44/44 trong 159,89 giây; `ui-statistics`, `panel-foundation`, `core-3d` đạt. Kịch bản số liệu kiểm số hàng, tổng phân bố, chú giải, xóa khi tạm dừng không đổi thời gian/hạt, phân bố đổi khi chạy và đặt lại xóa mưa. `git diff --check` đạt. Chưa thực hiện nghiệm thu toàn bộ, ảnh và FPS của bước 8.
+
+`node e2e/cycle-flow.e2e.mjs` cũng đạt cả luồng mặc định ×1, luồng gián đoạn và các trường hợp URL; không thay selector hay giảm điều kiện kiểm tra.

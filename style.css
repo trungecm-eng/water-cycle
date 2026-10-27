@@ -38,3 +38,15 @@ summary { cursor: pointer; font-weight: 600; padding: var(--space-1) 0; }
 .map-labels { position: absolute; top: 0; left: 0; pointer-events: none; }
 .map-label { position: absolute; transform: translate(-50%, -100%); white-space: nowrap; background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius-small); padding: 3px var(--space-2); font-size: var(--font-label); box-shadow: var(--shadow); }
 .map-label[hidden] { display: none; }
+.stat-card { margin-top: var(--space-4); border-top: 1px solid var(--border); padding-top: var(--space-3); }
+.stat-list { margin: var(--space-2) 0; }
+.stat-list > div { display: flex; justify-content: space-between; gap: var(--space-2); margin-bottom: var(--space-1); }
+.water-bar { display: flex; height: var(--space-3); overflow: hidden; border: 1px solid var(--border); border-radius: var(--radius-small); }
+.reservoir-row { display: flex; align-items: center; gap: var(--space-3); margin: var(--space-2) 0; }
+.level-gauge { position: relative; flex: 0 0 24px; height: 64px; border: 1px solid var(--border); background: var(--surface); }
+.level-gauge span { position: absolute; bottom: 0; width: 100%; background: var(--accent); }
+.level-gauge i { position: absolute; left: -3px; right: -3px; border-top: 2px solid var(--text); }
+#active-stages, #region-legend { padding: 0; list-style: none; }
+#active-stages li { padding: var(--space-1); border-left: 3px solid transparent; }
+#active-stages .active { background: var(--hover); border-color: var(--accent); font-weight: 600; }
+.legacy-stages { display: none; }

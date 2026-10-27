@@ -1,0 +1,34 @@
+import assert from 'node:assert/strict';
+import { launchBrowser, baseUrl, trackErrors } from './browser.mjs';
+const browser = await launchBrowser();
+try {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  const errors = trackErrors(page);
+  await page.goto(`${baseUrl}/?paused=1`);
+  await page.waitForFunction(() => window.__sim?.waterDistribution);
+  const initial = await page.evaluate(() => window.__sim);
+  assert.equal(initial.waterDistribution.total, initial.particles.length);
+  assert.equal(Object.values(initial.waterDistribution.percentages).reduce((a, b) => a + b), 100);
+  assert.equal(await page.locator('#water-distribution > div').count(), 6);
+  assert.equal(await page.locator('#rain-tally > div').count(), 5);
+  assert.equal(await page.locator('#legend li').count(), 5);
+  assert.equal(await page.locator('#region-legend li').count(), 7);
+  await page.locator('#clear-rain').click();
+  const cleared = await page.evaluate(() => window.__sim);
+  assert.deepEqual(cleared.particles, initial.particles);
+  assert.equal(cleared.time, initial.time);
+  assert.equal(cleared.rainTally.total, 0);
+  await page.locator('#pause').click();
+  await page.waitForFunction(() => window.__sim.time > 2);
+  await page.locator('#pause').click();
+  const running = await page.evaluate(() => window.__sim);
+  assert.ok(running.waterDistribution.counts.airborne > 0);
+  assert.match(await page.locator('#water-distribution').innerText(), /Trên không/);
+  await page.evaluate(() => { document.querySelector('#reset').click(); document.querySelector('#pause').click(); });
+  await page.waitForFunction(() => window.__sim.time === 0);
+  assert.equal(await page.evaluate(() => window.__sim.rainTally.total), 0);
+  const levels = await page.locator('#reservoir-levels').innerText();
+  assert.match(levels, /Mực ban đầu/);
+  assert.deepEqual(errors, []);
+  console.log('Statistics cards, independent clear, running distribution, reset and legends passed.');
+} finally { await browser.close(); }
