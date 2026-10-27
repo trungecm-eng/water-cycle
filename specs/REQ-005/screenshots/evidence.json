@@ -1,7 +1,7 @@
 [
   {
     "wind": 0,
-    "time": 61.88333333333333,
+    "time": 61.4,
     "rainTally": {
       "counts": {
         "mountain": 0,
@@ -22,10 +22,10 @@
   },
   {
     "wind": 100,
-    "time": 62.03333333333333,
+    "time": 61.1,
     "rainTally": {
       "counts": {
-        "mountain": 244,
+        "mountain": 232,
         "plain": 0,
         "sea": 0,
         "lake": 0,
@@ -38,7 +38,7 @@
         "lake": 0,
         "pond": 0
       },
-      "total": 244
+      "total": 232
     }
   }
 ]
