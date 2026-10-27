@@ -27,3 +27,10 @@
 - Đã hoàn thành bước 1–4; tiếp theo bước 5: nhiệt độ môi trường, ngưng tụ, gió, va chạm địa hình và cụm mây. World.step hiện chưa có các quy luật đó; không coi trạng thái hiện tại là vòng hoàn chỉnh. Chưa kiểm chứng nhịp/ổn định, E2E hoặc FPS.
 - Khi sun=0, xóa tia đang bay và phần nhịp tích lũy để bảo đảm không có bốc hơi mới ngay sau thao tác. Nước vẫn nguội, hơi đã có vẫn chuyển động. Bước 5 cần thay phần chuyển động vapor hiện tại để xử lý nhiệt và va chạm đầy đủ.
 - Commit dùng danh tính qua biến môi trường như phiên trước, không sửa cấu hình Git.
+
+## Phiên build ngày 2026-10-27 — bước 5
+- Hoàn thành `air.js`: nhiệt độ môi trường theo độ cao, hơi nước nguội theo hàm mũ về nhiệt độ môi trường, ngưng tụ độc lập khi đạt ngưỡng; mây dừng chuyển động đứng, trôi ngang nhẹ tất định, gió đẩy sang trái. Va chạm chặn tại tường/trần và tìm điểm sát sườn bằng chia đôi, không đẩy mây lên cao theo sườn.
+- Hoàn thành `clusters.js`: gom giọt mây bằng liên thông với lưới băm không gian, ngưỡng hiển thị 30 giọt; renderer vẽ hợp các vòng tròn mờ. Snapshot sao chép cả danh sách id của cụm trước khi đóng băng để không đóng băng dữ liệu mô phỏng.
+- `node --test`: 19/19 test đạt. Test mới gồm nhiệt độ môi trường, ngưng tụ hạt riêng lẻ, giữ độ cao, gió/va chạm, cụm liên thông qua ô băm và bảo vệ snapshot. Chưa chạy trình duyệt, E2E hay FPS.
+- Tiếp theo bước 6: bổ sung cờ mưa có trễ theo từng giọt, mưa dần, rơi thẳng, runoff và về hồ. `findClusters` hiện trả `{ids, size, visible, raining: false}`; cần bổ sung kế thừa cờ mưa khi tính lại cụm. `world.particles[id]` là hạt tương ứng vì mảng giữ nguyên thứ tự. Sau đó làm bước 7–10, chưa khẳng định nhịp hay ổn định đạt yêu cầu.
+- Commit dùng danh tính qua biến môi trường như các phiên trước; không sửa cấu hình Git. Phiên này kết thúc tại bước hoàn chỉnh để phiên sau tiếp tục từ bước 6.

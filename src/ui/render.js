@@ -29,6 +29,19 @@ export function render(canvas, world) {
     ctx.arc(ray.x, ray.y, config.visual.rayRadius, 0, Math.PI * 2);
     ctx.fill();
   }
+  ctx.fillStyle = config.colors.cloud;
+  ctx.globalAlpha = config.visual.cloudOpacity;
+  for (const cluster of world.clusters) {
+    if (!cluster.visible) continue;
+    ctx.beginPath();
+    for (const id of cluster.ids) {
+      const particle = world.particles[id];
+      ctx.moveTo(particle.x + config.cloud.clusterRadius, particle.y);
+      ctx.arc(particle.x, particle.y, config.cloud.clusterRadius, 0, Math.PI * 2);
+    }
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
   for (const particle of world.particles) {
     ctx.fillStyle = config.colors[particle.state];
     ctx.globalAlpha = particle.state === 'vapor' ? config.visual.vaporOpacity : 1;

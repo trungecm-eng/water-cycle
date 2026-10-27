@@ -1,6 +1,8 @@
 import { config } from '../config.js';
 import { Lake } from './lake.js';
 import { mulberry32 } from './rng.js';
+import { moveAirParticle } from './air.js';
+import { findClusters } from './clusters.js';
 
 function freeze(value) {
   for (const child of Object.values(value)) if (child && typeof child === 'object') freeze(child);
@@ -33,10 +35,8 @@ export class World {
     for (const particle of this.particles) {
       if (particle.state === 'water') {
         particle.temperature = Math.max(config.heat.baseline, particle.temperature - config.heat.cooling * dt);
-      } else if (particle.state === 'vapor') {
-        particle.vy = Math.min(config.motion.vaporMaxSpeed, particle.vy + config.motion.buoyancy * dt);
-        particle.y = Math.min(config.world.height, particle.y + particle.vy * dt);
-        if (particle.y === config.world.height) particle.vy = 0;
+      } else if (particle.state === 'vapor' || particle.state === 'cloud') {
+        moveAirParticle(particle, this.wind, this.options.seed, this.time);
       }
     }
     if (this.sun === 0) {
@@ -74,6 +74,7 @@ export class World {
         this.evaporations++;
       }
     }
+    this.clusters = findClusters(this.particles);
     this.steps++;
   }
 
@@ -82,7 +83,7 @@ export class World {
     for (const particle of this.particles) counts[particle.state]++;
     return freeze({ time: this.time, counts, level: this.lake.level,
       returns: this.returns, evaporations: this.evaporations,
-      sun: this.sun, wind: this.wind, clusters: this.clusters.map(cluster => ({ ...cluster })),
+      sun: this.sun, wind: this.wind, clusters: this.clusters.map(cluster => ({ ...cluster, ids: [...cluster.ids] })),
       particles: this.particles.map(particle => ({ ...particle })) });
   }
 }
