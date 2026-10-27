@@ -59,3 +59,12 @@ Bốn ảnh từ Chromium 1440 × 1000 (camera qua điều khiển công khai, k
 - [Mây mưa trên núi](screenshots/04-mountain-rain.png)
 
 Ảnh cuối đợi >10 giọt rain và đã có mưa xuống núi, rồi dừng để chụp. Ảnh cung cấp bằng chứng hình ảnh, không thay đánh giá AC-18.
+
+## Kiểm tra cuối phiên build — 2026-10-27
+
+- `node --test`: 39/39 đạt, 90,88 giây trên trạng thái code chốt; không mạng hoặc trình duyệt. Lượt trước chạy cùng nhiều trình duyệt: 133,40 giây.
+- Đã chạy đủ `core-3d`, `scenery`, `cycle-flow`, `scene`, `screenshots`, `measure-fps`; tất cả hoàn tất thành công, console không lỗi. Scene/scenery chạy lại sau bổ sung màu sông. Luồng mặc định quan sát mây ở 28,10 giây, mưa 33,30 giây và đủ năm trạng thái; biến thể gián đoạn cũng đạt. Mốc returns trong e2e tính cả mưa rơi thẳng vào vùng chứa; kiểm mốc trở về từ đất đúng nghĩa dùng test logic (36,85 giây).
+- FPS đo riêng khi không còn test logic/trình duyệt khác: Chromium 140.0.7339.16, WebGL2 phần mềm, 1280 × 1000, 1000 hạt, ×1, bắt đầu ở 35,45 giây mô phỏng và đủ năm trạng thái. 125 frame / 10,0663 giây = **12,42 FPS**. Đây là số tham khảo AC-15, không phải kết luận đạt AC-18; lượt đo song song trước chỉ 2,64 FPS và không dùng làm số chốt. Không bật bóng núi.
+- `package.json` chỉ có type/module và script test; vendor three.js 0.170.0 có file và MIT license. Chỉ src/ui import three.js. README đủ nội dung AC-17. `git diff --check` sạch.
+
+Toàn bộ bước build đã hoàn tất. Chưa kết luận AC-18: người dùng cần kiểm tay vẻ đẹp, nhận biết vùng khi tắt nhãn, câu chuyện nước, camera và ≥45 FPS trên máy của mình. Phép đo SwiftShader 12,42 FPS không chứng minh ngưỡng đó đạt; nếu máy người dùng không đạt, QA cần báo lại để tối ưu renderer trong vòng sửa tiếp theo.

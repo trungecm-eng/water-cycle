@@ -92,3 +92,10 @@
 - Hoàn thành kịch bản cycle-flow 3D (luồng ×1 và gián đoạn ×8), scene, screenshots và FPS 1000 hạt; cập nhật README, báo cáo và bốn ảnh trong screenshots/. Sửa màu river thiếu trong config, không đổi vật lý. Kịch bản FPS chỉ ghi số đo theo AC-15, không áp ngưỡng máy người dùng lên SwiftShader.
 - `node --test` đạt 39/39 trong 133,40 giây khi chạy cùng trình duyệt; sau thay màu chạy camera/foundation 4/4 đạt. core-3d, scene, cycle-flow và screenshots đều đạt, console sạch. Scene bao gồm scenery. Test reset dùng sự kiện từ canvas, chụp snapshot cùng tác vụ; phát từ document không hợp lệ vì handler cần target là Element.
 - Tiếp tục ngay bước 11: chạy lại toàn bộ trên trạng thái chốt, đo FPS riêng và ghi số đo. AC-18 vẫn dành cho người kiểm tay trên máy người dùng.
+
+
+## Phiên build 9 — bước 11 — 2026-10-27
+
+- Đã chạy và đánh dấu toàn bộ kế hoạch. Node chốt 39/39 trong 90,88 giây; core-3d, scenery, cycle-flow (×1 và gián đoạn ×8), scene, screenshots, measure-fps đều đạt, không lỗi console. Bốn ảnh đã commit ở specs/REQ-004/screenshots/. Báo cáo có cặp test cũ → mới, vật lý, kết quả chức năng, thời gian và FPS.
+- Đo FPS riêng: Chromium 140.0.7339.16 SwiftShader, 1000 hạt ×1, 1280 × 1000; đủ năm trạng thái ở 35,45 giây, 125 frame trong 10,0663 giây = 12,42 FPS. AC-15 không có ngưỡng đạt. AC-18 vẫn cần QA/người dùng kiểm tay trên máy của mình (bao gồm ≥45 FPS); chưa tuyên bố đạt tiêu chí đó. Không bật bóng núi. Không còn bước build chưa đánh dấu, phiên tiếp theo chuyển đánh giá hoặc sửa theo eval nếu có.
+- Chạy sản phẩm: python3 -m http.server 8000; kiểm logic: node --test; e2e: node e2e/<tên>.e2e.mjs, cần Playwright/Chromium sẵn. Không sửa npm dependency hoặc các tệp cấm. Commit theo bước dùng git -c user.name/user.email để không sửa cấu hình Git. Kết quả pha build là done, không phải phê duyệt nghiệm thu tay.
