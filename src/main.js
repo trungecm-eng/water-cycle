@@ -1,3 +1,4 @@
+import { QualityMonitor, parseQuality } from './quality.js';
 import { content } from './content.js';
 import { createPanel } from './ui/panel.js';
 import { parseParams } from './sim/params.js';
@@ -29,13 +30,23 @@ for (const button of [...viewButtons, document.querySelector('#default-view')]) 
   button.addEventListener('click', () => { views.select(button.dataset.view || 'overview', performance.now() / 1000); updateViews(); });
 }
 updateViews();
+const quality = new QualityMonitor(parseQuality(window.location.search));
 const renderer = createRenderer(canvas, world, camera);
+function updateQuality() {
+  for (const button of document.querySelectorAll('[data-quality]')) button.setAttribute('aria-pressed', String(button.dataset.quality === quality.level));
+  document.querySelector('#quality-hint').hidden = !quality.slowHint;
+}
+function selectQuality(level) { quality.select(level); renderer.setQuality?.(quality.level); updateQuality(); }
+for (const button of document.querySelectorAll('[data-quality]')) button.addEventListener('click', () => selectQuality(button.dataset.quality));
+document.querySelector('#quality-lower').addEventListener('click', () => selectQuality('low'));
+document.querySelector('#quality-dismiss').addEventListener('click', () => { quality.dismiss(); updateQuality(); });
+selectQuality(quality.level);
 bindCameraControls(canvas, camera, document, () => { views.interrupt(); updateViews(); });
 Object.defineProperty(window, '__sim', {
   get: () => {
     camera.reservoirs = world.reservoirs;
     return Object.freeze({ ...world.snapshot(), speed: clock.speed, paused: clock.paused,
-      ...statistics.snapshot(), panel: panel.snapshot(), view: views.name, camera: camera.snapshot(), webgl2: renderer.webgl2, scene: renderer.snapshot?.() ?? Object.freeze({ objects: Object.freeze([]), labels: Object.freeze([]) }) });
+      ...statistics.snapshot(), panel: panel.snapshot(), quality: quality.snapshot(), view: views.name, camera: camera.snapshot(), webgl2: renderer.webgl2, scene: renderer.snapshot?.() ?? Object.freeze({ objects: Object.freeze([]), labels: Object.freeze([]) }) });
   }
 });
 let previous;
@@ -46,10 +57,12 @@ function frame(timestamp) {
   previous = timestamp;
   camera.reservoirs = world.reservoirs;
   views.update(timestamp / 1000);
+  quality.frame(timestamp / 1000, document.hidden);
+  updateQuality();
   renderer.render();
   updateHud(world, clock);
   statistics.render();
   requestAnimationFrame(frame);
 }
-document.addEventListener('visibilitychange', () => { previous = undefined; statistics.sample(); });
+document.addEventListener('visibilitychange', () => { previous = undefined; quality.reset(); updateQuality(); statistics.sample(); });
 requestAnimationFrame(frame);

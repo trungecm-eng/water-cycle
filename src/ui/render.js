@@ -1,15 +1,16 @@
+import { qualityLevels } from '../quality.js';
 import { content } from '../content.js';
 import * as THREE from '../../vendor/three.module.min.js';
 import { decorateScene } from './scenery.js';
 import { config } from '../config.js';
 
-function terrainGeometry(map) {
+function terrainGeometry(map, step = 1) {
   const positions = [];
   const colors = [];
   const point = index => [index % map.stride * map.spacing, map.heights[index], Math.floor(index / map.stride) * map.spacing];
-  for (let row = 0; row < map.cells; row++) for (let column = 0; column < map.cells; column++) {
+  for (let row = 0; row < map.cells; row += step) for (let column = 0; column < map.cells; column += step) {
     const a = row * map.stride + column;
-    for (const triangle of [[a, a + map.stride, a + 1], [a + 1, a + map.stride, a + map.stride + 1]]) {
+    for (const triangle of [[a, a + map.stride * step, a + step], [a + step, a + map.stride * step, a + map.stride * step + step]]) {
       for (const index of triangle) {
         positions.push(...point(index));
         const region = map.regions[index];
@@ -64,6 +65,11 @@ export function createRenderer(canvas, world, orbit) {
   scene.add(new THREE.AmbientLight(0xffffff, config.rendering.ambientLight));
   const sunlight = new THREE.DirectionalLight(0xffffff, config.rendering.sunlight);
   sunlight.position.set(...config.sunlight.position);
+  sunlight.shadow.mapSize.set(config.quality.shadowMapSize, config.quality.shadowMapSize);
+  Object.assign(sunlight.shadow.camera, { left: -config.quality.shadowExtent, right: config.quality.shadowExtent, top: config.quality.shadowExtent, bottom: -config.quality.shadowExtent, near: config.quality.shadowNear, far: config.quality.shadowFar });
+  sunlight.shadow.bias = config.quality.shadowBias;
+  sunlight.target.position.set(world.map.size / 2, 0, world.map.size / 2);
+  scene.add(sunlight.target);
   scene.add(sunlight);
   const terrain = new THREE.Mesh(terrainGeometry(world.map),
     new THREE.MeshStandardMaterial({ vertexColors: true, flatShading: true, roughness: 1 }));
@@ -111,7 +117,19 @@ export function createRenderer(canvas, world, orbit) {
   const camera = new THREE.PerspectiveCamera(config.camera.fov, 1, config.camera.near, config.camera.far);
   return {
     webgl2: true,
-    snapshot: () => scenery.snapshot(),
+    snapshot: () => Object.freeze({ ...scenery.snapshot(), terrainTriangles: terrain.geometry.attributes.position.count / 3, shadows: renderer.shadowMap.enabled, pixelRatio: renderer.getPixelRatio() }),
+    setQuality(level) {
+      const settings = qualityLevels[level];
+      terrain.geometry.dispose();
+      terrain.geometry = terrainGeometry(world.map, settings.terrainStep);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, settings.pixelRatio));
+      renderer.shadowMap.enabled = settings.shadows;
+      sunlight.castShadow = settings.shadows;
+      terrain.castShadow = settings.shadows;
+      terrain.receiveShadow = settings.shadows;
+      scenery.setQuality(settings);
+      scene.traverse(object => { if (object.material) object.material.needsUpdate = true; });
+    },
     render() {
       const width = canvas.clientWidth;
       const height = canvas.clientHeight;

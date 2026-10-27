@@ -36,6 +36,8 @@ export const panelMarkup = `  <main>
         <button type="button" id="default-view">Góc nhìn mặc định</button>
         <output id="view-name" aria-live="polite"></output>
       </fieldset>
+      <fieldset><legend>Chất lượng đồ họa</legend><button type="button" data-quality="high">Cao</button><button type="button" data-quality="low">Thấp</button></fieldset>
+      <div id="quality-hint" role="status" hidden><p>Máy chạy chậm, thử chất lượng Thấp?</p><button id="quality-lower" type="button">Chuyển sang Thấp</button><button id="quality-dismiss" type="button">Đóng gợi ý</button></div>
       <button id="toggle-labels" type="button" aria-pressed="true">Nhãn bản đồ</button>
     </section>
     <p class="hint">Phím tắt: Space — tạm dừng / tiếp tục; 1–4 — tốc độ; R — đặt lại; kéo chuột / mũi tên — xoay; lăn chuột / + / − — thu phóng; L — bật / tắt nhãn; B — thu gọn / mở bảng.</p>

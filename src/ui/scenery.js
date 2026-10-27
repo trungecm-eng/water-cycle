@@ -1,3 +1,4 @@
+import { qualityLevels } from '../quality.js';
 import { content } from '../content.js';
 import * as THREE from '../../vendor/three.module.min.js';
 import { config } from '../config.js';
@@ -88,8 +89,10 @@ export function decorateScene(scene, canvas, world) {
     }
   });
   let lastClusters;
+  let quality = qualityLevels.high;
   let labelSnapshot = [];
   return {
+    setQuality(settings) { quality = settings; waves.visible = settings.waves; lastClusters = undefined; },
     update(camera) {
       waves.position.z = Math.sin(world.time * settings.waveSpeed) * settings.waveTravel;
       for (const mesh of streaks.children) {
@@ -105,10 +108,14 @@ export function decorateScene(scene, canvas, world) {
           if (!members.length) continue;
           const shade = Math.min(1, (cluster.size - config.cloud.cloudMinSize) / (config.cloud.rainStartSize - config.cloud.cloudMinSize));
           const material = new THREE.MeshStandardMaterial({ color: new THREE.Color(config.colors.cloud).lerp(new THREE.Color(config.colors.cloudDark), shade), flatShading: true, roughness: 1 });
+          let blocks = 0;
           for (let i = 0; i < Math.min(settings.cloudLobes, members.length); i++) {
             const member = members[Math.floor(i * members.length / Math.min(settings.cloudLobes, members.length))];
             for (const [dx, dy, dz] of settings.cloudOffsets) {
+              if (blocks++ >= quality.cloudBlocks) continue;
               const mesh = new THREE.Mesh(cloudGeometry, material.clone());
+              mesh.castShadow = quality.shadows;
+              mesh.receiveShadow = quality.shadows;
               mesh.position.set(member.x + dx, member.y + dy, member.z + dz);
               mesh.scale.set(settings.cloudRadius, settings.cloudRadius * settings.cloudFlatten, settings.cloudRadius);
               clouds.add(mesh);
@@ -134,7 +141,7 @@ export function decorateScene(scene, canvas, world) {
     },
     snapshot() {
       return Object.freeze({ objects: Object.freeze(scene.children.map(child => child.name).filter(Boolean)), labels: Object.freeze([...labelSnapshot]),
-        effects: Object.freeze({ time: world.time, waveOffset: waves.position.z, flowPositions: Object.freeze(streaks.children.map(mesh => Object.freeze(mesh.position.toArray()))) }) });
+        effects: Object.freeze({ wavesVisible: waves.visible, cloudBlocks: clouds.children.length, time: world.time, waveOffset: waves.position.z, flowPositions: Object.freeze(streaks.children.map(mesh => Object.freeze(mesh.position.toArray()))) }) });
     }
   };
 }

@@ -46,3 +46,13 @@ Kiểm tra bước 4: `node --test` đạt 44/44 trong 127,824 giây; `ui-contro
 Bốn góc nhìn đọc từ map-data.js; Camera có target riêng và giữ phép kẹp mắt an toàn. ViewTransition chuyển 1 giây thực, smoothstep, chọn đường phương vị ngắn nhất; nhận chọn tiếp giữa chừng và ngắt không nhảy khi chuột/bàn phím camera thao tác. URL view sai về overview; __sim.view có trạng thái free. Giao diện có bốn nút chọn một, nút mặc định và tên góc nhìn hiện tại. Không đổi mô phỏng hoặc test cũ.
 
 Kiểm tra: node --test đạt 47/47 trong 127,131 giây. Test mới kiểm 16 cặp đường chuyển với 1.001 mẫu/cặp, giới hạn, mặt đất/mặt nước, kết thúc đúng 1 giây, ngắt, chọn tiếp, đường góc ngắn và URL. ui-views, core-3d, ui-controls, panel-foundation đều đạt; console không lỗi. git diff --check đạt. Bước 6–8 chưa thực hiện.
+
+## Bước 6: chất lượng đồ họa
+
+Đã thêm `src/quality.js`: đọc URL độc lập World, hai bộ thông số bất biến trong config, đo FPS theo các cửa sổ một giây liên tiếp ở mức Cao. Năm giây liên tiếp dưới 30 FPS hiện gợi ý; đúng 30 không hiện. Tab ẩn, đổi mức hay đóng gợi ý xóa cửa sổ; đóng rồi không hiện lại trong phiên trang. Gợi ý có nút chuyển Thấp và nút đóng, không tự đổi mức.
+
+Cao vẽ 18.432 tam giác địa hình, sóng biển, bóng Mặt Trời trên địa hình và mây, tối đa 9 khối/cụm. Thấp vẽ 4.608 tam giác (lấy mỗi đỉnh thứ hai), ẩn sóng, tắt bóng, tối đa 4 khối/cụm và pixel ratio tối đa 1. Đổi mức tại chỗ, không sửa World, camera hay quy luật. `__sim.quality` và `__sim.scene` cho phép đọc mức, gợi ý, số tam giác, bóng, pixel ratio và hiệu ứng. Không sửa hoặc nới kiểm tra e2e cũ trong bước này.
+
+Test mới `test/quality.test.js` kiểm URL, FPS giả lập (20/30/60), ngắt chuỗi, tab ẩn, đóng vĩnh viễn, đổi mức và hai World cùng seed/cùng bước. `e2e/ui-quality.e2e.mjs` kiểm đổi mức thật, số tam giác, sóng, bóng, pixel ratio, giữ nguyên hạt/thời gian/camera/phân bố khi tạm dừng, URL low/ultra và console. File này được làm ngay ở bước 6 để kiểm lớp vẽ; bước 7 tiếp tục các kịch bản còn lại.
+
+Kiểm tra bước 6: `node --test` đạt 51/51 trong 143,257 giây. Sau khi gom hằng số đồ họa vào config và thêm kiểm ngưỡng đúng 30 FPS, chạy lại `node --test test/quality.test.js` đạt 4/4 và `ui-quality` đạt. Các e2e `core-3d`, `scenery`, `scene`, `ui-views`, `ui-controls`, `panel-foundation` đều đạt, console không lỗi. `git diff --check` đạt. Chưa có ảnh và số đo FPS REQ-005, chưa nghiệm thu bước 7–8 hoặc AC-12.
