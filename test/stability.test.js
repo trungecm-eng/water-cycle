@@ -1,12 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { World } from '../src/sim/world.js';
+import { World } from '../src/sim/legacy-world.js';
 import { config } from '../src/config.js';
 import { terrainHeight } from '../src/sim/terrain.js';
 
 const stepsPerSecond = Math.round(1 / config.clock.dt);
 
-test('default cycle meets milestones and stays active in every rolling minute', () => {
+test('legacy 2D: default cycle meets milestones and stays active in every rolling minute', () => {
   const world = new World();
   const milestones = {};
   const history = [];
@@ -32,7 +32,7 @@ test('default cycle meets milestones and stays active in every rolling minute', 
   assert.ok(minimumWater >= config.defaults.n * 0.2, `Minimum water: ${minimumWater}`);
 });
 
-test('all sunlight and wind combinations conserve bounded finite particles for 600 seconds', () => {
+test('legacy 2D: all sunlight and wind combinations conserve bounded finite particles for 600 seconds', () => {
   const states = new Set(['water', 'vapor', 'cloud', 'rain', 'runoff']);
   for (const sun of [0, 50, 100]) for (const wind of [0, 40, 100]) {
     const world = new World({ sun, wind });
@@ -57,7 +57,7 @@ test('all sunlight and wind combinations conserve bounded finite particles for 6
   }
 });
 
-test('full sunlight increases evaporation and switching it off preserves the airborne cycle', () => {
+test('legacy 2D: full sunlight increases evaporation and switching it off preserves the airborne cycle', () => {
   const normal = new World();
   const hot = new World({ sun: 100 });
   for (let step = 0; step < 60 * stepsPerSecond; step++) {

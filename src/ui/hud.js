@@ -1,10 +1,10 @@
 import { config } from '../config.js';
 
 export const stateLabels = {
-  water: 'Nước trong hồ', vapor: 'Hơi nước', cloud: 'Giọt mây', rain: 'Giọt mưa', runoff: 'Nước chảy trên đất'
+  water: 'Nước trong vùng chứa', vapor: 'Hơi nước', cloud: 'Giọt mây', rain: 'Giọt mưa', runoff: 'Nước chảy trên đất'
 };
 const stages = {
-  vapor: 'Bốc hơi', cloud: 'Ngưng tụ thành mây', rain: 'Mưa rơi', runoff: 'Chảy về hồ'
+  vapor: 'Bốc hơi', cloud: 'Ngưng tụ thành mây', rain: 'Mưa rơi', runoff: 'Chảy về vùng chứa'
 };
 
 export function activeStages(counts) {
@@ -28,10 +28,10 @@ export function createHud(root) {
     const values = {
       time: `${world.time.toFixed(1)} giây`, speed: `×${String(clock.speed).replace('.', ',')}`,
       status: clock.paused ? 'Tạm dừng' : 'Đang chạy',
-      level: `${world.lake.level.toFixed(1)} đơn vị`, returns: world.returns,
+      level: `${world.reservoirs.level('lake').toFixed(1)} đơn vị`, returns: world.returns,
       sun: world.sun, wind: world.wind, ...counts,
-      stages: activeStages(counts).join(' · ') || 'Nước đang ở trong hồ',
-      empty: counts.water === 0 ? 'Hồ đã cạn' : ''
+      stages: activeStages(counts).join(' · ') || 'Nước đang ở trong các vùng chứa',
+      empty: world.reservoirs.count('pond') === 0 ? 'Ao (đã cạn)' : ''
     };
     for (const [key, element] of Object.entries(fields)) {
       const text = String(values[key]);

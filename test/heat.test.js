@@ -1,13 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { World } from '../src/sim/world.js';
+import { World } from '../src/sim/legacy-world.js';
 import { config } from '../src/config.js';
 
 function run(world, seconds) {
   for (let step = 0; step < seconds / config.clock.dt; step++) world.step();
 }
 
-test('a heat ray heats only the surface of its target column', () => {
+test('legacy 2D: a heat ray heats only the surface of its target column', () => {
   const world = new World();
   const surface = world.lake.surface(4);
   world.rays.push({ column: 4, x: surface.x, y: surface.y });
@@ -18,7 +18,7 @@ test('a heat ray heats only the surface of its target column', () => {
   }
 });
 
-test('water cools to baseline and only hot surface particles evaporate', () => {
+test('legacy 2D: water cools to baseline and only hot surface particles evaporate', () => {
   const world = new World();
   const surface = world.lake.surface(0);
   const buried = world.lake.cells[0][0];
@@ -43,7 +43,7 @@ test('water cools to baseline and only hot surface particles evaporate', () => {
   assert.equal(cold.temperature, config.heat.baseline);
 });
 
-test('sun zero prevents evaporation and removes rays already in flight', () => {
+test('legacy 2D: sun zero prevents evaporation and removes rays already in flight', () => {
   const world = new World({ sun: 0 });
   run(world, 120);
   assert.equal(world.evaporations, 0);
@@ -58,7 +58,7 @@ test('sun zero prevents evaporation and removes rays already in flight', () => {
   assert.equal(world.rays.length, 0);
 });
 
-test('heat emission is seeded and proportional to sunlight', () => {
+test('legacy 2D: heat emission is seeded and proportional to sunlight', () => {
   const first = new World();
   const second = new World();
   const other = new World({ seed: 2 });

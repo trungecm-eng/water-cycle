@@ -6,13 +6,13 @@ import { releaseRain, movePrecipitation } from '../src/sim/precipitation.js';
 import { terrainHeight } from '../src/sim/terrain.js';
 import { Lake } from '../src/sim/lake.js';
 import { mulberry32 } from '../src/sim/rng.js';
-import { World } from '../src/sim/world.js';
+import { World } from '../src/sim/legacy-world.js';
 
 const clouds = (n, raining = false) => Array.from({ length: n }, (_, id) => ({
   id, state: 'cloud', x: 800, y: 400, vx: 0, vy: 0, temperature: 20, raining
 }));
 
-test('rain thresholds inherit hysteresis and release droplets gradually', () => {
+test('legacy 2D: rain thresholds inherit hysteresis and release droplets gradually', () => {
   for (const [n, inherited, expected] of [[79, false, false], [80, false, true], [40, true, true], [29, true, false]]) {
     assert.equal(findClusters(clouds(n, inherited))[0].raining, expected);
   }
@@ -26,7 +26,7 @@ test('rain thresholds inherit hysteresis and release droplets gradually', () => 
   assert.equal(findClusters(remaining)[0].raining, false);
 });
 
-test('ten thousand seeded rain particles hit terrain or lake without penetration', () => {
+test('legacy 2D: ten thousand seeded rain particles hit terrain or lake without penetration', () => {
   const rng = mulberry32(7);
   for (let i = 0; i < 10000; i++) {
     const lake = new Lake();
@@ -43,7 +43,7 @@ test('ten thousand seeded rain particles hit terrain or lake without penetration
   }
 });
 
-test('runoff from every terrain abscissa stays on descending surface and returns within forty seconds', () => {
+test('legacy 2D: runoff from every terrain abscissa stays on descending surface and returns within forty seconds', () => {
   for (let x = 0; x < config.lake.left; x++) {
     const lake = new Lake();
     const particle = { state: 'runoff', x, y: terrainHeight(x) };
@@ -61,7 +61,7 @@ test('runoff from every terrain abscissa stays on descending surface and returns
   }
 });
 
-test('rain accelerates vertically regardless of wind and world counts returns', () => {
+test('legacy 2D: rain accelerates vertically regardless of wind and world counts returns', () => {
   for (const wind of [0, 40, 100]) {
     const world = new World({ sun: 0, wind });
     const particle = world.particles[0];

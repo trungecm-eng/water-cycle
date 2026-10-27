@@ -1,7 +1,9 @@
 import { parseParams } from './sim/params.js';
 import { World } from './sim/world.js';
 import { Clock } from './sim/clock.js';
-import { render } from './ui/render.js';
+import { createRenderer } from './ui/render.js';
+import { Camera } from './sim/camera.js';
+import { bindCameraControls } from './ui/camera-controls.js';
 import { bindControls } from './ui/controls.js';
 import { createHud } from './ui/hud.js';
 
@@ -9,8 +11,15 @@ const options = parseParams(window.location.search);
 const world = new World(options);
 const clock = new Clock(() => world.step(), options);
 const canvas = document.querySelector('#world');
+const camera = new Camera(world.map, world.reservoirs);
+const renderer = createRenderer(canvas, world, camera);
+bindCameraControls(canvas, camera);
 Object.defineProperty(window, '__sim', {
-  get: () => Object.freeze({ ...world.snapshot(), speed: clock.speed, paused: clock.paused })
+  get: () => {
+    camera.reservoirs = world.reservoirs;
+    return Object.freeze({ ...world.snapshot(), speed: clock.speed, paused: clock.paused,
+      camera: camera.snapshot(), webgl2: renderer.webgl2 });
+  }
 });
 let previous;
 bindControls(document, world, clock, () => { previous = undefined; });
@@ -18,7 +27,8 @@ const updateHud = createHud(document);
 function frame(timestamp) {
   if (previous !== undefined) clock.advance((timestamp - previous) / 1000);
   previous = timestamp;
-  render(canvas, world);
+  camera.reservoirs = world.reservoirs;
+  renderer.render();
   updateHud(world, clock);
   requestAnimationFrame(frame);
 }

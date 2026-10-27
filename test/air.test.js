@@ -4,11 +4,11 @@ import { config } from '../src/config.js';
 import { environmentTemperature, moveAirParticle } from '../src/sim/air.js';
 import { findClusters } from '../src/sim/clusters.js';
 import { terrainHeight } from '../src/sim/terrain.js';
-import { World } from '../src/sim/world.js';
+import { World } from '../src/sim/legacy-world.js';
 
 const droplet = (id, x, y) => ({ id, x, y, vx: 0, vy: 0, temperature: 81, state: 'vapor' });
 
-test('environment cools with altitude and isolated vapor condenses without rising again', () => {
+test('legacy 2D: environment cools with altitude and isolated vapor condenses without rising again', () => {
   let previous = Infinity;
   for (let y = 0; y <= config.world.height; y++) {
     const temperature = environmentTemperature(y);
@@ -28,7 +28,7 @@ test('environment cools with altitude and isolated vapor condenses without risin
   assert.equal(particle.y, height);
 });
 
-test('wind moves only air particles and collisions stop at slope walls and ceiling', () => {
+test('legacy 2D: wind moves only air particles and collisions stop at slope walls and ceiling', () => {
   const still = droplet(0, 800, 300);
   moveAirParticle(still, 0, 1, 0);
   assert.equal(still.x, 800);
@@ -53,7 +53,7 @@ test('wind moves only air particles and collisions stop at slope walls and ceili
   assert.deepEqual(world.particles.map(p => [p.x, p.y]), before);
 });
 
-test('cloud components are transitive across hash cells and visibility starts at thirty', () => {
+test('legacy 2D: cloud components are transitive across hash cells and visibility starts at thirty', () => {
   const particles = Array.from({ length: 29 }, (_, id) => ({ ...droplet(id, id * 39, 400), state: 'cloud' }));
   assert.equal(findClusters(particles)[0].visible, false);
   particles.push({ ...droplet(29, 29 * 39, 400), state: 'cloud' });
@@ -65,7 +65,7 @@ test('cloud components are transitive across hash cells and visibility starts at
   assert.equal(findClusters(particles).length, 2);
 });
 
-test('cluster snapshot membership cannot mutate simulation data', () => {
+test('legacy 2D: cluster snapshot membership cannot mutate simulation data', () => {
   const world = new World({ sun: 0 });
   const particle = world.particles[0];
   world.lake.remove(particle);
