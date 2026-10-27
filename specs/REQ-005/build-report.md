@@ -40,3 +40,9 @@ Space trên mọi nút nay thực hiện phím tắt tạm dừng/tiếp tục n
 `e2e/ui-controls.e2e.mjs` kiểm giữ nguyên thời gian/hạt/bộ đếm/camera/tốc độ khi về mặc định, đổi slider cập nhật World và output, Enter, tốc độ chọn một, nút nhãn/phím L, Space khi focus nút và bỏ qua shortcut trên thanh trượt.
 
 Kiểm tra bước 4: `node --test` đạt 44/44 trong 127,824 giây; `ui-controls`, `core-3d`, `panel-foundation`, `ui-statistics`, `scenery`, `scene` đều đạt, console không lỗi. `git diff --check` đạt. Bước 5–8 còn lại, chưa nghiệm thu toàn REQ-005.
+
+## Bước 5: góc nhìn sẵn
+
+Bốn góc nhìn đọc từ map-data.js; Camera có target riêng và giữ phép kẹp mắt an toàn. ViewTransition chuyển 1 giây thực, smoothstep, chọn đường phương vị ngắn nhất; nhận chọn tiếp giữa chừng và ngắt không nhảy khi chuột/bàn phím camera thao tác. URL view sai về overview; __sim.view có trạng thái free. Giao diện có bốn nút chọn một, nút mặc định và tên góc nhìn hiện tại. Không đổi mô phỏng hoặc test cũ.
+
+Kiểm tra: node --test đạt 47/47 trong 127,131 giây. Test mới kiểm 16 cặp đường chuyển với 1.001 mẫu/cặp, giới hạn, mặt đất/mặt nước, kết thúc đúng 1 giây, ngắt, chọn tiếp, đường góc ngắn và URL. ui-views, core-3d, ui-controls, panel-foundation đều đạt; console không lỗi. git diff --check đạt. Bước 6–8 chưa thực hiện.

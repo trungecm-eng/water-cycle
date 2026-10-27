@@ -28,6 +28,14 @@ export const panelMarkup = `  <main>
         <span id="wind-direction" class="hint">Từ biển vào đất liền ←</span>
       </label>
       <button id="default-controls" type="button">Về mặc định</button>
+      <fieldset><legend>Góc nhìn</legend>
+        <button type="button" data-view="overview">Toàn cảnh</button>
+        <button type="button" data-view="sea">Từ biển nhìn vào núi</button>
+        <button type="button" data-view="mountain">Cận cảnh núi</button>
+        <button type="button" data-view="river">Dọc sông</button>
+        <button type="button" id="default-view">Góc nhìn mặc định</button>
+        <output id="view-name" aria-live="polite"></output>
+      </fieldset>
       <button id="toggle-labels" type="button" aria-pressed="true">Nhãn bản đồ</button>
     </section>
     <p class="hint">Phím tắt: Space — tạm dừng / tiếp tục; 1–4 — tốc độ; R — đặt lại; kéo chuột / mũi tên — xoay; lăn chuột / + / − — thu phóng; L — bật / tắt nhãn; B — thu gọn / mở bảng.</p>
@@ -69,6 +77,7 @@ export const panelMarkup = `  <main>
 `;
 
 export const content = {
+  views: { overview: 'Toàn cảnh', sea: 'Từ biển nhìn vào núi', mountain: 'Cận cảnh núi', river: 'Dọc sông', free: 'Tự do' },
   title: 'Vòng tuần hoàn nước', collapse: 'Thu gọn', expand: 'Mở bảng',
   pause: 'Tạm dừng', resume: 'Tiếp tục', running: 'Đang chạy',
   seconds: 'giây', units: 'đơn vị', idle: 'Nước đang ở trong các vùng chứa', emptyPond: 'Ao đã cạn',

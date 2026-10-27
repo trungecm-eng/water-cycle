@@ -33,6 +33,12 @@ export const mapData = deepFreeze({
     lake: { x: 360, z: 620, radiusX: 48, radiusZ: 43, bottom: 12, levelPerParticle: 0.04, initial: 200, capacity: 320, outlet: [400, 610] },
     pond: { x: 560, z: 280, radiusX: 25, radiusZ: 21, bottom: 8, levelPerParticle: 0.06, initial: 60, capacity: 120, outlet: [585, 280] }
   },
+  views: {
+    overview: { target: [500, 40, 500], azimuth: 2.35, elevation: 38, distance: 1500 },
+    sea: { target: [420, 90, 500], azimuth: Math.PI / 2, elevation: 22, distance: 1200 },
+    mountain: { target: [240, 110, 550], azimuth: 2.1, elevation: 42, distance: 650 },
+    river: { target: [560, 35, 550], azimuth: Math.PI / 2, elevation: 28, distance: 720 }
+  },
   labels: [
     { id: 'mountain', position: [150, 320, 500] },
     { id: 'plain', position: [540, 40, 750] },

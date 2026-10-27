@@ -6,6 +6,7 @@ const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
 export class Camera {
   constructor(map, reservoirs) {
+    this.target = [...config.camera.target];
     this.map = map;
     this.reservoirs = reservoirs;
     Object.assign(this, { azimuth: config.camera.azimuth, elevation: config.camera.elevation, distance: config.camera.distance });
@@ -19,7 +20,7 @@ export class Camera {
   }
   snapshot() {
     const settings = config.camera;
-    const [tx, ty, tz] = settings.target;
+    const [tx, ty, tz] = this.target;
     const radians = this.elevation * Math.PI / 180;
     const horizontal = this.distance * Math.cos(radians);
     const x = tx + horizontal * Math.sin(this.azimuth);
@@ -31,7 +32,7 @@ export class Camera {
     }
     // Lift the eye above obstacles without changing the user's orbit settings.
     const y = Math.max(ty + this.distance * Math.sin(radians), floor + settings.clearance);
-    return Object.freeze({ position: Object.freeze({ x, y, z }), target: Object.freeze([...settings.target]), azimuth: this.azimuth,
+    return Object.freeze({ position: Object.freeze({ x, y, z }), target: Object.freeze([...this.target]), azimuth: this.azimuth,
       elevation: this.elevation, distance: this.distance });
   }
 }
