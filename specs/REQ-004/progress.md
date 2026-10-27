@@ -9,3 +9,12 @@
 - Lệnh chạy kiểm thử: `node --test` (không mạng, không trình duyệt). Kiểm tra thư viện bằng import Node trả `REVISION = '170'`; chưa import three.js vào lớp mô phỏng. Chưa chạy e2e vì lớp vẽ vẫn là REQ-001.
 - Kết quả cuối phiên: toàn bộ 30 test đạt trong 164,79 giây; `git diff --check` sạch. Chưa nghiệm thu toàn bộ REQ-004; còn bước 2–11.
 - Môi trường chưa cấu hình danh tính Git; commit dùng danh tính agent tạm thời qua `git -c user.name=Codex -c user.email=codex@openai.com commit`, không sửa tệp cấu hình Git.
+
+## Phiên build 2 — 2026-10-27
+
+- Hoàn thành bước 2: thêm `src/sim/drainage.js`, khắc đường suối/sông theo dữ liệu, đặt đáy hồ/ao, lấp trũng bằng priority-flood với độ dốc tối thiểu, xuất hướng chảy D8 và lưu vực cho mọi điểm lưới. Ba suối nối đúng hồ/sông; hồ có cửa thoát ra sông; sông ra biển; không dòng nào vào ao.
+- `generateDrainage()` trả cấu trúc heightmap mở rộng: `directions` là chỉ số đích (-1 tại vùng chứa), `reservoirs` là mã vùng chứa hoặc null, `basins` là vùng chứa cuối cùng, `channels` chứa đường đi có thứ tự, `outlets` chứa ô nhận nước tràn của hồ/ao. Các chỉ số dùng cùng 97 × 97 đỉnh như heightmap; `cellAt()` ánh xạ tọa độ sang đỉnh gần nhất, có kẹp biên. Lớp vẽ và mô phỏng 3D cần dùng bản đồ này thay vì heightmap chưa khắc.
+- Hằng số khắc dòng và đường tràn ao ở `mapData.drainage`. Đường tràn ao là rãnh địa hình nhãn `plain`, không phải suối/sông, đi ra biển và không quay lại lưu vực ao. Đáy ô nhận tràn thấp hơn đáy vùng chứa; chưa triển khai hạt tràn (bước 3/6).
+- Thêm bốn test: duyệt mọi ô bảo đảm D8 xuống thấp nghiêm ngặt, không vòng và tới đúng lưu vực; quan hệ suối/hồ/sông/biển; đáy vùng chứa và cửa tràn; tính tất định. Địa hình sau lấp trũng vẫn có độ dốc trung bình đồng bằng khoảng 0,093, núi khoảng 0,907.
+- Kiểm thử: `node --test` đạt 34/34 trong 152,52 giây; `node --test test/drainage.test.js` đạt 4/4. `git diff --check` sạch. Không có notes hoặc eval riêng của REQ-004. Các test và ứng dụng 2D cũ vẫn giữ nguyên, chưa thay bằng lõi 3D; không coi đây là nghiệm thu toàn bộ AC-2/AC-3.
+- Tiếp theo: bước 3 (vùng chứa, World 3D, camera thuần, lớp vẽ three.js tối thiểu, chuyển test core/URL/clock). Còn bước 3–11; chưa chạy e2e. Danh tính commit tiếp tục truyền bằng `git -c user.name=Codex -c user.email=codex@openai.com commit`, không sửa cấu hình Git.

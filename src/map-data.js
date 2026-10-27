@@ -14,6 +14,7 @@ export const mapData = deepFreeze({
   coast: { x: 750, amplitude: 28, wavelength: 170, beachWidth: 22, depthSlope: 0.18 },
   plain: { base: 5, slope: 0.045 },
   noise: { amplitude: 1.2 },
+  drainage: { minimumRise: 0.001, channelRise: 0.25, channelDepth: 2, pondOverflow: [[585, 280], [680, 280], [800, 280]] },
   peaks: [
     { x: 150, z: 500, height: 280, radiusX: 135, radiusZ: 230 },
     { x: 115, z: 210, height: 205, radiusX: 120, radiusZ: 145 },
