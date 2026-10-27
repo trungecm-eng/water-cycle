@@ -27,7 +27,7 @@ async function runFlow(interrupted) {
         if (sim) {
           const evidence = window.cycleEvidence;
           for (const [state, count] of Object.entries(sim.counts)) if (count) evidence.states[state] = true;
-          evidence.heated ||= sim.particles.some(particle => particle.state === 'water' && particle.temperature > 20);
+          evidence.heated ||= sim.particles.some(particle => particle.state === 'vapor' && particle.temperature > 80);
           evidence.cloud ||= sim.clusters.some(cluster => cluster.visible);
           for (const [name, happened] of Object.entries({ evaporation: sim.evaporations > 0,
             cloud: evidence.cloud, rain: sim.counts.rain > 0, return: sim.returns > 0 })) {
@@ -46,6 +46,8 @@ async function runFlow(interrupted) {
       await page.waitForFunction(() => window.__sim.evaporations > 0);
       for (let i = 0; i < 3; i++) {
         await pauseAndCheck(page);
+        await page.locator('#world').focus();
+        await page.keyboard.press('ArrowLeft');
         await page.setViewportSize({ width: i % 2 ? 1280 : 1050, height: 800 + i * 20 });
         await page.locator('#pause').click();
       }
@@ -57,9 +59,20 @@ async function runFlow(interrupted) {
       // Browser observation can lag one frame behind the actual fixed-step event.
       assert.ok(evidence.milestones[name] <= deadline, `${name}: ${JSON.stringify(evidence)}`);
     }
+    const cycle = await page.evaluate(() => window.__sim);
+    assert.ok(cycle.evaporationsByReservoir.sea > cycle.evaporationsByReservoir.lake);
+    assert.notEqual(cycle.reservoirs.lake.count, 200);
+    await page.locator('#world').focus();
+    await page.keyboard.press('+');
+    await page.keyboard.press('l');
+    await page.waitForFunction(() => window.__sim.scene.labels.length === 0);
+    await page.keyboard.press('l');
     assert.ok(evidence.heated && evidence.states.vapor && evidence.states.cloud);
     await pauseAndCheck(page);
-    const stageNames = { vapor: 'Bốc hơi', cloud: 'Ngưng tụ thành mây', rain: 'Mưa rơi', runoff: 'Chảy về hồ' };
+    const effects = await page.evaluate(() => window.__sim.scene.effects);
+    await page.waitForTimeout(200);
+    assert.deepEqual(await page.evaluate(() => window.__sim.scene.effects), effects);
+    const stageNames = { vapor: 'Bốc hơi', cloud: 'Ngưng tụ thành mây', rain: 'Mưa rơi', runoff: 'Chảy về vùng chứa' };
     const pausedCounts = await page.evaluate(() => window.__sim.counts);
     assert.equal(await page.locator('[data-hud="stages"]').textContent(),
       Object.entries(stageNames).filter(([state]) => pausedCounts[state] > 0).map(([, name]) => name).join(' · '));
@@ -88,9 +101,11 @@ async function runFlow(interrupted) {
     }
     await page.keyboard.press('Space');
     assert.equal(await page.evaluate(() => window.__sim.paused), false);
-    await page.keyboard.press('r');
-    const reset = await page.evaluate(() => window.__sim);
-    assert.equal(reset.counts.water, 600);
+    const reset = await page.evaluate(() => {
+      document.querySelector('#world').dispatchEvent(new KeyboardEvent('keydown', { key: 'r', bubbles: true }));
+      return window.__sim;
+    });
+    assert.equal(reset.counts.water, 1000);
     assert.equal(reset.returns, 0);
     assert.equal(reset.evaporations, 0);
     assert.equal(reset.speed, 1);
@@ -99,13 +114,14 @@ async function runFlow(interrupted) {
     assert.equal(reset.wind, 100);
     await page.locator('#reset').click();
     assert.equal(await page.evaluate(() => window.__sim.returns), 0);
+    await page.locator('#pause').click();
     // Mutating any returned snapshot must leave the next snapshot unchanged.
     assert.equal(await page.evaluate(() => {
       const sim = window.__sim;
       try { sim.particles[0].x = -100; } catch {}
       try { sim.counts.water = -1; } catch {}
       return Object.isFrozen(sim) && Object.isFrozen(sim.particles[0])
-        && window.__sim.particles[0].x >= 0 && window.__sim.counts.water === 600;
+        && Object.values(window.__sim.counts).reduce((a, b) => a + b, 0) === 1000;
     }), true);
     assert.deepEqual(errors, []);
     console.log(JSON.stringify({ flow: interrupted ? 'interrupted' : 'default x1', evidence }));
@@ -116,9 +132,9 @@ async function runFlow(interrupted) {
 
 async function checkUrls() {
   const cases = [
-    ['?n=300&sun=80&wind=0&seed=7&speed=8&paused=1', { n: 300, sun: 80, wind: 0, speed: 8, paused: true }],
-    ...['n=50', 'n=5000', 'n=abc', 'sun=-5', 'wind=200', 'speed=0'].map(query =>
-      [`?${query}&paused=1`, { n: 600, sun: 50, wind: 40, speed: 1, paused: true }])
+    ['?n=1500&sun=80&wind=0&seed=7&speed=8&paused=1', { n: 1500, sun: 80, wind: 0, speed: 8, paused: true }],
+    ...['n=50', 'n=3000', 'n=abc', 'sun=-5', 'wind=200', 'speed=0'].map(query =>
+      [`?${query}&paused=1`, { n: 1000, sun: 50, wind: 40, speed: 1, paused: true }])
   ];
   for (const [query, expected] of cases) {
     const page = await browser.newPage();
@@ -137,7 +153,7 @@ async function checkUrls() {
         assert.equal(await page.evaluate(async () => {
           const { World } = await import('/src/sim/world.js');
           const sim = window.__sim;
-          const expected = new World({ n: 300, sun: 80, wind: 0, seed: 7 });
+          const expected = new World({ n: 1500, sun: 80, wind: 0, seed: 7 });
           for (let step = 0; step < Math.round(sim.time * 60); step++) expected.step();
           const snapshot = expected.snapshot();
           return Object.keys(snapshot).every(key => JSON.stringify(snapshot[key]) === JSON.stringify(sim[key]));

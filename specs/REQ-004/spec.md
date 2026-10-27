@@ -1,0 +1,59 @@
+# REQ-004 — Đặc tả: thế giới 3D sa bàn, bản đồ đầy đủ, mưa ở sườn núi
+
+## Tóm tắt
+Giữ quy luật của REQ-001 (năm trạng thái hạt, ngưng tụ theo nhiệt độ, cụm mây có trễ, mưa dần, bảo toàn, tất định) nhưng thay thế giới 2D bằng một sa bàn 3D low-poly 1000 × 1000 vẽ bằng three.js. Học sinh mở `http://localhost:8000` và thấy trọn câu chuyện trên một bản đồ: nước bốc hơi chủ yếu từ biển phía đông, gió đưa hơi ẩm vào đất liền, mây bị đẩy lên sườn núi phía tây, lạnh đi và mưa, nước chảy theo suối về hồ, qua sông ra biển; một phần đọng ở ao (ao có thể cạn). Camera xoay và thu phóng được; nhãn vùng bật tắt bằng phím L. Điều khiển, HUD và chú giải của REQ-001 được giữ, gom vào một góc màn hình.
+
+## Phạm vi
+**Trong phạm vi** (chi tiết quy luật là mục "Phạm vi" của `requirement.md`):
+- `vendor/` chứa một file three.js (ES module) có ghi phiên bản và license; chỉ lớp vẽ `src/ui/` import nó.
+- Mô tả bản đồ trong file dữ liệu; sinh lưới độ cao 96 × 96 từ mô tả và seed riêng của bản đồ; hướng chảy cho mọi ô đất; suối, sông, hồ, ao, biển.
+- Vùng chứa biển, hồ, ao: đếm hạt, mực nước, sức chứa, tràn (hồ → cửa thoát → sông; ao → hướng chảy tại mép), ao cạn.
+- Bốn giai đoạn trong 3D: bốc hơi theo diện tích × Mặt Trời; `T_env` theo độ cao; cụm mây theo khoảng cách 3D; xác suất mưa `p0 × f(T)`; mưa rơi thẳng; `runoff` theo hướng chảy, suối, sông.
+- Gió đông → tây, mây trượt lên sườn núi, gió lặng dần phía tây đường đỉnh.
+- Đồ họa sa bàn low-poly: mặt cắt lớp đất, bảng màu pastel, nước trong mờ, sóng biển, dải sáng trên sông suối, khối mây xám dần, ánh sáng, sương mờ, nhãn 3D.
+- Camera xoay/thu phóng có giới hạn, không chui dưới địa hình hay mặt nước.
+- Thông báo tiếng Việt khi WebGL không khởi tạo được.
+- `window.__sim` mở rộng; tham số URL với `n` 100–2000, mặc định 1000.
+- Test logic thay/giữ test REQ-001; kịch bản đầu-cuối, đo FPS, chụp bốn ảnh; README.
+
+**Ngoài phạm vi:** thiết kế lại giao diện, góc nhìn sẵn, mức chất lượng, thẻ số liệu, bộ đếm mưa theo vùng trên giao diện (REQ-005); theo dõi một giọt, giải thích, gợi ý thí nghiệm, giọt mây hút nhau; thực vật, nước ngầm, băng tuyết, thủy triều, ngày đêm, mùa; địa hình chỉnh sửa được, nhiều bản đồ; âm thanh, cảm ứng, điện thoại, lưu cài đặt, đóng gói, phát hành.
+
+## Tiêu chí chấp nhận
+Nội dung đầy đủ của từng tiêu chí là mục "Tiêu chí nghiệm thu" của `requirement.md`; dưới đây là bản tóm tắt kèm cách kiểm. Test logic chạy bằng `node --test`; kịch bản trình duyệt là `e2e/*.e2e.mjs` (Playwright + Chromium headless, WebGL2 SwiftShader).
+
+- AC-1 (luồng): Mở trang ×1 mặc định: thấy sa bàn đủ bảy vùng kèm nhãn; trong 120 giây có bốc hơi chủ yếu từ biển, gió đưa vào đất liền, mây trên sườn núi mưa, `runoff` theo suối về hồ hoặc theo sông ra biển, mực hồ thay đổi; xoay, thu phóng, bật/tắt nhãn; tạm dừng thì hạt, sóng biển, dải sáng sông đứng yên rồi tiếp tục; Mặt Trời 0 → 100, Gió 0 → 100, đặt lại. Kiểm bằng `e2e/cycle-flow.e2e.mjs` (đọc `window.__sim`) và biến thể gián đoạn (đổi kích thước cửa sổ, xoay camera khi tạm dừng, tạm dừng nhiều lần, `?speed=8`); console không lỗi.
+- AC-2: Lưới độ cao sinh từ file dữ liệu, cùng dữ liệu cùng lưới, `?seed=` không đổi lưới; ô biển < 0; đỉnh cao nhất trong vùng núi; dốc trung bình đồng bằng nhỏ hơn rõ rệt (≤ 1/3) dốc trung bình núi; ≥ 3 suối bắt nguồn trong vùng núi; hồ nhận ≥ 1 suối và có cửa thoát ra sông; sông nhận ≥ 1 suối và đổ ra biển; không suối/sông nào chảy vào ao. Kiểm bằng `node --test`.
+- AC-3: Từ mọi ô đất, đi theo hướng chảy tới một vùng chứa sau hữu hạn bước (≤ số ô), không vòng lặp; hướng chảy không bao giờ lên cao hơn; hạt `runoff` thả ở mọi ô đất tới vùng chứa trong ≤ 60 giây mô phỏng. Kiểm bằng `node --test`.
+- AC-4: Phân bố ban đầu đúng file dữ liệu (1000 hạt: biển 740, hồ 200, ao 60, theo tỷ lệ với `n` khác); mực hồ/ao = đáy + số hạt × hệ số; vượt sức chứa thì phần vượt ra cửa thoát (hồ) hoặc theo hướng chảy tại mép (ao), không vùng nào vượt sức chứa quá một bước; vùng hết hạt không bốc hơi; ao hết hạt thì `__sim` báo cạn, có nước về thì hết cạn. Kiểm bằng `node --test`.
+- AC-5: Cùng Mặt Trời, 300 giây, seed cố định: số hạt bốc hơi của mỗi vùng tỷ lệ với diện tích mặt nước (sai lệch tỷ lệ ≤ 15% với vùng có ≥ 50 lần bốc hơi), biển nhiều nhất; `sun = 0` không bốc hơi; hạt mới nằm trên mặt nước của đúng vùng, nhiệt độ > 80. Kiểm bằng `node --test`.
+- AC-6: Các test ngưng tụ, ngưỡng mây/mưa có trễ, mưa dần của REQ-001 (AC-5, AC-6 cũ) đúng trong 3D với khoảng cách cụm 3D, `T_env` theo độ cao trên mực biển và ngưỡng mới; `f(condenseTemp) = 1`, `f` không tăng theo nhiệt độ, `f(0)` trong [2,5; 3,5]; hai cụm đang mưa giống nhau chỉ khác nhiệt độ thì cụm lạnh hơn ra nhiều giọt mưa hơn trong 10 giây. Kiểm bằng `node --test`.
+- AC-7: 10.000 hạt `rain` thả ngẫu nhiên có seed: mỗi hạt thành `runoff` hoặc vào đúng vùng chứa nó rơi trúng, không hạt nào xuyên địa hình; mọi `runoff` cuối cùng vào một vùng chứa; hạt rơi trong lưu vực hồ về hồ (hoặc qua hồ ra sông), trong lưu vực ao về ao. Kiểm bằng `node --test`.
+- AC-8: Gió đẩy `vapor`/`cloud` từ đông sang tây theo thanh trượt; gió 0 không trôi ngang do gió; gió không tác động `rain`, `runoff`, `water`; hạt bị đẩy vào sườn núi thì độ cao tăng dần, nằm trên bề mặt, nhiệt độ theo `T_env` mới; gió 0 không hạt nào bị đẩy lên sườn; phía tây đường đỉnh hệ số gió giảm về 0; gió 100 trong 300 giây không lúc nào quá 5% số giọt mây trong 20 đơn vị sát mép tây. Kiểm bằng `node --test`.
+- AC-9: Seed cố định, 300 giây, đếm giọt mưa chạm đất/nước từ giây 60: gió 0 thì > 50% xuống biển; gió 40 thì ≥ 25% xuống vùng núi; gió 100 thì ≥ 50% xuống vùng núi; tỷ lệ xuống núi tăng chặt theo gió 0 < 40 < 100. Nếu không đạt cùng lúc với AC-10 thì developer dừng và báo `need_human`, không tự nới. Kiểm bằng `node --test`.
+- AC-10: Mặc định: bốc hơi đầu ≤ 10 giây, đám mây đầu ≤ 45 giây, mưa đầu ≤ 75 giây, hạt đầu tiên chạm đất rồi vào vùng chứa ≤ 120 giây; trong 600 giây hồ không lúc nào có 0 hạt, có ≥ 1 lần nước từ suối vào hồ, ≥ 1 lần nước từ sông ra biển. Không đạt cùng lúc thì `need_human`, không tự nới. Kiểm bằng `node --test` không trình duyệt.
+- AC-11: Với `sun ∈ {0, 50, 100}` × `wind ∈ {0, 40, 100}`, 300 giây: tổng hạt, tổng theo trạng thái và theo nơi chứa luôn bằng `n`; không NaN/vô hạn; không hạt nào ngoài thế giới hay dưới mặt địa hình; tất định (kể cả xen tạm dừng, đổi tốc độ), khác seed thì khác; tạm dừng không chạy bước; sau nghỉ một lần cập nhật ≤ 0,25 giây × tốc độ; đặt lại về trạng thái đầu. Kiểm bằng `node --test`.
+- AC-12: Module camera: góc nhìn kẹp trong [10°, 85°], khoảng cách kẹp trong [min, max] của file dữ liệu; với mọi góc phương vị/góc nhìn/khoảng cách lấy mẫu dày, camera luôn cao hơn mặt địa hình và mặt nước tại vị trí của nó. Kiểm bằng `node --test`.
+- AC-13: Kịch bản trình duyệt `e2e/scene.e2e.mjs`: `__sim` báo WebGL2 đã khởi tạo; cảnh có địa hình, biển, hồ, ao, sông, suối và bảy nhãn; hộp bao của hai nhãn bất kỳ không giao nhau ở góc nhìn mặc định; khi chặn `getContext` WebGL thì trang hiện thông báo tiếng Việt, không lỗi chưa bắt. QA chụp bốn ảnh (toàn cảnh mặc định, từ biển nhìn vào núi, cận cảnh núi với suối và hồ, mây đang mưa trên sườn núi) bằng `e2e/screenshots.e2e.mjs` và đính kèm báo cáo.
+- AC-14: `?n=1500` có hiệu lực; `?n=50`, `?n=3000`, `?n=abc`, `?sun=-5`, `?wind=200`, `?speed=0` bị bỏ qua, dùng mặc định, console không lỗi. Kiểm bằng `node --test` cho hàm đọc tham số và kịch bản trình duyệt cho console.
+- AC-15: QA chạy `e2e/measure-fps.e2e.mjs` (1000 hạt, ×1, 10 giây khi đủ các giai đoạn) và ghi số đo vào báo cáo; chỉ để tham khảo, không có ngưỡng đạt.
+- AC-16: Test REQ-001 nhóm "giữ nguyên ý nghĩa" vẫn pass (giá trị ngưỡng có thể đổi); mỗi test nhóm "được thay" có test 3D tương đương; báo cáo build liệt kê từng cặp cũ → mới; `node --test` xong trong khoảng 5 phút. Kiểm bằng chạy lệnh có đo thời gian và đọc báo cáo.
+- AC-17: `node --test` pass, không trình duyệt hay mạng; `package.json` chỉ có `type` và `scripts.test`; `vendor/` có three.js, phiên bản, license; README có đủ các mục liệt kê trong requirement (kể cả "Mô hình đơn giản hóa"). Kiểm bằng chạy lệnh và đọc tệp.
+- AC-18 (người kiểm tay): Trên máy người dùng: cảnh là sa bàn low-poly gọn, màu dịu, đẹp hơn rõ rệt REQ-001; nhận ra bảy vùng cả khi tắt nhãn; nước trông như nước, mây như mây và xám dần; thấy được câu chuyện từ biển lên núi về biển; camera dễ dùng; ≥ 45 khung hình/giây với 1000 hạt.
+
+## Giả định
+- three.js bản r170 trở lên, file `vendor/three.module.min.js`, kèm `vendor/three.LICENSE` (MIT) và `vendor/README.md` ghi phiên bản và nguồn; tải một lần bằng `npm pack three` lúc phát triển, không thêm vào `package.json`. Không dùng addon (OrbitControls, CSS2DRenderer): camera và nhãn tự viết.
+- Hằng số và bảng màu ở `src/config.js`; mô tả bản đồ ở `src/map-data.js` (module ES, đóng băng sâu), để trình duyệt và Node cùng import.
+- Module thuần mới trong `src/sim/`: `heightmap.js` (sinh lưới, nội suy độ cao), `drainage.js` (lấp trũng, hướng chảy D8, lưu vực), `reservoirs.js` (biển/hồ/ao), `camera.js`; `air.js`, `clusters.js`, `precipitation.js`, `world.js` được sửa sang 3D. `lake.js` (lưới ô 2D) bị bỏ.
+- Bố cục bản đồ theo bảng gợi ý của requirement: núi x < 300 (đỉnh chính khoảng (150, 500) cao khoảng 300), hồ chân núi khoảng (360, 620), ao trên đồng bằng khoảng (560, 280), bờ biển cong quanh x ≈ 750, cửa sông khoảng (760, 520). Developer được chỉnh tọa độ miễn giữ quan hệ giữa các vùng.
+- "Vùng núi" (dùng trong AC-2, AC-9) là tập ô được gán nhãn `mountain` trong bước sinh bản đồ từ mô tả (vùng phía tây đường chân núi); "đường đỉnh" là một đường z → x trong mô tả bản đồ. Hệ số gió giảm tuyến tính từ 1 tại đường đỉnh về 0 sau một khoảng cách trong file dữ liệu.
+- Lấp vùng trũng bằng priority-flood có độ dốc tối thiểu, trừ ô hồ và ao; ô suối/sông được khắc thấp hơn hai bên và hướng chảy theo thứ tự đường đi trong mô tả.
+- Hạt `water` trong vùng chứa không có vị trí vẽ, chỉ mang mã vùng chứa. Diện tích mặt nước dùng cho bốc hơi là diện tích cố định của các ô vùng chứa (ao cạn thì không bốc hơi vì hết hạt). Bốc hơi dùng bộ cộng dồn kỳ vọng `k × diện tích × sun/100 × dt` cho mỗi vùng, phần lẻ quyết định bằng RNG có seed.
+- Phân bố ban đầu và sức chứa với `n ≠ 1000` co theo tỷ lệ `n/1000` (làm tròn, phần dư vào biển). `cloudMinSize`, `rainStartSize` là hằng số trong `src/config.js`, giá trị chốt ở bước hiệu chỉnh.
+- `f(T) = 1 + (fMax − 1) × (condenseTemp − T) / condenseTemp` kẹp trong [1, fMax], `fMax = 3`.
+- Hạt `runoff` đi theo tâm ô theo hướng chảy, tốc độ `max(vMin, k × độ dốc)`; độ cao luôn nội suy trên mặt đất hoặc mặt nước suối/sông. "Nước từ suối vào hồ" = `runoff` đi từ ô suối vào hồ; "từ sông ra biển" = `runoff` đi từ ô sông vào biển; hai bộ đếm này có trong `__sim`.
+- `window.__sim` thêm `reservoirs` (`sea`, `lake`, `pond`: `count`, `capacity`, `level`; ao có `dry`), `camera` (`position`, `azimuth`, `elevation`, `distance`), `webgl2`, các bộ đếm sự kiện mới, `rainLandings` theo vùng (núi, đồng bằng, biển, hồ, ao), và `scene` (tên các đối tượng chính đã có trong cảnh, nhãn đang hiện cùng hộp bao trên màn hình) để kịch bản trình duyệt kiểm AC-13.
+- Nhãn 3D là phần tử HTML có nền bo góc, đặt theo hình chiếu của điểm neo trong mô tả bản đồ (vì vậy luôn quay về camera); phím L bật tắt. Ao cạn: nhãn "Ao (đã cạn)" và đáy màu bùn.
+- Giả lập WebGL hỏng trong e2e bằng `addInitScript` làm `getContext('webgl2'/'webgl')` trả `null`; không thêm tham số URL.
+- Hiệu ứng sóng biển, dải sáng sông và sáng cảnh theo Mặt Trời tính từ thời gian mô phỏng, không tiêu thụ RNG của mô phỏng. Bóng núi chỉ bật nếu FPS đo được không giảm rõ.
+- Phím mới: mũi tên xoay, `+`/`=` và `-` thu phóng, `L` nhãn; giữ Space, 1–4, R. Khi focus ở thanh trượt, phím theo hành vi trình duyệt. Camera không thuộc trạng thái mô phỏng: đặt lại không đổi camera và camera không ảnh hưởng tất định.
+- Test nặng (lưới 9 tổ hợp, 600 giây mặc định) chia ra nhiều file để `node --test` chạy song song, mục tiêu xong trong khoảng 5 phút.

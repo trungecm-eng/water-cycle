@@ -1,104 +1,95 @@
 # Vòng tuần hoàn nước
 
-Mô phỏng bằng hạt dành cho học sinh cấp 2: nước trong hồ nhận nhiệt, bốc hơi, ngưng tụ thành giọt mây, mưa rơi và chảy về hồ. Tổng lượng nước được giữ nguyên. Đây là mô hình đơn giản hóa, nhiệt độ dùng thang 0–100 của mô hình.
+Sa bàn 3D dành cho học sinh cấp 2: nước bốc hơi chủ yếu từ biển, theo gió lên núi, ngưng tụ thành mây, mưa rồi chảy về hồ và biển. Tổng số hạt được bảo toàn.
 
-## Chạy trên máy
+## Chạy và thử sản phẩm
 
-Không cần cài thư viện, CDN hoặc build. Tại gốc repo:
+Không cần cài thư viện, CDN hoặc build:
 
 ```sh
 python3 -m http.server 8000
 ```
 
-Mở <http://localhost:8000> trong trình duyệt máy tính, cửa sổ rộng từ 1024 px. Giữ tốc độ ×1 để quan sát; với mặc định, vòng đầu hoàn tất trong 120 giây và tiếp tục lặp lại.
+Mở <http://localhost:8000> bằng trình duyệt máy tính hỗ trợ WebGL2. Ở ×1, quan sát trong 120 giây để thấy vòng đầu. Nếu thiếu WebGL2, trang hiện thông báo tiếng Việt.
+
+## Bản đồ và phong cách
+
+Bản đồ 1000 × 1000 có núi phía tây, ba suối, hồ chân núi có cửa thoát ra sông, đồng bằng, ao biệt lập và biển phía đông. Nước sông chảy ra biển; hồ đầy tràn qua cửa thoát, ao đầy tràn theo địa hình. Ao có thể cạn và lộ đáy bùn.
+
+Sa bàn low-poly có mặt tam giác phẳng, mặt cắt đất nâu/đá xám, màu pastel: biển xanh ngọc đậm dần ra xa bờ, cát vàng nhạt, đồng bằng xanh tươi, chân núi xanh đậm, sườn nâu, đỉnh xám không tuyết. Hồ/ao/suối/sông xanh dương trong mờ; mây trắng chuyển xám khi lớn. Sóng biển và dải sáng dòng chảy chạy theo thời gian mô phỏng.
 
 ## Điều khiển
 
-| Điều khiển | Tác dụng |
+| Thao tác | Tác dụng |
 | --- | --- |
-| Nhiệt độ Mặt Trời, 0–100 | Điều chỉnh nhịp tia nhiệt; 0 ngừng tia và bốc hơi mới. Hạt trên không vẫn tiếp tục vòng. |
-| Gió, 0–100 | Thổi hơi nước và giọt mây sang trái, từ hồ về phía núi; không tác động mưa và dòng chảy. |
-| Tạm dừng / Tiếp tục, Space | Dừng mọi bước mô phỏng; tiếp tục không bù thời gian dừng. |
-| ×0,5 / ×1 / ×2 / ×4, phím 1–4 | Đổi tốc độ; không đổi vị trí tức thời. |
-| Đặt lại, R | Giữ số hạt, seed và hai thanh trượt; khởi tạo nước trong hồ, về ×1, đang chạy. |
+| Kéo chuột / mũi tên | Xoay camera quanh tâm bản đồ |
+| Lăn chuột / + / − | Thu phóng có giới hạn; camera không chui dưới đất/nước |
+| L | Bật/tắt bảy nhãn vùng |
+| Mặt Trời 0–100 | Điều chỉnh bốc hơi theo diện tích; 0 tắt tia và ngừng bốc hơi |
+| Gió 0–100 | Đẩy hơi nước/mây từ biển vào núi; không đẩy mưa hay runoff |
+| Space / nút tạm dừng | Dừng hạt, sóng biển và dải sáng; camera vẫn dùng được |
+| 1–4 / nút tốc độ | ×0,5 / ×1 / ×2 / ×4 |
+| R / Đặt lại | Khởi tạo lại phân bố nước; giữ seed, số hạt, thanh trượt và camera; về ×1 đang chạy |
 
-Khi focus đang ở thanh trượt, bàn phím điều khiển thanh theo hành vi trình duyệt; bấm ra ngoài để dùng phím tắt. Khi tab bị ẩn, quay lại không bù thời gian đã ẩn. HUD hiện thời gian, tốc độ, trạng thái chạy, số hạt từng trạng thái, mực nước, số lần về hồ và giá trị thanh. “Đang diễn ra” dựa trên sự hiện diện của vapor/cloud/rain/runoff tương ứng bốn giai đoạn.
+Khi focus ở thanh trượt, phím dùng hành vi trình duyệt. HUD hiển thị thời gian, các trạng thái, mực hồ và số lượt về vùng chứa. Mở “Chú giải và mô hình” để đọc đủ năm trạng thái. Thu nhỏ cửa sổ vẫn có thể cuộn cột điều khiển.
 
 ## Tham số URL
 
-Ví dụ: <http://localhost:8000/?n=300&sun=80&wind=0&seed=7&speed=8&paused=1>.
+Ví dụ: <http://localhost:8000/?n=1500&sun=80&wind=40&seed=7&speed=8&paused=1>.
 
-| Tham số | Miền hợp lệ | Mặc định |
+| Tham số | Miền | Mặc định |
 | --- | --- | --- |
-| `n` | Số nguyên 100–1200 | 600 |
-| `sun` | 0–100 | 50 |
-| `wind` | 0–100 | 40 |
+| `n` | Số nguyên 100–2000 | 1000 |
+| `sun`, `wind` | 0–100 | 50, 40 |
 | `seed` | Số nguyên | 1 |
-| `speed` | 0,5–8 (viết dấu chấm trong URL, ví dụ `0.5`) | 1 |
-| `paused` | `1` để tạm dừng lúc mở | Đang chạy |
+| `speed` | 0.5–8 | 1 |
+| `paused` | `1` tạm dừng | Đang chạy |
 
-Giá trị sai hoặc ngoài miền được bỏ qua, dùng mặc định. Seed và chuỗi thao tác giống nhau cho cùng trạng thái ở cùng số bước.
+Giá trị sai dùng mặc định, không báo lỗi console. Seed mô phỏng không thay bản đồ. Cùng seed và thao tác cho cùng trạng thái tại cùng số bước.
 
-## Hạt và ý nghĩa
+## Mô hình đơn giản hóa
 
-| Trạng thái | Hiển thị | Ý nghĩa |
-| --- | --- | --- |
-| `water` | Xanh dương | Nước nằm yên trong các ô hồ; chỉ hạt mặt nước nhận tia nhiệt. |
-| `vapor` | Trắng rất mờ | Hơi nước bay lên và nguội dần. Hơi nước thật không nhìn thấy được; ở đây vẽ mờ để theo dõi. |
-| `cloud` | Chấm trắng rõ, cụm có vùng trắng mờ | Những giọt nước rất nhỏ đã ngưng tụ khi hơi nước gặp lạnh. |
-| `rain` | Xanh dương đậm | Mưa rơi thẳng đứng do trọng lực. |
-| `runoff` | Xanh dương đậm trên mặt đất | Nước chảy xuôi sườn sang phải về hồ. |
+Hơi nước thật vô hình; đốm trắng rất mờ chỉ giúp theo dõi. Nước thật bay hơi ở mọi nhiệt độ; mô hình phát hạt nóng trên 80 theo nhịp diện tích × Mặt Trời, rồi làm nguội để ngưng tụ. Mây là giọt nước nhỏ đã ngưng tụ, không phải hơi nước. Các con số nhiệt độ không dùng dự đoán thời tiết.
 
-Mực hồ là `60 + số hạt water × 0,1` đơn vị. Nước về hồ lấp ô trống thấp nhất, ưu tiên cột gần nơi vào. Nhiệt độ, độ cao và thời gian là các đại lượng đơn giản hóa của mô hình; không dùng để dự đoán thời tiết thực tế.
+Sông và suối luôn hiện đầy nước dù lượng đang chảy ít hay nhiều. Mực biển coi như không đổi, nhưng vẫn đếm nước để bảo toàn. Không có nước ngầm và cây cối. Hồ/ao có mực theo số hạt, sức chứa co theo tổng hạt. Runoff đi theo các đỉnh lưới xuống thấp nên có thể thấy chuyển động theo nấc.
 
-## Hằng số
+## Hằng số và dữ liệu
 
-Mọi dữ liệu mô phỏng và màu hạt ở `src/config.js`, đóng băng sâu để tránh thay đổi ngoài ý muốn.
+`src/config.js` chứa các hằng số, bảng màu và camera; `src/map-data.js` chứa vùng, đỉnh núi, đường đỉnh, đường suối/sông, nhãn, seed bản đồ và phân bố ban đầu (740 biển, 200 hồ, 60 ao). Dữ liệu đóng băng sâu. Mực hồ/ao = đáy + số hạt × hệ số. Hướng thoát nước D8 khắc kênh và lấp trũng kín ngoài hồ/ao.
 
-| Nhóm | Ý nghĩa và các giá trị chính |
-| --- | --- |
-| `world`, `terrain` | Thế giới 1000 × 600, gốc dưới trái; núi trái dốc tới rìa hồ x=640; đáy hồ y=60. |
-| `lake` | Ô cạnh 6, 60 cột × 20 hàng; mỗi hạt tăng mức nước 0,1. |
-| `defaults`, `limits` | Mặc định và miền hợp lệ của tham số. |
-| `clock` | Bước cố định 1/60 giây; mỗi frame nhận tối đa 0,25 giây thực nhân tốc độ. |
-| `heat` | Nền hồ 20; chỉ vượt 80 mới bốc hơi; ngưng tụ khi ≤20; môi trường `max(0, 30 − 0,09 × (y − 60))`; nhịp tối đa 30 tia/giây, nhiệt mỗi tia 35. |
-| `motion` | Lực nổi, gió, trôi mây, trọng lực, giới hạn tốc độ mưa và tốc độ chảy; runoff 24 đơn vị/giây. |
-| `cloud` | Bán kính liên thông 40; từ 30 giọt vẽ đám mây; từ 80 bắt đầu mưa, tiếp tục tới dưới 30; xác suất mưa dùng nhịp 0,15/giây. |
-| `sun`, `visual`, `colors` | Vị trí Mặt Trời, kích thước hạt/tia, độ mờ, độ rung và bảng màu. |
-
-Cụm không được bổ sung dừng mưa khi còn dưới 30 giọt theo quy tắc trễ. Các giọt mây còn lại chờ cụm được bổ sung để mưa tiếp.
+Bước thời gian 1/60 giây, mỗi cập nhật kẹp 0,25 giây thực × tốc độ; tab ẩn không bù thời gian. Cụm liên thông trong bán kính 40; 30 giọt hiện mây, 80 bắt đầu mưa, dưới 30 ngừng. Giọt lạnh mưa nhiều hơn; gió giảm về 0 sau đường đỉnh. Hiệu ứng vẽ không dùng RNG mô phỏng.
 
 ## Kiểm thử
 
-Logic chạy với Node 24, không cần mạng hoặc trình duyệt:
+Node không cần mạng hoặc trình duyệt:
 
 ```sh
 node --test
 ```
 
-Có các kiểm tra từng giai đoạn, 10.000 giọt mưa, nhịp vòng và lưới chín tổ hợp sun × wind trong 600 giây mô phỏng. Bộ test mất khoảng hai phút trên máy phát triển; không đặt điều kiện thời gian chạy máy.
+Bao gồm 10.000 giọt mưa, runoff từ mọi ô trong ≤60 giây, mặc định 600 giây, chín tổ hợp sun × wind trong 300 giây. Thời gian mục tiêu dưới khoảng 5 phút.
 
-E2E cần Playwright và Chromium có sẵn trên máy kiểm thử, cùng server ở trên; không thêm dependency vào `package.json`:
+E2E cần server trên và Playwright/Chromium cài sẵn trong môi trường kiểm thử, không thêm npm dependency vào dự án:
 
 ```sh
+node e2e/core-3d.e2e.mjs
+node e2e/scenery.e2e.mjs
 node e2e/cycle-flow.e2e.mjs
+node e2e/scene.e2e.mjs
+node e2e/screenshots.e2e.mjs
 node e2e/measure-fps.e2e.mjs
 ```
 
-Script tìm Playwright ở repo hoặc thư mục npm toàn cục. Có thể truyền `PLAYWRIGHT_MODULE` là đường dẫn module (`index.mjs`), và `BASE_URL` để đổi địa chỉ server. Không cần cài gì khi môi trường đã có công cụ.
+Script tìm Playwright ở repo hoặc npm toàn cục; hỗ trợ `PLAYWRIGHT_MODULE` trỏ tới index.mjs và `BASE_URL`. Chromium dùng WebGL2 phần mềm, không cần cờ. Luồng ×1 và biến thể ×8 có resize/tạm dừng/xoay camera; lỗi console làm test thất bại. Bốn ảnh lưu ở `specs/REQ-004/screenshots/`. Đo FPS 1000 hạt, ×1, cửa sổ 1280 × 1000 trong 10 giây khi đủ các trạng thái; số đo phần mềm chỉ tham khảo, không có ngưỡng đạt. AC-18 cần người dùng xem cảnh và đo ≥45 FPS trên máy của mình.
 
-E2E chạy vòng mặc định ở ×1, biến thể ×8 bị resize và tạm dừng nhiều lần, điều khiển bằng chuột/phím, đặt lại, URL và snapshot chỉ đọc; lỗi console làm test thất bại. Công cụ FPS chờ đủ cả năm trạng thái, giữ 600 hạt/×1 ở Chromium 1280 × 1000 rồi đếm `requestAnimationFrame` trong ít nhất 10 giây, yêu cầu trung bình ≥45 FPS và in JSON số đo. Đo lại trên máy QA vì kết quả phụ thuộc môi trường.
+`window.__sim` là snapshot chỉ đọc: hạt, cụm, thời gian, số đếm, vùng chứa/mực/cạn, camera, WebGL2, sự kiện dòng chảy, mưa theo vùng, tên đối tượng/nhãn/hiệu ứng cảnh. Không có API sửa mô phỏng.
 
-`window.__sim` là getter trả bản sao đóng băng sâu, gồm thời gian, đếm trạng thái, mức hồ, số lần bốc hơi/về hồ, sun/wind, cụm mây (id giọt, số giọt, cờ hiển thị/mưa), hạt, tốc độ và tạm dừng. Không có API để sửa trạng thái qua cửa này.
+## Cấu trúc thư mục
 
-Người kiểm tay cần quan sát ×1: nhận ra núi/hồ/Mặt Trời và năm loại hạt bằng chú giải; thấy vòng trọn, tác dụng hai thanh trượt, chuyển động mượt và chữ đọc được. E2E không thay thế đánh giá khả năng hiểu của học sinh.
-
-## Cấu trúc
-
-- `index.html`, `style.css`: trang và bố cục tiếng Việt.
-- `src/main.js`: nối đồng hồ, mô phỏng, Canvas, giao diện và cửa kiểm thử.
-- `src/config.js`: dữ liệu và hằng số chung.
-- `src/sim/`: logic thuần (hồ, nhiệt, không khí, cụm, mưa/chảy, địa hình, RNG, clock, URL, World), không dùng DOM/Canvas.
-- `src/ui/`: vẽ Canvas, controls và HUD.
-- `test/`: test Node; `e2e/`: kịch bản Chromium và đo FPS, không nằm trong tập test Node mặc định.
-- `specs/REQ-001/`: yêu cầu, đặc tả, kế hoạch và nhật ký bàn giao.
+- `index.html`, `style.css`: bố cục tiếng Việt.
+- `src/main.js`: nối đồng hồ, mô phỏng, renderer, HUD và điều khiển.
+- `src/sim/`: logic thuần bản đồ, thoát nước, vùng chứa, nhiệt/không khí/mưa/chảy, camera, URL, RNG, clock và World.
+- `src/ui/`: three.js, sa bàn, nhãn, camera chuột/phím, HUD và controls; chỉ lớp này import three.js.
+- `vendor/`: three.js ES module, phiên bản và giấy phép MIT.
+- `test/`, `test-support/`: kiểm thử Node và trợ giúp; `e2e/`: Chromium.
+- `specs/REQ-004/`: đặc tả, kế hoạch, bàn giao, báo cáo và ảnh.
