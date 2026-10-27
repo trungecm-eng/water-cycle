@@ -47,3 +47,10 @@
 - Bổ sung `test/stability.test.js`: kiểm mọi cửa sổ 60 giây căn theo bước cố định, bắt đầu từ giây 120; kiểm từng hạt ở từng bước trong 600 giây trên cả chín tổ hợp sun 0/50/100 × wind 0/40/100 (hữu hạn, nhiệt độ, trạng thái, bảo toàn, biên thế giới/địa hình và số hạt hồ); kiểm sun=100 bốc hơi ít nhất 1,5 lần mặc định và ngắt nắng vẫn ngưng tụ/mưa/về hồ, đổi thanh không nhảy vị trí.
 - `node --test`: 26/26 test đạt, khoảng 123 giây trên máy này; phần lưới 600 giây chiếm khoảng 104 giây. Test không có điều kiện phụ thuộc tốc độ máy, trình duyệt hay mạng.
 - Tiếp theo bước 8: controls/HUD/chú giải và bố cục; sau đó bước 9–10: E2E, README, FPS và kiểm tra toàn bộ. Chưa có kiểm chứng trình duyệt hoặc FPS. Lưu ý cách hiểu ngưỡng dừng mưa ở bàn giao bước 6 vẫn giữ nguyên.
+
+## Phiên build ngày 2026-10-27 — bước 8
+- Hoàn thành controls và HUD: thanh Mặt Trời/Gió, giá trị trực tiếp; nút và phím Space/1–4/R; reset giữ thanh, về ×1 và đang chạy; trạng thái/năm bộ đếm/mực nước/lần về hồ, các giai đoạn đang có hạt theo đúng một ánh xạ; chú giải và giải thích hơi nước vô hình/mây là giọt đã ngưng tụ. Canvas giữ tỷ lệ; bố cục đã xem ảnh tại 1024 px, không tràn ngang.
+- Khi đổi trạng thái chạy/tốc độ/reset, xóa mốc thời gian frame để không bù thời gian dừng. Bỏ phím tắt lúc nhập liệu; Space trên nút dùng kích hoạt mặc định của trình duyệt để tránh bị gọi hai lần.
+- `node --test`: 26/26 đạt, khoảng 127 giây; `node --check` cho các module giao diện và `git diff --check` đạt. Chromium kiểm nhanh: tạm dừng giữ nguyên thời gian, reset giữ sun=0/wind=100 và về ×1, không lỗi JS, không tràn ngang tại 1024 px.
+- Môi trường có Playwright toàn cục tại `/usr/local/lib/node_modules/playwright/index.mjs` và Chromium trong `/opt/ms-playwright`; import tên gói từ repo không tìm thấy. Không cần cài thêm dependency. Server local chạy bằng `python3 -m http.server 8000`.
+- Tiếp theo bước 9–10: lưu E2E và công cụ FPS vào repo, README; chạy toàn bộ và báo cáo đo. Chưa khẳng định hoàn tất AC-1/12/14.
