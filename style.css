@@ -50,3 +50,6 @@ summary { cursor: pointer; font-weight: 600; padding: var(--space-1) 0; }
 #active-stages li { padding: var(--space-1); border-left: 3px solid transparent; }
 #active-stages .active { background: var(--hover); border-color: var(--accent); font-weight: 600; }
 .legacy-stages { display: none; }
+
+.control-icon { width: var(--space-4); height: var(--space-4); vertical-align: middle; margin-right: var(--space-1); }
+.controls .slider-ends { grid-column: 1 / -1; display: flex; justify-content: space-between; font-size: var(--font-small); font-weight: 400; }

@@ -30,3 +30,13 @@ Xu hướng lấy mẫu sau mỗi bước cố định của Clock; thao tác đ
 Kiểm tra: `node --test` đạt 44/44 trong 159,89 giây; `ui-statistics`, `panel-foundation`, `core-3d` đạt. Kịch bản số liệu kiểm số hàng, tổng phân bố, chú giải, xóa khi tạm dừng không đổi thời gian/hạt, phân bố đổi khi chạy và đặt lại xóa mưa. `git diff --check` đạt. Chưa thực hiện nghiệm thu toàn bộ, ảnh và FPS của bước 8.
 
 `node e2e/cycle-flow.e2e.mjs` cũng đạt cả luồng mặc định ×1, luồng gián đoạn và các trường hợp URL; không thay selector hay giảm điều kiện kiểm tra.
+
+## Bước 4: điều khiển thí nghiệm
+
+Hàng thời gian đặt trước hai thanh trượt; giữ id và nút tốc độ chọn một bằng `aria-pressed`. Hai thanh có SVG nội tuyến, giá trị, mô tả hai đầu liên kết bằng `aria-describedby`. Nút “Về mặc định” chỉ đưa nắng/gió về `config.defaults`, đồng bộ thanh và output; không gọi reset World hay Clock. Nút “Nhãn bản đồ” dùng chung trạng thái với phím L, có `aria-pressed`.
+
+Space trên mọi nút nay thực hiện phím tắt tạm dừng/tiếp tục như AC-7; chặn kích hoạt mặc định của Space để tránh thao tác hai lần. Enter vẫn kích hoạt nút đang focus. Phím tắt tiếp tục bỏ qua thanh trượt. Không sửa selector hoặc nới điều kiện của kịch bản cũ trong bước này.
+
+`e2e/ui-controls.e2e.mjs` kiểm giữ nguyên thời gian/hạt/bộ đếm/camera/tốc độ khi về mặc định, đổi slider cập nhật World và output, Enter, tốc độ chọn một, nút nhãn/phím L, Space khi focus nút và bỏ qua shortcut trên thanh trượt.
+
+Kiểm tra bước 4: `node --test` đạt 44/44 trong 127,824 giây; `ui-controls`, `core-3d`, `panel-foundation`, `ui-statistics`, `scenery`, `scene` đều đạt, console không lỗi. `git diff --check` đạt. Bước 5–8 còn lại, chưa nghiệm thu toàn REQ-005.

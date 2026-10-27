@@ -27,18 +27,28 @@ export function bindControls(root, world, clock, resetFrameTime) {
     resetFrameTime();
     update();
   }
+  const syncSliders = [];
   for (const name of ['sun', 'wind']) {
     const slider = root.querySelector(`#${name}`);
     const output = root.querySelector(`#${name}-value`);
     slider.min = config.limits.minControl;
     slider.max = config.limits.maxControl;
-    slider.value = world[name];
-    output.value = String(world[name]);
+    const sync = () => {
+      slider.value = world[name];
+      output.value = String(world[name]);
+    };
+    syncSliders.push(sync);
+    sync();
     slider.addEventListener('input', () => {
       world[name] = Number(slider.value);
       output.value = slider.value;
     });
   }
+  root.querySelector('#default-controls').addEventListener('click', () => {
+    world.sun = config.defaults.sun;
+    world.wind = config.defaults.wind;
+    for (const sync of syncSliders) sync();
+  });
   pause.addEventListener('click', togglePause);
   root.querySelector('#reset').addEventListener('click', reset);
   for (const button of speedButtons) {
@@ -47,8 +57,6 @@ export function bindControls(root, world, clock, resetFrameTime) {
   root.addEventListener('keydown', event => {
     if (event.repeat || event.ctrlKey || event.altKey || event.metaKey) return;
     if (event.target.closest('input, textarea, select, [contenteditable="true"]')) return;
-    // Space on a focused button keeps the browser's native single activation.
-    if (event.code === 'Space' && event.target.closest('button')) return;
     if (event.code === 'Space') {
       event.preventDefault();
       togglePause();

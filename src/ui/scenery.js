@@ -74,9 +74,18 @@ export function decorateScene(scene, canvas, world) {
     return { ...data, element };
   });
   let labelsVisible = true;
+  const labelsButton = document.querySelector('#toggle-labels');
+  function toggleLabels() {
+    labelsVisible = !labelsVisible;
+    labelsButton.setAttribute('aria-pressed', String(labelsVisible));
+  }
+  labelsButton.addEventListener('click', toggleLabels);
   document.addEventListener('keydown', event => {
     if (event.repeat || event.ctrlKey || event.altKey || event.metaKey || event.target.closest('input, textarea, select, [contenteditable="true"]')) return;
-    if (event.key.toLowerCase() === 'l') labelsVisible = !labelsVisible;
+    if (event.key.toLowerCase() === 'l') {
+      event.preventDefault();
+      toggleLabels();
+    }
   });
   let lastClusters;
   let labelSnapshot = [];

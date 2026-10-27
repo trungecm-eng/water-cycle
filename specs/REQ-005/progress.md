@@ -25,3 +25,14 @@ Xu hướng được lấy mẫu sau từng bước Clock, không chỉ sau mỗ
 Kiểm tra: `node --test` đạt 44/44 trong 159,89 giây. `node e2e/ui-statistics.e2e.mjs`, `node e2e/panel-foundation.e2e.mjs`, `node e2e/core-3d.e2e.mjs`, `node e2e/cycle-flow.e2e.mjs` đều đạt; cycle-flow gồm ×1, gián đoạn và URL. Không có lỗi console. Test mới xóa khi tạm dừng để so hạt/thời gian chính xác; sau reset phải bấm pause cùng một lượt JS vì Clock.reset mặc định tiếp tục chạy. Server dùng `python3 -m http.server 8000`. `git diff --check` đạt.
 
 Tiếp theo: bước 4 (thanh trượt có SVG, hai mô tả đầu/cuối, về mặc định riêng, hàng thời gian và nút nhãn). Bước 5–8 còn nguyên, chưa có góc nhìn sẵn, chọn chất lượng, ảnh/FPS REQ-005 hay nghiệm thu AC-12. Không coi bước 3 là hoàn tất toàn yêu cầu.
+
+
+## Phiên 2026-10-27 — Bước 4 hoàn tất
+
+Đã đưa hàng thời gian lên đầu nhóm Điều khiển; hai thanh trượt có SVG nội tuyến, output và mô tả hai đầu được liên kết bằng aria-describedby. Nút “Về mặc định” chỉ đưa sun/wind về config.defaults (50/40), cập nhật thanh và giá trị; giữ nguyên World, thời gian, trạng thái tạm dừng, tốc độ, camera và bộ đếm. Nút “Nhãn bản đồ” đồng bộ aria-pressed với phím L. Space trên nút thực hiện phím tắt mô phỏng đúng một lần (preventDefault ngăn click mặc định); Enter kích hoạt nút, shortcut tiếp tục bỏ qua thanh trượt. Không đổi World hay hằng số vật lý, không sửa test cũ.
+
+Kiểm tra: node --test đạt 44/44 trong 127,824 giây. Các kịch bản ui-controls (mới), core-3d, panel-foundation, ui-statistics, scenery và scene đều đạt, không lỗi console. ui-controls kiểm về mặc định không đổi mô phỏng khi tạm dừng, input slider, Enter, Space trên nút, L, tốc độ chọn một và bỏ qua shortcut trên slider. Server: python3 -m http.server 8000; không cần npm install. git diff --check đạt. Báo cáo build đã ghi thay đổi phím Space theo AC-7.
+
+Tiếp theo: bước 5 trong plan.md, thêm views ở map-data.js, module chuyển camera, target thay đổi được, nút góc nhìn, URL và __sim.view. Bước 5–8 chưa làm; chưa có chất lượng cao/thấp, ảnh nghiệm thu hay FPS REQ-005; chưa kết luận AC-12 kiểm tay. Phiên này dừng ở commit hoàn chỉnh bước 4, kết quả continue.
+
+Lưu ý môi trường commit: chưa có danh tính Git trong cấu hình. Dùng biến môi trường cho riêng lệnh commit, theo danh tính commit trước: GIT_AUTHOR_NAME='Dev Agent', GIT_AUTHOR_EMAIL='dev-agent@example.com', GIT_COMMITTER_NAME='Dev Agent', GIT_COMMITTER_EMAIL='dev-agent@example.com'. Không sửa .git/config.

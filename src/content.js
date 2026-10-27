@@ -1,15 +1,12 @@
+const icon = paths => `<svg class="control-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true" focusable="false">${paths}</svg>`;
+const sunIcon = icon('<circle cx="12" cy="12" r="4"/><path d="M12 1v3m0 16v3M1 12h3m16 0h3M4 4l2 2m12 12 2 2M4 20l2-2M18 6l2-2"/>');
+const windIcon = icon('<path d="M2 8h14a3 3 0 1 0-3-3M2 12h18a2 2 0 1 1-2 2M2 16h8a3 3 0 1 1-3 3"/>');
+
 export const panelMarkup = `  <main>
     <div class="simulation-panel">
     <button id="panel-toggle" type="button" aria-expanded="true" aria-controls="panel-body">Thu gọn</button><div id="panel-body"><h1>Vòng tuần hoàn nước</h1>
     <p class="intro">Khám phá nước bốc hơi, ngưng tụ thành giọt mây, rơi xuống và trở về biển.</p>
     <details data-group="controls" open><summary>Điều khiển</summary><section class="controls" aria-label="Điều khiển mô phỏng">
-      <label for="sun">Nhiệt độ Mặt Trời: <output id="sun-value" for="sun">50</output>
-        <input id="sun" type="range" min="0" max="100" value="50">
-      </label>
-      <label for="wind">Gió: <output id="wind-value" for="wind">40</output>
-        <input id="wind" type="range" min="0" max="100" value="40">
-        <span class="hint">Từ biển vào đất liền ←</span>
-      </label>
       <div class="buttons">
         <button id="pause" type="button" aria-pressed="false">Tạm dừng</button>
         <button id="reset" type="button">Đặt lại</button>
@@ -21,6 +18,17 @@ export const panelMarkup = `  <main>
           <button type="button" data-speed="4" aria-pressed="false">×4</button>
         </div>
       </div>
+      <label for="sun"><span>${sunIcon}Nhiệt độ Mặt Trời</span><output id="sun-value" for="sun">50</output>
+        <input id="sun" type="range" min="0" max="100" value="50" aria-describedby="sun-ends">
+        <span id="sun-ends" class="slider-ends"><span>Tắt nắng</span><span>Nắng gắt</span></span>
+      </label>
+      <label for="wind"><span>${windIcon}Gió</span><output id="wind-value" for="wind">40</output>
+        <input id="wind" type="range" min="0" max="100" value="40" aria-describedby="wind-ends wind-direction">
+        <span id="wind-ends" class="slider-ends"><span>Lặng gió</span><span>Gió mạnh</span></span>
+        <span id="wind-direction" class="hint">Từ biển vào đất liền ←</span>
+      </label>
+      <button id="default-controls" type="button">Về mặc định</button>
+      <button id="toggle-labels" type="button" aria-pressed="true">Nhãn bản đồ</button>
     </section>
     <p class="hint">Phím tắt: Space — tạm dừng / tiếp tục; 1–4 — tốc độ; R — đặt lại; kéo chuột / mũi tên — xoay; lăn chuột / + / − — thu phóng; L — bật / tắt nhãn; B — thu gọn / mở bảng.</p>
     </details><details data-group="statistics" open><summary>Số liệu</summary><section class="information" aria-label="Thông tin mô phỏng">
