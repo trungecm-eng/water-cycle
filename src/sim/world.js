@@ -1,6 +1,6 @@
 import { moveAirParticle } from './air.js';
 import { findClusters } from './clusters.js';
-import { releaseRain } from './precipitation.js';
+import { releaseRain, movePrecipitation } from './precipitation.js';
 import { config } from '../config.js';
 import { generateDrainage } from './drainage.js';
 import { Reservoirs } from './reservoirs.js';
@@ -24,6 +24,9 @@ export class World {
     this.steps = 0;
     this.evaporations = 0;
     this.returns = 0;
+    this.streamToLake = 0;
+    this.riverToSea = 0;
+    this.rainLandings = { mountain: 0, plain: 0, sea: 0, lake: 0, pond: 0 };
     this.evaporationsByReservoir = { sea: 0, lake: 0, pond: 0 };
     this.rays = [];
     this.clusters = [];
@@ -36,6 +39,7 @@ export class World {
   get time() { return this.steps * config.clock.dt; }
   step() {
     for (const particle of this.particles) moveAirParticle(particle, this.wind, this.map);
+    for (const particle of this.particles) movePrecipitation(particle, this.reservoirs, this);
     releaseRain(this.particles, this.rng);
     this.clusters = findClusters(this.particles);
     this.reservoirs.overflow();
@@ -72,7 +76,8 @@ export class World {
     const counts = { water: 0, vapor: 0, cloud: 0, rain: 0, runoff: 0 };
     for (const particle of this.particles) counts[particle.state]++;
     return freeze({ time: this.time, counts, level: this.reservoirs.level('lake'),
-      reservoirs: this.reservoirs.snapshot(), evaporationsByReservoir: { ...this.evaporationsByReservoir }, returns: this.returns, evaporations: this.evaporations,
+      reservoirs: this.reservoirs.snapshot(), streamToLake: this.streamToLake, riverToSea: this.riverToSea,
+      rainLandings: { ...this.rainLandings }, evaporationsByReservoir: { ...this.evaporationsByReservoir }, returns: this.returns, evaporations: this.evaporations,
       sun: this.sun, wind: this.wind, clusters: this.clusters.map(cluster => ({ ...cluster, ids: [...cluster.ids] })),
       particles: this.particles.map(particle => ({ ...particle })) });
   }

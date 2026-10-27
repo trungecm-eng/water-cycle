@@ -73,6 +73,7 @@ export class Reservoirs {
     delete particle.y;
     delete particle.z;
     delete particle.cell;
+    delete particle.travelCredit;
   }
   overflow() {
     const released = [];
