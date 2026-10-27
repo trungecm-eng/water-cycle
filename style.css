@@ -1,0 +1,5 @@
+:root { font-family: system-ui, sans-serif; color: #16364c; background: #f0f7fa; font-size: 16px; }
+body { margin: 0; }
+main { max-width: 1200px; margin: 0 auto; padding: 20px; }
+h1 { font-size: 26px; }
+canvas { display: block; width: 100%; height: auto; aspect-ratio: 5 / 3; background: #cdeefa; border-radius: 12px; }
