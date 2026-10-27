@@ -18,6 +18,8 @@ export const config = deepFreeze({
   defaults: { n: 1000, sun: 50, wind: 40, seed: 1, speed: 1, paused: false },
   limits: { minParticles: 100, maxParticles: 2000, minControl: 0, maxControl: 100, minSpeed: 0.5, maxSpeed: 8 },
   clock: { dt: 1 / 60, maxFrame: 0.25, epsilon: 1e-12, speeds: [0.5, 1, 2, 4] },
+  evaporation: { ratePerArea: 0.00008, temperature: 90, sampleAttempts: 32 },
+  sunlight: { position: [800, 650, 200], rayCount: 8, rayOpacity: 0.4 },
   heat: { baseline: 20, evaporationTemp: 80, condenseTemp: 20, environmentBase: 30, lapseRate: 0.09, cooling: 2, vaporCooling: 0.6, rayHeat: 35, raysPerSecond: 30, raySpeed: 700 },
   motion: { cloudDrift: 0.3, collisionIterations: 40, buoyancy: 18, vaporMaxSpeed: 35, windSpeed: 30, gravity: 80, rainMaxSpeed: 150, runoffSpeed: 24 },
   cloud: { clusterRadius: 40, cloudMinSize: 30, rainStartSize: 80, rainRate: 0.15 },

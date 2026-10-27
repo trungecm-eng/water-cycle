@@ -61,7 +61,7 @@ export function createRenderer(canvas, world, orbit) {
   scene.background = new THREE.Color(config.colors.sky);
   scene.add(new THREE.AmbientLight(0xffffff, config.rendering.ambientLight));
   const sunlight = new THREE.DirectionalLight(0xffffff, config.rendering.sunlight);
-  sunlight.position.set(800, 1000, -400);
+  sunlight.position.set(...config.sunlight.position);
   scene.add(sunlight);
   const terrain = new THREE.Mesh(terrainGeometry(world.map),
     new THREE.MeshStandardMaterial({ vertexColors: true, flatShading: true, roughness: 1 }));
@@ -82,6 +82,11 @@ export function createRenderer(canvas, world, orbit) {
   geometry.setAttribute('color', new THREE.Float32BufferAttribute(new Float32Array(world.options.n * 3), 3));
   const points = new THREE.Points(geometry, new THREE.PointsMaterial({ size: config.rendering.particleSize, vertexColors: true }));
   scene.add(points);
+  const rayGeometry = new THREE.BufferGeometry();
+  rayGeometry.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(3 * config.sunlight.rayCount * 6), 3));
+  const rays = new THREE.LineSegments(rayGeometry,
+    new THREE.LineBasicMaterial({ color: config.colors.ray, transparent: true, opacity: config.sunlight.rayOpacity }));
+  scene.add(rays);
   const camera = new THREE.PerspectiveCamera(config.camera.fov, 1, config.camera.near, config.camera.far);
   return {
     webgl2: true,
@@ -109,6 +114,14 @@ export function createRenderer(canvas, world, orbit) {
       geometry.setDrawRange(0, count);
       geometry.attributes.position.needsUpdate = true;
       geometry.attributes.color.needsUpdate = true;
+      for (let index = 0; index < world.rays.length; index++) {
+        const ray = world.rays[index];
+        rayGeometry.attributes.position.setXYZ(index * 2, ...config.sunlight.position);
+        rayGeometry.attributes.position.setXYZ(index * 2 + 1, ray.x, ray.y, ray.z);
+      }
+      rayGeometry.setDrawRange(0, world.rays.length * 2);
+      rayGeometry.attributes.position.needsUpdate = true;
+      rays.visible = world.sun > 0;
       renderer.render(scene, camera);
     }
   };

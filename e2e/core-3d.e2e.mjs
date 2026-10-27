@@ -34,7 +34,22 @@ try {
   await page.locator('#reset').click();
   const reset = await page.evaluate(() => window.__sim);
   assert.deepEqual(reset.camera, dragged.camera);
-  assert.equal(reset.counts.water, 2000);
+  assert.equal(Object.values(reset.counts).reduce((sum, count) => sum + count, 0), 2000);
+  await page.locator('#sun').focus();
+  await page.keyboard.press('Home');
+  await page.waitForFunction(() => window.__sim.sun === 0);
+  const unheated = await page.evaluate(() => window.__sim.evaporations);
+  const startTime = await page.evaluate(() => window.__sim.time);
+  await page.waitForFunction(time => window.__sim.time >= time + 1, startTime);
+  assert.equal(await page.evaluate(() => window.__sim.evaporations), unheated);
+  await page.keyboard.press('End');
+  await page.waitForFunction(count => window.__sim.sun === 100 && window.__sim.evaporations > count, unheated);
+  await page.locator('#pause').click();
+  const paused = await page.evaluate(() => window.__sim);
+  await page.keyboard.press('ArrowLeft');
+  const still = await page.evaluate(() => window.__sim);
+  assert.equal(still.time, paused.time);
+  assert.deepEqual(still.particles, paused.particles);
   await page.addInitScript(() => {
     const original = HTMLCanvasElement.prototype.getContext;
     HTMLCanvasElement.prototype.getContext = function (type, ...args) {
@@ -47,7 +62,7 @@ try {
   assert.match(await page.getByRole('alert').textContent(), /Không thể khởi tạo WebGL2/);
   assert.equal(await page.evaluate(() => window.__sim.webgl2), false);
   assert.deepEqual(errors, []);
-  console.log('3D core: WebGL2, 2000 particles, paused orbit/zoom, resize, reset, and fallback passed.');
+  console.log('3D core: WebGL2, 2000 particles, paused orbit/zoom, resize, reset, sunlight, evaporation pause, and fallback passed.');
 } finally {
   await browser.close();
 }
