@@ -54,3 +54,10 @@
 - `node --test`: 26/26 đạt, khoảng 127 giây; `node --check` cho các module giao diện và `git diff --check` đạt. Chromium kiểm nhanh: tạm dừng giữ nguyên thời gian, reset giữ sun=0/wind=100 và về ×1, không lỗi JS, không tràn ngang tại 1024 px.
 - Môi trường có Playwright toàn cục tại `/usr/local/lib/node_modules/playwright/index.mjs` và Chromium trong `/opt/ms-playwright`; import tên gói từ repo không tìm thấy. Không cần cài thêm dependency. Server local chạy bằng `python3 -m http.server 8000`.
 - Tiếp theo bước 9–10: lưu E2E và công cụ FPS vào repo, README; chạy toàn bộ và báo cáo đo. Chưa khẳng định hoàn tất AC-1/12/14.
+
+## Phiên build ngày 2026-10-27 — bước 9
+- Lưu `e2e/cycle-flow.e2e.mjs`: chạy luồng mặc định ×1, biến thể ×8 với resize và ba lần dừng/tiếp tục, kiểm bốn mốc, đủ năm trạng thái/nước nhận nhiệt, slider không nhảy hạt, ngừng nắng không bốc hơi mới, HUD/các giai đoạn, nút/phím/tốc độ/reset, snapshot đóng băng, URL hợp lệ/không hợp lệ và seed=7 khớp World độc lập sau cùng số bước. Console và pageerror đều phải sạch. Thêm favicon nội tuyến để tránh request favicon ngoài ý muốn.
+- Lưu công cụ `e2e/measure-fps.e2e.mjs` chờ đủ năm trạng thái ở 600 hạt/×1 rồi đo RAF trong 10 giây; `e2e/browser.mjs` tìm Playwright local hoặc npm toàn cục, hỗ trợ PLAYWRIGHT_MODULE và BASE_URL. Không cài thư viện vào repo.
+- Viết README tiếng Việt: chạy local, điều khiển, URL, trạng thái, hằng số/ý nghĩa, kiểm thử và cấu trúc thư mục. Nêu rõ hạt mây còn dưới ngưỡng dừng mưa và phần kiểm tay của người học.
+- `node --test`: 26/26 đạt (~128 giây). E2E bản cuối đạt cả hai luồng và URL; bốn mốc mặc định giống kiểm thử logic. Lần E2E đầu có race giữa điều kiện chờ và bộ ghi bằng chứng; đã sửa kịch bản chờ chính bằng chứng return trước khi khẳng định, không sửa logic mô phỏng.
+- Đo thử FPS Chromium 140.0.7339.16: 601 frame/10,0162 giây = 60,003 FPS tại viewport 1280×1000, ×1, 600 hạt; không lỗi console. Bước 10 sẽ lưu báo cáo chính thức và kiểm tra cuối.
