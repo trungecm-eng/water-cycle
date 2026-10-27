@@ -55,4 +55,9 @@ export function render(canvas, world) {
     ctx.fill();
   }
   ctx.restore();
+  if (world.lake.count === 0) {
+    ctx.fillStyle = config.colors.text;
+    ctx.font = '18px system-ui';
+    ctx.fillText('Hồ đã cạn', 20, 30);
+  }
 }

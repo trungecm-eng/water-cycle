@@ -2,6 +2,7 @@ import { config } from '../config.js';
 import { Lake } from './lake.js';
 import { mulberry32 } from './rng.js';
 import { moveAirParticle } from './air.js';
+import { movePrecipitation, releaseRain } from './precipitation.js';
 import { findClusters } from './clusters.js';
 
 function freeze(value) {
@@ -37,6 +38,8 @@ export class World {
         particle.temperature = Math.max(config.heat.baseline, particle.temperature - config.heat.cooling * dt);
       } else if (particle.state === 'vapor' || particle.state === 'cloud') {
         moveAirParticle(particle, this.wind, this.options.seed, this.time);
+      } else if (particle.state === 'rain' || particle.state === 'runoff') {
+        if (movePrecipitation(particle, this.lake)) this.returns++;
       }
     }
     if (this.sun === 0) {
@@ -74,6 +77,7 @@ export class World {
         this.evaporations++;
       }
     }
+    releaseRain(this.particles, this.rng);
     this.clusters = findClusters(this.particles);
     this.steps++;
   }

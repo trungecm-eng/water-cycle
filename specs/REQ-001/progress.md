@@ -34,3 +34,10 @@
 - `node --test`: 19/19 test đạt. Test mới gồm nhiệt độ môi trường, ngưng tụ hạt riêng lẻ, giữ độ cao, gió/va chạm, cụm liên thông qua ô băm và bảo vệ snapshot. Chưa chạy trình duyệt, E2E hay FPS.
 - Tiếp theo bước 6: bổ sung cờ mưa có trễ theo từng giọt, mưa dần, rơi thẳng, runoff và về hồ. `findClusters` hiện trả `{ids, size, visible, raining: false}`; cần bổ sung kế thừa cờ mưa khi tính lại cụm. `world.particles[id]` là hạt tương ứng vì mảng giữ nguyên thứ tự. Sau đó làm bước 7–10, chưa khẳng định nhịp hay ổn định đạt yêu cầu.
 - Commit dùng danh tính qua biến môi trường như các phiên trước; không sửa cấu hình Git. Phiên này kết thúc tại bước hoàn chỉnh để phiên sau tiếp tục từ bước 6.
+
+## Phiên build ngày 2026-10-27 — bước 6
+- Hoàn thành `precipitation.js`: xác suất mưa theo dt và RNG, ngưỡng bắt đầu 80/tiếp tục từ 30 giọt với cờ kế thừa từng giọt; mưa bỏ vận tốc ngang, gia tốc trọng trường và tốc độ tối đa; bắt va chạm địa hình hoặc mực hồ trước khi xuyên qua. Runoff đi sang phải trên bề mặt, vào hồ bằng Lake.add; World đếm số lần về hồ. Canvas báo “Hồ đã cạn” khi không còn water (HUD đầy đủ thuộc bước 8).
+- `node --test`: 23/23 test đạt. Kiểm thử mới: ngưỡng 79/80/40/29 và mưa dần, 10.000 hạt mưa ngẫu nhiên có seed, runoff từ mọi hoành độ nguyên 0–639 tới hồ trong 40 giây, rơi thẳng và tăng tốc ở gió 0/40/100, bảo toàn số hạt khi về hồ.
+- Điểm cần biết: AC-6 có hai câu không đồng nhất nếu hiểu “mưa hết” là còn 0 giọt: quy tắc bắt buộc dừng dưới 30 để lại giọt mây. Triển khai giữ đúng quy tắc ngưỡng; test 60 giây kiểm cụm không bổ sung đã xuống dưới 30 và ngừng mưa, không khẳng định toàn bộ giọt đã thành rain. Cần nêu rõ khi nghiệm thu; không tự sửa requirement/spec.
+- Tiếp theo bước 7: đo và hiệu chỉnh bốn mốc nhịp, ổn định 600 giây và lưới sun × wind; các hằng số chưa được hiệu chỉnh. Sau đó bước 8–10: giao diện điều khiển/HUD, E2E, README và FPS. Chưa chạy trình duyệt, chưa khẳng định toàn bộ AC đạt.
+- Phiên dừng tại bước 6 hoàn chỉnh. Commit dùng biến môi trường danh tính ai-dev-team như phiên trước, không sửa cấu hình Git.

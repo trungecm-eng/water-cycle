@@ -30,8 +30,11 @@ export function findClusters(particles) {
         }
       }
     }
+    const raining = members.length >= config.cloud.rainStartSize
+      || (members.length >= config.cloud.cloudMinSize && members.some(particle => particle.raining));
+    for (const particle of members) particle.raining = raining;
     clusters.push({ ids: members.map(particle => particle.id), size: members.length,
-      visible: members.length >= config.cloud.cloudMinSize, raining: false });
+      visible: members.length >= config.cloud.cloudMinSize, raining });
   }
   return clusters;
 }
