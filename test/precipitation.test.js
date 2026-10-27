@@ -79,6 +79,6 @@ test('rain accelerates vertically regardless of wind and world counts returns', 
     }
     assert.equal(particle.state, 'water');
     assert.equal(world.returns, 1);
-    assert.equal(world.lake.count, 600);
+    assert.equal(world.lake.count, config.defaults.n);
   }
 });
