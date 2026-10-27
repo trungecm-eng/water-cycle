@@ -1,8 +1,8 @@
-# REQ-004 — Báo cáo build (đang thực hiện)
+# REQ-004 — Báo cáo build
 
 ## Phạm vi hiện tại
 
-Đã triển khai bước 1–7. Đồ họa hoàn chỉnh, giao diện, kịch bản trình duyệt và chạy nghiệm thu toàn bộ còn ở bước 8–11; chưa kết luận đạt toàn bộ yêu cầu.
+Đã triển khai bước 1–10: vật lý 3D, sa bàn, nhãn, giao diện, kịch bản trình duyệt, ảnh và README. Kết quả chạy tổng thể ghi phía cuối; đánh giá chủ quan và FPS máy người dùng (AC-18) dành cho nghiệm thu tay.
 
 ## Chuyển kiểm thử REQ-001 sang thế giới 3D
 
@@ -44,3 +44,18 @@ Giảm `windShelterDistance` từ 100 xuống 80: đường gió lặng cũ có 
 Mặc định 600 giây: bốc hơi đầu ở 0,05 giây; mây nhìn thấy đầu ở 28,07 giây; mưa đầu ở 33,30 giây; giọt đã chạm đất rồi về vùng chứa đầu ở 36,85 giây. Hồ ít nhất còn 179 hạt; 152 lần suối vào hồ và 108 lần sông ra biển. Lưới 9 tổ hợp kiểm tra mỗi bước: tổng hạt/trạng thái/vùng chứa, giá trị hữu hạn, biên thế giới, không xuyên đất, mây sát mép tây. Test riêng giữ ý nghĩa tăng bốc hơi khi tăng Mặt Trời và chu trình trên không tiếp tục khi tắt nắng.
 
 Kiểm thử chốt bước 7: `node --test` đạt 39/39, 81,02 giây, không cần trình duyệt hoặc mạng. Số test giảm do gỡ các test 2D đã có bản thay thế, không phải bỏ các ý nghĩa bảo toàn/ngưng tụ/mưa/thời gian. Chưa chạy e2e hoặc đo FPS ở mốc này.
+
+## Trình duyệt và tài liệu
+
+Kịch bản cycle-flow thay luồng 2D bằng 1000 hạt, bốc hơi trên vùng chứa, mực hồ thay đổi, năm trạng thái, L, zoom, tạm dừng hiệu ứng, thanh trượt, reset, URL và đối chiếu snapshot World thuần. Có luồng ×1 và biến thể ×8 bị resize, xoay camera lúc dừng và dừng nhiều lần. Kiểm reset chụp snapshot cùng tác vụ để tránh bước bốc hơi chạy giữa thao tác và phép kiểm.
+
+`scene.e2e.mjs` tái sử dụng scenery để kiểm đối tượng, bảy nhãn không chồng và hiệu ứng, thêm URL và fallback WebGL; core-3d kiểm camera kéo/lăn/phím, bố cục, resize, 2000 hạt. Console sạch. Bổ sung màu river còn thiếu khi xem ảnh. README đã thay nội dung 2D bằng bản đồ, màu, camera, URL, hằng số, cấu trúc, kiểm thử và mô hình đơn giản hóa 3D.
+
+Bốn ảnh từ Chromium 1440 × 1000 (camera qua điều khiển công khai, không sửa World):
+
+- [Toàn cảnh mặc định](screenshots/01-default.png)
+- [Từ biển nhìn núi](screenshots/02-sea-to-mountains.png)
+- [Núi, suối và hồ](screenshots/03-mountains-streams-lake.png)
+- [Mây mưa trên núi](screenshots/04-mountain-rain.png)
+
+Ảnh cuối đợi >10 giọt rain và đã có mưa xuống núi, rồi dừng để chụp. Ảnh cung cấp bằng chứng hình ảnh, không thay đánh giá AC-18.

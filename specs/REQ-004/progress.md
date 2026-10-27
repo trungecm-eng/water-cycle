@@ -85,3 +85,10 @@
 - Kiểm thử: node --test đạt 39/39 trong 101,47 giây. Sau chỉnh góc chiếu/config, chạy riêng camera/foundation đạt 4/4; e2e core-3d/scenery đạt. git diff --check sạch. Đã xem ảnh bố cục /tmp/req004-step9.png (ảnh tạm trước khi mở rộng góc chiếu, không dùng nghiệm thu).
 - Tiếp theo: bước 10 và 11 còn chưa đánh dấu. Phải thay/nâng cấp cycle-flow và measure-fps hiện là kịch bản từ REQ-001; thêm scene và screenshots theo đúng kế hoạch, lưu bộ bốn ảnh, cập nhật README và build-report (phần phạm vi báo cáo hiện mới ghi bước 1–7). Sau đó chạy toàn bộ test/e2e/FPS, ghi thời gian và số đo; không coi lần chạy riêng bước 9 là nghiệm thu toàn bộ. AC-18 vẫn cần kiểm tay trên máy người dùng.
 - Lệnh: python3 -m http.server 8000; node e2e/core-3d.e2e.mjs; node e2e/scenery.e2e.mjs; node --test. Danh tính commit vẫn truyền bằng git -c, không sửa cấu hình Git. Không có notes/eval riêng trong specs/REQ-004 ở đầu phiên.
+
+
+## Phiên build 9 — bước 10 — 2026-10-27
+
+- Hoàn thành kịch bản cycle-flow 3D (luồng ×1 và gián đoạn ×8), scene, screenshots và FPS 1000 hạt; cập nhật README, báo cáo và bốn ảnh trong screenshots/. Sửa màu river thiếu trong config, không đổi vật lý. Kịch bản FPS chỉ ghi số đo theo AC-15, không áp ngưỡng máy người dùng lên SwiftShader.
+- `node --test` đạt 39/39 trong 133,40 giây khi chạy cùng trình duyệt; sau thay màu chạy camera/foundation 4/4 đạt. core-3d, scene, cycle-flow và screenshots đều đạt, console sạch. Scene bao gồm scenery. Test reset dùng sự kiện từ canvas, chụp snapshot cùng tác vụ; phát từ document không hợp lệ vì handler cần target là Element.
+- Tiếp tục ngay bước 11: chạy lại toàn bộ trên trạng thái chốt, đo FPS riêng và ghi số đo. AC-18 vẫn dành cho người kiểm tay trên máy người dùng.
