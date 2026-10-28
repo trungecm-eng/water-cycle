@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { renderedTriangleHeight, measureSurfaceClearance, locateClearanceExtrema, auditChannelBanks } from '../src/art/water-audit.js';
+import { renderedTriangleHeight, sampleSurfaceTriangles, measureSurfaceClearance, locateClearanceExtrema, auditChannelBanks } from '../src/art/water-audit.js';
 import { generateDrainage } from '../src/sim/drainage.js';
 
 test('rendered height follows both terrain triangles rather than bilinear interpolation', () => {
@@ -148,5 +148,33 @@ test('triangle-aware stream routes reduce headwater overhang below thirty-three 
       assert.equal(stream.rendered.coveredVertices, 0);
       assert.ok(stream.rendered.minimumGap > 0.05);
     }
+  }
+});
+
+
+test('surface sampling finds terrain crossing between clear triangle corners', () => {
+  const triangle = Float32Array.from([0, 1, 0, 6, 1, 0, 0, 1, 6]);
+  const original = Array.from(triangle);
+  const terrain = (x, z) => x === 2 && z === 2 ? 3 : 0;
+  assert.equal(measureSurfaceClearance(triangle, terrain).coveredVertices, 0);
+  const samples = sampleSurfaceTriangles(triangle);
+  assert.equal(samples.length, 21);
+  assert.deepEqual(samples.slice(-3), [2, 1, 2]);
+  assert.equal(measureSurfaceClearance(samples, terrain).coveredVertices, 1);
+  assert.deepEqual(locateClearanceExtrema(samples, terrain).minimum.position, [2, 1, 2]);
+  assert.deepEqual(Array.from(triangle), original);
+  assert.deepEqual(sampleSurfaceTriangles([]), []);
+  assert.throws(() => sampleSurfaceTriangles([0, 1, 0]), RangeError);
+});
+
+test('channel interior audit includes seven samples per rendered triangle', () => {
+  const map = generateDrainage();
+  for (const cells of [80, 160]) for (const channel of auditChannelBanks(map, cells).channels) {
+    assert.equal(channel.interior.samplesPerTriangle, 7);
+    assert.equal(channel.interior.rendered.vertices, channel.rendered.vertices / 3 * 7);
+    assert.equal(channel.interior.extrema.minimum.gap, channel.interior.rendered.minimumGap);
+    assert.equal(channel.interior.extrema.maximum.gap, channel.interior.rendered.maximumGap);
+    assert.ok(channel.interior.rendered.minimumGap <= channel.rendered.minimumGap + 1e-10);
+    assert.ok(channel.interior.rendered.maximumGap >= channel.rendered.maximumGap - 1e-10);
   }
 });

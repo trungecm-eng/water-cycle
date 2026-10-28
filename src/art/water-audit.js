@@ -27,6 +27,25 @@ export function measureSurfaceClearance(positions, terrainHeight, tolerance = 0.
   };
 }
 
+// Vertex-only checks miss terrain crossing a triangle between its corners.
+// Sample edge midpoints and the centroid as well, keeping Float32 input just
+// like the renderer. Counts include shared edges, as the vertex audit does.
+export function sampleSurfaceTriangles(positions) {
+  if (positions.length % 9 !== 0) throw new RangeError('Expected complete triangles');
+  const samples = [];
+  for (let i = 0; i < positions.length; i += 9) {
+    const a = Array.from(positions.slice(i, i + 3));
+    const b = Array.from(positions.slice(i + 3, i + 6));
+    const c = Array.from(positions.slice(i + 6, i + 9));
+    for (const weights of [[1, 0, 0], [0, 1, 0], [0, 0, 1],
+      [0.5, 0.5, 0], [0, 0.5, 0.5], [0.5, 0, 0.5], [1/3, 1/3, 1/3]]) {
+      for (let axis = 0; axis < 3; axis++) samples.push(
+        a[axis] * weights[0] + b[axis] * weights[1] + c[axis] * weights[2]);
+    }
+  }
+  return samples;
+}
+
 // Keep the location of extrema as well as aggregate counts so the next bank
 // correction can target a specific slope instead of changing global constants.
 export function locateClearanceExtrema(positions, terrainHeight) {
@@ -54,7 +73,13 @@ export function auditChannelBanks(map, cells) {
     tolerance: 0.05,
     channels: map.channels.filter(channel => ['river', 'stream'].includes(channel.type)).map(channel => {
       const positions = Float32Array.from(channelRibbon(map, channel));
+      const samples = sampleSurfaceTriangles(positions);
       return {
+        interior: {
+          samplesPerTriangle: 7,
+          rendered: measureSurfaceClearance(samples, renderedHeight),
+          extrema: locateClearanceExtrema(samples, renderedHeight)
+        },
         type: channel.type,
         source: channel.path[0],
         analytic: measureSurfaceClearance(positions, (x, z) => waterBedHeight(map, x, z)),
