@@ -51,9 +51,9 @@ test('lake connector reaches the river and its visible bed is recessed', () => {
   const original = Array.from(map.heights);
   const surface = lakeConnection(map,20);
   const end = map.outlets.lake;
-  assert.equal(surface[0],360);
+  assert.equal((surface[0] + surface[3]) / 2,360);
   assert.equal(surface[1],20);
-  assert.equal(surface.at(-3),end%map.stride*map.spacing);
+  assert.equal((surface.at(-12) + surface.at(-3)) / 2,end%map.stride*map.spacing);
   for (let i=0;i<surface.length;i+=3) assert.ok(waterBedHeight(map,surface[i],surface[i+2])<surface[i+1]);
   assert.deepEqual(Array.from(map.heights),original);
 });
@@ -285,4 +285,33 @@ test('river rounds a right-angle drainage bend into turns below fifteen degrees'
     // Two passes left 26.565-degree turns on this bend.
     assert.ok(angle < 15, `sharp river bend: ${angle}`);
   }
+});
+
+
+test('lake connector retains width and area for outlets in every direction', () => {
+  const lake = { x: 50, z: 50 };
+  const data = { reservoirs: { lake } };
+  for (const [column, row] of [[8, 5], [5, 8], [2, 5], [5, 2], [8, 8]]) {
+    const end = row * 11 + column;
+    const localMap = { stride: 11, spacing: 10, outlets: { lake: end },
+      heights: new Float64Array(121).fill(10) };
+    const surface = lakeConnection(localMap, 20, data);
+    const dx = column * 10 - lake.x, dz = row * 10 - lake.z;
+    let area = 0;
+    for (let i = 0; i < surface.length; i += 18) {
+      const acrossX = surface[i + 3] - surface[i];
+      const acrossZ = surface[i + 5] - surface[i + 2];
+      assert.ok(Math.abs(Math.hypot(acrossX, acrossZ) - 6) < 1e-10);
+      assert.ok(Math.abs(acrossX * dx + acrossZ * dz) < 1e-10);
+      for (const offset of [0, 9]) {
+        const j = i + offset;
+        area += Math.abs((surface[j + 3] - surface[j]) * (surface[j + 8] - surface[j + 2])
+          - (surface[j + 6] - surface[j]) * (surface[j + 5] - surface[j + 2])) / 2;
+      }
+    }
+    assert.ok(Math.abs(area - 6 * Math.hypot(dx, dz)) < 1e-9);
+  }
+  const emptyMap = { stride: 11, spacing: 10, outlets: { lake: 60 },
+    heights: new Float64Array(121).fill(10) };
+  assert.deepEqual(lakeConnection(emptyMap, 20, data), []);
 });

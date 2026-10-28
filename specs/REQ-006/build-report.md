@@ -466,3 +466,13 @@ Audit giữ mọi assertion hiện có. Cực đại đỉnh ba suối Thấp **
 E2e `art-trees`, `art-strata`, `art-budget`, `cycle-flow`, `core-3d` đạt, console sạch; cycle-flow gồm luồng chính, gián đoạn và URL. Cây 2.200/400, hạt bất biến khi đổi chất lượng. Budget khi đủ các giai đoạn tại **70,65 giây**: Cao **67 lần vẽ / 224.608 tam giác**, Thấp **66 / 84.598**; Mặt Trời nằm trong khung ở bốn góc hai mức. Chưa chạy mọi e2e REQ-005/006, FPS hoặc kiểm cuối 10c; không dùng các kết quả này để đóng 10c.
 
 Kiểm thử Node cuối trên code đã gom phép đo hành lang và có test mới: `node --test` **108/108**, 0 fail/skip/cancelled, exit 0, **113,332 giây**, chạy riêng sau khi mọi trình duyệt đóng. Không hạ assertion hoặc sửa test cũ. Đóng mốc 10b-25; bước 10b/10c/10 còn mở. Server Python đã dừng.
+
+
+## Mốc 10b-26: bề rộng cửa nối hồ–sông
+
+- Sửa `lakeConnection`: lấy pháp tuyến của hướng từ tâm hồ tới cửa thoát để đặt hai mép cách nhau 6 đơn vị. Trước đây mép chỉ lệch theo trục Z, khiến bề rộng thực giảm khi hướng chảy xiên và suy biến thành đường khi cửa thoát dọc Z. Trả geometry rỗng khi hai đầu trùng nhau. Không đổi đường tâm, độ cao, lòng đất, World/RNG hoặc mô phỏng.
+- Test mới kiểm năm hướng cửa thoát: bề rộng 6, vuông góc hướng chảy, diện tích chiếu bằng chiều dài nhân bề rộng và trường hợp hai đầu trùng. Test cửa nối cũ chuyển hai assertion tọa độ mép sang tọa độ trung điểm để giữ kiểm hai đầu đường tâm; giữ assertion nước trên đáy và không sửa heightmap.
+- Toàn bộ `node --test` **109/109**, không fail/skip/cancelled, exit 0, **122,499 giây**. Nhóm nước **14/14**. E2e `art-strata`, `art-trees` đạt, console sạch; cây 2.200/400, hạt không đổi khi chuyển chất lượng.
+- Đã chụp và xem `screenshots/28-perpendicular-connector.png`: Cao 1920 × 1080, góc dọc sông, paused từ 0 giây, hồ 20, ao 11,6, console sạch. Sửa này cục bộ; núi vẫn nhọn/vách dốc và bờ suối còn gấp. Giữ QA bắt buộc 1/2 chưa đạt; không thay bộ chín ảnh/evidence nghiệm thu. Chưa kiểm mọi e2e, FPS hoặc bốn góc ở mực thấp–đầy; **10b/10c/10 vẫn mở, trả continue**.
+- Tiếp theo cần sửa hình khối núi và giao tuyến bờ suối/cửa hồ tổng thể, bảo toàn sáu đỉnh, mọi assertion và bất biến mô phỏng; kiểm cả đỉnh/nội thất trên hai lưới. Sau khi ảnh đạt mới chụp lại chín ảnh/bảng QA và chạy đủ 10c. Tránh coi sửa cửa nối này là hoàn tất AC-7.
+- Không có notes.md hoặc eval REQ-006. Lệnh hoạt động: `node --test`, `node --test test/water-shapes.test.js`, `node e2e/art-strata.e2e.mjs`, `node e2e/art-trees.e2e.mjs`. Server Python cổng 8000 đã dừng. Script chụp/log trong /tmp không bền vững; bằng chứng ảnh và số liệu cần giữ đã lưu repo. Commit dùng danh tính từng lệnh, không sửa git config hoặc tệp cấm.

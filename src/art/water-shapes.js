@@ -178,11 +178,17 @@ export function lakeConnection(map, level, data = mapData) {
   const end = map.outlets.lake;
   const x = end % map.stride * map.spacing, z = Math.floor(end / map.stride) * map.spacing;
   const positions = [];
+  const dx = x - lake.x, dz = z - lake.z;
+  const length = Math.hypot(dx, dz);
+  if (!length) return positions;
+  // Offset across the flow direction, rather than along the world Z axis.
+  // A Z-aligned outlet otherwise collapses the connector into a line.
+  const nx = -dz / length * 3, nz = dx / length * 3;
   for (let i=0;i<24;i++) {
     const pair = [i/24,(i+1)/24].map(t => {
       const px = lake.x + (x-lake.x)*t, pz = lake.z + (z-lake.z)*t;
       const y = level*(1-t) + (map.heights[end]+0.35)*t;
-      return [[px,y,pz-3],[px,y,pz+3]];
+      return [[px-nx,y,pz-nz],[px+nx,y,pz+nz]];
     });
     for (const p of [pair[0][0],pair[0][1],pair[1][0],pair[1][0],pair[0][1],pair[1][1]]) positions.push(...p);
   }
