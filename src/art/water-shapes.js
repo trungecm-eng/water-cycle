@@ -95,6 +95,17 @@ export function lakeConnection(map, level, data = mapData) {
   return positions;
 }
 
+// Blend the carved bed back into the existing terrain with zero slope at both
+// ends. A hard distance cutoff leaves a vertical lip along the whole channel.
+const bankInnerRadius = 9;
+const bankOuterRadius = 34;
+function recessedBank(height, bed, distance) {
+  if (distance >= bankOuterRadius) return height;
+  const t = Math.max(0, (distance - bankInnerRadius) / (bankOuterRadius - bankInnerRadius));
+  const blend = t * t * (3 - 2 * t);
+  return height + (Math.min(height, bed) - height) * (1 - blend);
+}
+
 // The connector cuts only the visible bed; World and its drainage stay intact.
 export function waterBedHeight(map, x, z, data = mapData) {
   const lake = data.reservoirs.lake, end = map.outlets.lake;
@@ -102,17 +113,17 @@ export function waterBedHeight(map, x, z, data = mapData) {
   const dx = ex-lake.x, dz = ez-lake.z;
   const t = Math.max(0,Math.min(1,((x-lake.x)*dx+(z-lake.z)*dz)/(dx*dx+dz*dz)));
   const distance = Math.hypot(x-lake.x-dx*t,z-lake.z-dz*t);
-  let height = heightAt(map,x,z);
-  if (distance < 14) height = Math.min(height,lake.bottom*(1-t)+map.heights[end]*t-3);
+  const originalHeight = heightAt(map,x,z);
+  let height = recessedBank(originalHeight, lake.bottom*(1-t)+map.heights[end]*t-3, distance);
   for (const channel of map.channels.filter(c => ['river','stream'].includes(c.type))) {
     const points = channelPoints(map,channel);
     for (let i=1;i<points.length;i++) {
       const a=points[i-1], b=points[i];
-      if (x < Math.min(a[0],b[0])-18 || x > Math.max(a[0],b[0])+18 || z < Math.min(a[2],b[2])-18 || z > Math.max(a[2],b[2])+18) continue;
+      if (x < Math.min(a[0],b[0])-bankOuterRadius || x > Math.max(a[0],b[0])+bankOuterRadius || z < Math.min(a[2],b[2])-bankOuterRadius || z > Math.max(a[2],b[2])+bankOuterRadius) continue;
       const dx=b[0]-a[0], dz=b[2]-a[2];
       const t=Math.max(0,Math.min(1,((x-a[0])*dx+(z-a[2])*dz)/(dx*dx+dz*dz || 1)));
       const distance=Math.hypot(x-a[0]-dx*t,z-a[2]-dz*t);
-      if(distance < 18) height=Math.min(height,a[1]*(1-t)+b[1]*t-4+Math.max(0,distance-9)*0.6);
+      height = Math.min(height, recessedBank(originalHeight, a[1]*(1-t)+b[1]*t-4, distance));
     }
   }
   return height;

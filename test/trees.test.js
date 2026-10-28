@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { generateTrees, treeEligible } from '../src/art/trees.js';
 import { terrainSample } from '../src/art/terrain-colors.js';
+import { waterBedHeight } from '../src/art/water-shapes.js';
 import { generateDrainage } from '../src/sim/drainage.js';
 import { config } from '../src/config.js';
 import { mapData } from '../src/map-data.js';
@@ -23,7 +24,8 @@ test('forests are seeded clustered bounded and avoid forbidden terrain', () => {
     assert.ok(!['sea', 'lake', 'pond', 'river', 'stream', 'beach'].includes(sample.region));
     assert.ok(sample.slope < config.art.treeSlope);
     assert.ok(sample.height < config.art.snowHeight);
-    assert.equal(tree.y, sample.height);
+    assert.equal(tree.y, waterBedHeight(map, tree.x, tree.z));
+    assert.ok(tree.y <= sample.height);
   }
   for (const region of ['sea', 'lake', 'pond', 'river', 'stream', 'beach']) {
     assert.equal(treeEligible({ region, slope: 0, height: 0 }), false);

@@ -3,6 +3,7 @@ import { mapData } from '../map-data.js';
 import { mulberry32 } from '../sim/rng.js';
 import { terrainSample } from './terrain-colors.js';
 import { valueNoise } from './noise.js';
+import { waterBedHeight } from './water-shapes.js';
 import { fieldAt, generateFields } from './fields.js';
 
 export function treeEligible(sample) {
@@ -25,7 +26,7 @@ export function generateTrees(map, count = config.quality.levels.high.trees, dat
       if (!treeEligible(sample) || fieldAt(fields, tx, tz)) continue;
       const cluster = valueNoise(tx / 65, tz / 65, data.seed ^ 0x9ab4);
       const weight = sample.region === 'plain' ? 0.12 : 1;
-      candidates.push({ x: tx, y: sample.height, z: tz, region: sample.region,
+      candidates.push({ x: tx, y: waterBedHeight(map, tx, tz, data), z: tz, region: sample.region,
         scale: 0.75 + random() * 0.5, shade: random(), rotation: random() * Math.PI * 2,
         rank: rank / (weight * (0.12 + cluster ** 2)) });
     }

@@ -191,3 +191,17 @@ Kiểm thử: Node **77/77**, không fail/skip, **108,538 giây**, chạy riêng
 Bảng QA bước 9 vẫn giữ trạng thái chưa đạt; ảnh tạm chỉ chứng minh màn mưa dễ thấy hơn trong một trạng thái. Tiếp theo sửa dáng núi, lòng chảo/mép nước và lòng dẫn răng cưa, đo AC-2 trên bề mặt vẽ, chụp lại chín ảnh và đánh giá cả mưa núi/biển, nhãn/panel. Sau đó 10c kiểm tổng thể và FPS.
 
 - Kiểm hồi quy `e2e/scenery.e2e.mjs` đạt, console sạch; `git diff --check` sạch. Server đã dừng cuối phiên.
+
+## Mốc 10b-2 — Chuyển tiếp bờ lòng dẫn
+
+Thay hai ngưỡng cắt cứng của `waterBedHeight` (14 đơn vị quanh dải nối, 18 quanh sông/suối) bằng nội suy smoothstep: giữ đáy trong bán kính 9, trở lại địa hình gốc liên tục ở bán kính 34. Lấy giá trị thấp nhất của các mặt cắt từ cùng địa hình gốc, tránh hạ đất nhiều lần tại đoạn giao nhau. Không đổi World, độ cao mô phỏng, RNG hoặc dải nước. Cây lấy độ cao từ `waterBedHeight` để thân không lơ lửng trên phần bờ mới hạ; vị trí ngang, số lượng, seed và thứ tự cây giữ nguyên.
+
+Hai test mới kiểm bước nhảy của phần hạ lòng dẫn ở các ngưỡng cũ/mới và nội suy tam giác lưới 80/160 không che đỉnh dải nước. Đo đối chứng bằng mã HEAD trước sửa và cùng bản đồ: chênh lệch lớn nhất giữa hai điểm cách nhau 0,002 đơn vị tại các ngưỡng giảm **46,56657 → 0,009878**. Đây là số đo độ liên tục, không phải kết luận hồ/ao hoặc núi đạt QA.
+
+Cặp kỳ vọng test thay đổi: `test/trees.test.js`, độ cao thân **terrainSample.height → waterBedHeight(map,x,z)**; thêm kiểm không nâng cao hơn mặt mô phỏng. Giữ các kiểm số lượng, vùng cấm, tất định, mật độ và bất biến World/RNG.
+
+Ảnh thử Cao 1920 × 1080, góc dọc sông, paused ×1 ở `/tmp/req006-smooth-banks.png` đã xem: bờ dọc sông dịu hơn, nhưng hồ vẫn như đĩa cao và núi vẫn là các chóp rời. Không thay bộ chín ảnh hoặc bảng QA chưa đạt bằng ảnh thử này.
+
+**Phát hiện cần xử lý tiếp ở 10b:** đo lại chỉ số AC-2 bằng cách lấy mẫu `waterBedHeight` trên tọa độ lưới 96 cho thấy **5 đỉnh**, không phải 6; cả HEAD trước sửa và code mới đều mất đỉnh gần (208,292) do lòng dẫn cắt qua. Test hiện có đo địa hình mô phỏng nên chưa phát hiện. Bản vẽ mới có độ lệch chuẩn dốc núi **2,188804**, độ cao tối đa **293,903890**, độ lệch chuẩn phần dư đồng bằng **1,980108** (2.950 mẫu theo cùng phép loại vùng của test hiện có). Thử tạm chuyển test AC-2 sang mặt vẽ đã báo fail đúng 5 đỉnh, sau đó hoàn nguyên thay đổi thử; không hạ ngưỡng 6 hoặc commit test hỏng. Cần sửa dáng núi/vị trí lòng dẫn và đưa phép đo mặt vẽ cuối vào test đạt trước khi đánh dấu 10b/10 hoàn tất. Bảng QA bước 9 vẫn giữ nguyên trạng thái chưa đạt.
+
+Kiểm thử cuối mốc 10b-2: `node --test` **79/79**, 0 fail/skip, **106,597 giây** (wrapper **106,633 giây**, exit 0). E2e art-trees, art-strata, scenery, art-budget và cycle-flow (chính, gián đoạn, URL) đạt, console sạch. Budget tại **81,7167 giây**: Cao **67 calls / 225.584 triangles**, Thấp **66 / 86.384**, hạt giữ nguyên giữa hai mức. Lượt e2e đầu server đã dừng nên connection refused; lượt chạy lại dùng wrapper quản lý server đạt exit 0. Chưa đo FPS hoặc chạy toàn bộ e2e, chưa chụp lại chín ảnh. Không đánh dấu 10b/10 hoặc AC-2/7/13 đạt. `git diff --check` sạch.
