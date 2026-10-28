@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { generateDrainage } from '../src/sim/drainage.js';
 import { heightAt } from '../src/sim/heightmap.js';
-import { basinSurface, channelRibbon, lakeConnection, waterBedHeight } from '../src/art/water-shapes.js';
+import { basinSurface, channelRibbon, lakeConnection, waterBedHeight, reservoirBedHeight, basinTerrainHeight } from '../src/art/water-shapes.js';
 const map = generateDrainage();
 
 test('basin surfaces follow terrain intersections and reservoir levels', () => {
@@ -40,7 +40,7 @@ test('lake connector reaches the river and its visible bed is recessed', () => {
 });
 
 test('carved banks join the terrain continuously across their influence boundary', () => {
-  const correction = (x, z) => waterBedHeight(map, x, z) - heightAt(map, x, z);
+  const correction = (x, z) => waterBedHeight(map, x, z) - basinTerrainHeight(map, x, z);
   const paths = map.channels.filter(channel => ['river', 'stream'].includes(channel.type))
     .map(channel => channel.path.map(index => [index % map.stride * map.spacing,
       Math.floor(index / map.stride) * map.spacing]));
@@ -85,4 +85,38 @@ test('terrain triangles leave channel water exposed at both rendering resolution
       }
     }
   }
+});
+
+
+test('reservoir shoreline edges meet the same fixed bowl used by the land mesh', () => {
+  const original = Array.from(map.heights);
+  for (const [id, levels] of [['lake', [12.5, 20, 24.8]], ['pond', [8.5, 11.6, 15.2]]]) {
+    const areas = [];
+    for (const level of levels) {
+      const surface = basinSurface(map, id, level);
+      const edges = new Map();
+      let area = 0;
+      for (let i = 0; i < surface.length; i += 9) {
+        const vertices = [0, 3, 6].map(offset => surface.slice(i + offset, i + offset + 3));
+        area += Math.abs((vertices[1][0]-vertices[0][0])*(vertices[2][2]-vertices[0][2])
+          -(vertices[2][0]-vertices[0][0])*(vertices[1][2]-vertices[0][2])) / 2;
+        for (let j = 0; j < 3; j++) {
+          const a = vertices[j], b = vertices[(j+1)%3];
+          const key = [a.join(','), b.join(',')].sort().join('|');
+          const edge = edges.get(key) ?? { count: 0, a, b };
+          edge.count++;
+          edges.set(key, edge);
+        }
+      }
+      const boundary = [...edges.values()].filter(edge => edge.count === 1);
+      assert.ok(boundary.length >= 3);
+      for (const edge of boundary) for (const [x,,z] of [edge.a, edge.b]) {
+        assert.ok(Math.abs(reservoirBedHeight(map, id, x, z) - level) < 0.00001,
+          `${id}: floating shoreline at ${x},${z}`);
+      }
+      areas.push(area);
+    }
+    assert.ok(areas[0] < areas[1] && areas[1] < areas[2], `${id}: shoreline must grow with level`);
+  }
+  assert.deepEqual(Array.from(map.heights), original);
 });

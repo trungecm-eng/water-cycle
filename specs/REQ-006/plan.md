@@ -18,5 +18,6 @@ Mỗi bước gồm code và test của bước đó; `node --test` xanh và cá
   - [x] 10b-1. Tăng độ rõ màn mưa riêng với hạt mưa mô phỏng; kiểm thử logic, e2e khí quyển và ngân sách. QA chín ảnh cuối vẫn thuộc 10b.
   - [x] 10b-2. Làm trơn chuyển tiếp bờ lòng dẫn, đặt cây theo mặt vẽ; kiểm hồi quy độ liên tục và dải nước ở hai mức. QA hồ/núi và chín ảnh vẫn thuộc 10b.
   - [x] 10b-3. Giữ đủ sáu đỉnh trên mặt vẽ: dịch đỉnh tránh lòng suối, đo cả mặt mô phỏng/mặt vẽ, chạy hồi quy mô phỏng và trình duyệt; dáng núi và hồ tổng thể vẫn thuộc 10b.
+  - [x] 10b-4. Dùng chung lòng chảo cố định cho mặt đất và đường bờ hồ/ao theo mực nước; kiểm đường bờ, hồi quy mô phỏng và trình duyệt. QA bốn góc và cửa thoát tổng thể vẫn thuộc 10b.
   - [ ] 10b. Sửa dáng núi, lòng chảo/mép nước và độ rõ màn mưa theo bảng QA bước 9; đo lại địa hình vẽ, chụp ảnh và cập nhật bảng QA.
   - [ ] 10c. Chạy đầy đủ Node/e2e, FPS hai mức, ngân sách cuối, rà README/package và ghi bàn giao cuối.

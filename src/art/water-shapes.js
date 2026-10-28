@@ -6,17 +6,11 @@ import { mapData } from '../map-data.js';
 export function basinSurface(map, id, level, data = mapData) {
   const region = data.reservoirs[id];
   const bounds = id === 'sea' ? [map.size / 2, map.size, 0, map.size]
-    : [region.x - region.radiusX - map.spacing, region.x + region.radiusX + map.spacing,
-      region.z - region.radiusZ - map.spacing, region.z + region.radiusZ + map.spacing];
+    : [region.x - region.radiusX * 1.25 - map.spacing, region.x + region.radiusX * 1.25 + map.spacing,
+      region.z - region.radiusZ * 1.25 - map.spacing, region.z + region.radiusZ * 1.25 + map.spacing];
   const positions = [];
-  function bedAt(x,z) {
-    const bed = heightAt(map,x,z);
-    if (id === 'sea') return bed;
-    const dx=(x-region.x)/region.radiusX, dz=(z-region.z)/region.radiusZ;
-    const angle=Math.atan2(dz,dx);
-    const rim=1+0.045*Math.sin(angle*5+data.seed)+0.035*Math.cos(angle*3);
-    return Math.max(bed,level+(Math.hypot(dx,dz)-rim)*20);
-  }
+  const bedAt = id === 'sea' ? (x, z) => heightAt(map, x, z)
+    : (x, z) => reservoirBowl(data.reservoirs[id], x, z, data.seed).height;
   const step = map.spacing / 2;
   function clip(vertices) {
     const result = [];
@@ -45,6 +39,27 @@ export function basinSurface(map, id, level, data = mapData) {
     clip([points[2],points[1],points[3]]);
   }
   return positions;
+}
+
+// One fixed bowl serves both the land mesh and the moving water plane. Its
+// shoreline therefore changes with the reservoir level rather than with a
+// separate, level-dependent ellipse. Blend back to the map outside the rim.
+function reservoirBowl(region, x, z, seed) {
+  const dx = (x - region.x) / region.radiusX, dz = (z - region.z) / region.radiusZ;
+  const angle = Math.atan2(dz, dx);
+  const rim = 1 + 0.045 * Math.sin(angle * 5 + seed) + 0.035 * Math.cos(angle * 3);
+  const radius = Math.hypot(dx, dz) / rim;
+  const fullLevel = region.bottom + region.capacity * region.levelPerParticle;
+  return { radius, height: region.bottom + (fullLevel + 3 - region.bottom) * radius ** 2 };
+}
+
+export function reservoirBedHeight(map, id, x, z, data = mapData) {
+  const bowl = reservoirBowl(data.reservoirs[id], x, z, data.seed);
+  const original = heightAt(map, x, z);
+  if (bowl.radius >= 1.65) return original;
+  const t = Math.max(0, Math.min(1, (bowl.radius - 1.1) / 0.55));
+  const blend = t * t * (3 - 2 * t);
+  return bowl.height * (1 - blend) + original * blend;
 }
 
 const channelCache = new WeakMap();
@@ -106,6 +121,17 @@ function recessedBank(height, bed, distance) {
   return height + (Math.min(height, bed) - height) * (1 - blend);
 }
 
+export function basinTerrainHeight(map, x, z, data = mapData) {
+  let height = heightAt(map,x,z);
+  for (const id of ['lake', 'pond']) {
+    const region = data.reservoirs[id];
+    if (Math.hypot((x-region.x)/region.radiusX, (z-region.z)/region.radiusZ) < 1.8) {
+      height = reservoirBedHeight(map, id, x, z, data);
+    }
+  }
+  return height;
+}
+
 // The connector cuts only the visible bed; World and its drainage stay intact.
 export function waterBedHeight(map, x, z, data = mapData) {
   const lake = data.reservoirs.lake, end = map.outlets.lake;
@@ -113,7 +139,7 @@ export function waterBedHeight(map, x, z, data = mapData) {
   const dx = ex-lake.x, dz = ez-lake.z;
   const t = Math.max(0,Math.min(1,((x-lake.x)*dx+(z-lake.z)*dz)/(dx*dx+dz*dz)));
   const distance = Math.hypot(x-lake.x-dx*t,z-lake.z-dz*t);
-  const originalHeight = heightAt(map,x,z);
+  const originalHeight = basinTerrainHeight(map, x, z, data);
   let height = recessedBank(originalHeight, lake.bottom*(1-t)+map.heights[end]*t-3, distance);
   for (const channel of map.channels.filter(c => ['river','stream'].includes(c.type))) {
     const points = channelPoints(map,channel);

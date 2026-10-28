@@ -219,3 +219,16 @@ Các cặp test thay đổi: hai test `drained terrain…` và `plain relief…`
 Kiểm thử Node sau chỉnh bản đồ: **81/81**, không fail/skip, **106,412 giây** (wrapper **106,444 giây**, exit 0), chạy riêng không có trình duyệt. Toàn bộ nhóm bản đồ/thoát nước/nhịp/ổn định/gió/bảo toàn vẫn đạt; không hiệu chỉnh hằng số vật lý hoặc hạ ngưỡng test. Chưa hoàn tất 10b/10c hoặc QA chín ảnh.
 
 - E2e cuối trên bản đồ mới: **art-trees, art-budget, cycle-flow** (chính, gián đoạn và URL) đều đạt, console sạch, wrapper exit 0. Cây 2.200/400 và hạt không đổi khi chuyển mức. Ngân sách cùng trạng thái **81,3167 giây**: Cao **67 calls / 225.640 triangles**, Thấp **66 / 86.440**; Mặt Trời trong khung ở cả bốn góc mỗi mức. Không phải số đo FPS cuối. Đã đánh dấu riêng 10b-3; 10b/10c/10 giữ mở. Server đã dừng; `git diff --check` sạch.
+
+
+## Mốc 10b-4 — Chung lòng chảo cho mặt đất và mặt nước
+
+Đường viền cũ dùng `max(địa hình, level + (bán kính - viền) × 20)`, nên phần viền nhân tạo không có mặt đất tương ứng và phụ thuộc ngay vào mực nước. Nay `reservoirBowl` tạo lòng chảo cố định với viền biến thiên theo góc/seed, đáy theo dữ liệu vùng chứa, mép cao hơn mực đầy 3 đơn vị. `reservoirBedHeight` dùng cùng lòng chảo để tạo mặt đất, chuyển smoothstep về địa hình cũ từ bán kính chuẩn hóa 1,1 đến 1,65. Mặt nước cắt theo lòng chảo này tại mực thật; vùng lấy mẫu bao quanh toàn viền, không lan tới các vùng đất thấp hạ lưu. Lòng dẫn và cửa thoát vẫn khắc sau lòng chảo. Không thay địa hình mô phỏng, World, RNG hay lượng nước.
+
+Test hồi quy mới kiểm các cạnh biên của mặt hồ/ao ở ba mực (thấp, ban đầu, đầy) trùng lòng chảo trong sai số 0,00001, diện tích tăng theo mực và bản đồ mô phỏng không bị sửa. Hai cặp kỳ vọng được đổi vì lòng chảo vẽ có thể nâng mép bờ: test cây **y ≤ độ cao mô phỏng → y ≤ mặt lòng chảo trước khắc kênh**, vẫn giữ y bằng mặt vẽ cuối; test liên tục bờ kênh **phần hạ so với heightAt → phần hạ so với basinTerrainHeight**, giữ ngưỡng bước nhảy < 0,1 và phần khắc không nâng đất. Các kiểm vùng cấm/số cây/tất định/bất biến World và nước kênh không bị lưới che giữ nguyên.
+
+Ảnh thử Cao 1920 × 1080 góc dọc sông khi tạm dừng ban đầu: `screenshots/10-basin-river.png`. Đã xem: hồ/ao có thành lòng chảo quanh mặt nước rõ hơn, không còn mảng mặt hồ thừa tràn xuống đồng bằng như lượt thử mở rộng vùng lấy mẫu ban đầu (đã sửa trước kiểm thử cuối). Ảnh vẫn cho thấy núi là các chóp rời và cửa thoát/hồ cần QA bốn góc ở nhiều mực; **không đánh dấu 10b, AC-7 hoặc bảng QA 14 mục đạt**. Chín ảnh/evidence bước 9 chưa thay; ảnh 10 chỉ là bằng chứng sửa lỗi cục bộ, không dùng thay bộ nghiệm thu.
+
+Kiểm thử Node mốc 10b-4: **82/82**, 0 fail/skip, **105,133 giây** (wrapper **105,168 giây**, exit 0), chạy riêng với trình duyệt. Mặt mô phỏng vẫn có 6 đỉnh, độ lệch chuẩn dốc 2,154392215; mặt vẽ 6 đỉnh, dốc **2,146393580**, phần dư đồng bằng **1,983465802** / 2.950 mẫu. README đã nói rõ lòng chảo chỉ điều chỉnh mặt vẽ; package.json giữ nguyên hợp đồng.
+
+E2e cuối: **art-trees, art-strata, scenery, art-budget, cycle-flow** (chính, gián đoạn và URL) đạt, console sạch, wrapper exit 0. Ngân sách cùng trạng thái **70,65 giây**: Cao **67 calls / 223.416 triangles**, Thấp **66 / 84.216**; hạt không đổi khi chuyển mức, Mặt Trời trong khung ở bốn góc mỗi mức. Chưa đo FPS hoặc chạy toàn bộ e2e, chưa chụp lại chín ảnh. Đánh dấu riêng 10b-4; 10b/10c/10 vẫn mở.
