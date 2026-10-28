@@ -370,3 +370,14 @@ Audit tái lập bằng `node scripts/audit-water-banks.mjs > specs/REQ-006/wate
 Toàn bộ `node --test` **96/96**, 0 fail/skip/cancelled, **108,238 giây**, exit 0, chạy riêng trước trình duyệt. E2e **art-strata, art-trees** đạt, console sạch, cây **2.200/400**, hạt bất biến khi chuyển chất lượng. Mặt vẽ vẫn **6 đỉnh**, độ lệch chuẩn dốc **1,622273730**, phần dư đồng bằng **2,642467559** / 2.950 mẫu. Server Python đã dừng sau kiểm thử.
 
 Đã chụp/xem `screenshots/20-river-slope-banks.png`, Cao 1920 × 1080, dọc sông, paused ban đầu. Núi vẫn quá nhọn, suối còn gấp/răng cưa; giữ bảng QA bắt buộc 1/2 chưa đạt và chín ảnh/evidence cũ. Chưa QA bốn góc/mực thấp–đầy, chưa chạy mọi e2e/FPS/ngân sách cuối. **10b/10c/10 tiếp tục mở; trả continue.**
+
+
+## Mốc 10b-17 — Định vị cực trị mép nước
+
+Báo cáo `water-bank-audit.json` bổ sung `extrema.analytic` và `extrema.rendered` cho từng kênh/mức: chỉ số đỉnh trong dải tam giác, tọa độ Float32, độ cao đất và khoảng hở. Cực trị hòa chọn đỉnh đầu tiên; dữ liệu rỗng trả null. Không đổi hình ảnh, World, RNG hoặc assertion cũ. Test kiểm cực trị trùng min/max tổng hợp và đầu vào không bị sửa.
+
+Phát hiện quan trọng: suối thứ ba có khoảng hở lớn nhất tại **đỉnh 1, [164,898895; 207,522614; 241,351105]**, ngay đầu nguồn, trên cả hai lưới. Đất Thấp cao **138,300350**, Cao **151,891420**; khoảng hở **69,222263 / 55,631194**. Suối thứ hai cực đại tại [208,045319; 199,773758; 518,780212] ở Thấp và [204,781601; 202,763107; 517,997192] ở Cao. Cần xét mặt dải nước đầu nguồn và mặt đất tại tọa độ ngang tương ứng, không chỉ cửa hồ hoặc phần bờ xa.
+
+Thử ngoại suy độ dốc suối chỉ ngoài khoảng cách 16 không đổi cực đại; áp dụng từ khoảng cách 6 làm che một đỉnh nước ở Thấp. Đã bỏ toàn bộ thử nghiệm sản phẩm. Giữ QA 1/2 chưa đạt; không chụp ảnh mới vì hình ảnh không đổi. Các bước 10b, 10c và 10 chưa hoàn tất.
+
+Kiểm thử cuối mốc 10b-17: `node --test` đạt **97/97**, 0 fail/skip/cancelled, **111,091 giây**, exit 0. Không chạy e2e/ảnh/FPS vì không đổi mã dựng cảnh hoặc mô phỏng; không dùng kết quả cũ thay lượt kiểm cuối 10c.

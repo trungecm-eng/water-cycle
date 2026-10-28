@@ -27,6 +27,20 @@ export function measureSurfaceClearance(positions, terrainHeight, tolerance = 0.
   };
 }
 
+// Keep the location of extrema as well as aggregate counts so the next bank
+// correction can target a specific slope instead of changing global constants.
+export function locateClearanceExtrema(positions, terrainHeight) {
+  let minimum = null, maximum = null;
+  for (let i = 0; i < positions.length; i += 3) {
+    const position = Array.from(positions.slice(i, i + 3));
+    const groundHeight = terrainHeight(position[0], position[2]);
+    const sample = { vertex: i / 3, position, groundHeight, gap: position[1] - groundHeight };
+    if (minimum === null || sample.gap < minimum.gap) minimum = sample;
+    if (maximum === null || sample.gap > maximum.gap) maximum = sample;
+  }
+  return { minimum, maximum };
+}
+
 // This is a diagnostic, not an acceptance verdict: ribbon endpoint edges may
 // meet another water surface instead of dry land. Report every occurrence,
 // including duplicates, to keep counts comparable with renderer triangles.
@@ -44,7 +58,11 @@ export function auditChannelBanks(map, cells) {
         type: channel.type,
         source: channel.path[0],
         analytic: measureSurfaceClearance(positions, (x, z) => waterBedHeight(map, x, z)),
-        rendered: measureSurfaceClearance(positions, renderedHeight)
+        rendered: measureSurfaceClearance(positions, renderedHeight),
+        extrema: {
+          analytic: locateClearanceExtrema(positions, (x, z) => waterBedHeight(map, x, z)),
+          rendered: locateClearanceExtrema(positions, renderedHeight)
+        }
       };
     })
   };

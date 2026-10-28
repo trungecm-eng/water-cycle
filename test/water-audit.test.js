@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { renderedTriangleHeight, measureSurfaceClearance, auditChannelBanks } from '../src/art/water-audit.js';
+import { renderedTriangleHeight, measureSurfaceClearance, locateClearanceExtrema, auditChannelBanks } from '../src/art/water-audit.js';
 import { generateDrainage } from '../src/sim/drainage.js';
 
 test('rendered height follows both terrain triangles rather than bilinear interpolation', () => {
@@ -29,6 +29,15 @@ test('channel audit is reproducible at both resolutions and leaves the simulatio
     for (const channel of audit.channels) {
       assert.ok(channel.rendered.vertices > 0);
       assert.equal(channel.rendered.vertices, channel.analytic.vertices);
+      for (const kind of ['analytic', 'rendered']) {
+        const extrema = channel.extrema[kind];
+        assert.equal(extrema.minimum.gap, channel[kind].minimumGap);
+        assert.equal(extrema.maximum.gap, channel[kind].maximumGap);
+        for (const sample of [extrema.minimum, extrema.maximum]) {
+          assert.equal(sample.position[1] - sample.groundHeight, sample.gap);
+          assert.ok(sample.vertex >= 0 && sample.vertex < channel[kind].vertices);
+        }
+      }
       for (const surface of [channel.rendered, channel.analytic]) {
         assert.ok(Number.isFinite(surface.minimumGap));
         assert.ok(Number.isFinite(surface.maximumGap));
@@ -99,4 +108,16 @@ test('river banks extend segment slopes upstream without burying ribbon edges', 
     // Constant endpoint excavation produced gaps of 3.77 / 4.04 units.
     assert.ok(river.rendered.maximumGap < (cells === 80 ? 3.3 : 3.6));
   }
+});
+
+
+test('clearance extrema retain exact positions and choose the first tied vertex', () => {
+  assert.deepEqual(locateClearanceExtrema([], () => 0), { minimum: null, maximum: null });
+  const positions = Float32Array.from([1, 4, 2, 3, -2, 4, 5, 4, 6]);
+  const before = Array.from(positions);
+  assert.deepEqual(locateClearanceExtrema(positions, () => 1), {
+    minimum: { vertex: 1, position: [3, -2, 4], groundHeight: 1, gap: -3 },
+    maximum: { vertex: 0, position: [1, 4, 2], groundHeight: 1, gap: 3 }
+  });
+  assert.deepEqual(Array.from(positions), before);
 });
