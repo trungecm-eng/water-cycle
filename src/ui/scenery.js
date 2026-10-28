@@ -4,6 +4,7 @@ import * as THREE from '../../vendor/three.module.min.js';
 import { config } from '../config.js';
 import { heightAt } from '../sim/heightmap.js';
 import { generateStrata } from '../art/strata.js';
+import { generateTrees } from '../art/trees.js';
 import { mapData } from '../map-data.js';
 
 export function decorateScene(scene, canvas, world) {
@@ -67,6 +68,37 @@ export function decorateScene(scene, canvas, world) {
     streaks.add(mesh);
   }
   scene.add(streaks);
+  const trees = generateTrees(map);
+  // Three stacked six-sided cones share one canopy geometry and one instanced draw.
+  const canopyPositions = [];
+  for (const [radius, height, y] of [[5, 10, 9], [4, 9, 13], [3, 8, 17]]) {
+    const cone = new THREE.ConeGeometry(radius, height, 6).toNonIndexed();
+    cone.translate(0, y, 0);
+    canopyPositions.push(...cone.attributes.position.array);
+    cone.dispose();
+  }
+  const canopyGeometry = new THREE.BufferGeometry();
+  canopyGeometry.setAttribute('position', new THREE.Float32BufferAttribute(canopyPositions, 3));
+  canopyGeometry.computeVertexNormals();
+  const canopy = new THREE.InstancedMesh(canopyGeometry,
+    new THREE.MeshStandardMaterial({ flatShading: true, roughness: 1 }), trees.length);
+  const trunks = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.8, 1.1, 8, 5),
+    new THREE.MeshStandardMaterial({ color: config.colors.trunk, flatShading: true }), trees.length);
+  canopy.name = 'tree-canopies';
+  trunks.name = 'tree-trunks';
+  const transform = new THREE.Object3D();
+  trees.forEach((tree, index) => {
+    transform.position.set(tree.x, tree.y - 0.5, tree.z);
+    transform.rotation.y = tree.rotation;
+    transform.scale.setScalar(tree.scale);
+    transform.updateMatrix();
+    canopy.setMatrixAt(index, transform.matrix);
+    canopy.setColorAt(index, new THREE.Color(config.colors.treeDark).lerp(new THREE.Color(config.colors.treeLight), tree.shade));
+    transform.position.y += 4 * tree.scale;
+    transform.updateMatrix();
+    trunks.setMatrixAt(index, transform.matrix);
+  });
+  scene.add(canopy, trunks);
   const clouds = new THREE.Group();
   clouds.name = 'cloud-masses';
   scene.add(clouds);
@@ -100,7 +132,10 @@ export function decorateScene(scene, canvas, world) {
   let quality = qualityLevels.high;
   let labelSnapshot = [];
   return {
-    setQuality(settings) { quality = settings; waves.visible = settings.waves; lastClusters = undefined; },
+    setQuality(settings) { canopy.count = trunks.count = Math.min(trees.length, settings.trees);
+      canopy.castShadow = trunks.castShadow = settings.shadows;
+      canopy.receiveShadow = trunks.receiveShadow = settings.shadows;
+      quality = settings; waves.visible = settings.waves; lastClusters = undefined; },
     update(camera) {
       sky.position.copy(camera.position);
       waves.position.z = Math.sin(world.time * settings.waveSpeed) * settings.waveTravel;
@@ -153,7 +188,7 @@ export function decorateScene(scene, canvas, world) {
       }
     },
     snapshot() {
-      return Object.freeze({ objects: Object.freeze(scene.children.map(child => child.name).filter(Boolean)), strataLayers: strata[0].layers.length, seaCutaway: seaFace.geometry.attributes.position.count > 0, labels: Object.freeze([...labelSnapshot]),
+      return Object.freeze({ objects: Object.freeze(scene.children.map(child => child.name).filter(Boolean)), trees: canopy.count, treeMeshes: 2, strataLayers: strata[0].layers.length, seaCutaway: seaFace.geometry.attributes.position.count > 0, labels: Object.freeze([...labelSnapshot]),
         effects: Object.freeze({ wavesVisible: waves.visible, cloudBlocks: clouds.children.length, time: world.time, waveOffset: waves.position.z, flowPositions: Object.freeze(streaks.children.map(mesh => Object.freeze(mesh.position.toArray()))) }) });
     }
   };
