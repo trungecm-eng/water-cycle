@@ -211,3 +211,16 @@ test('stream banks extend upstream slopes and blend into coarse-grid confluences
     }
   }
 });
+
+
+test('distant stream banks reduce high-grid excavation while preserving interior clearance', () => {
+  const map = generateDrainage();
+  for (const cells of [80, 160]) {
+    const streams = auditChannelBanks(map, cells).channels.filter(channel => channel.type === 'stream');
+    if (cells === 160) assert.ok(streams[1].rendered.maximumGap < 32);
+    for (const stream of streams) {
+      assert.equal(stream.interior.rendered.coveredVertices, 0);
+      assert.ok(stream.interior.rendered.minimumGap > 0.05);
+    }
+  }
+});
