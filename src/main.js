@@ -34,7 +34,7 @@ for (const button of [...viewButtons, document.querySelector('#default-view')]) 
 }
 updateViews();
 const quality = new QualityMonitor(parseQuality(window.location.search));
-const renderer = createRenderer(canvas, world, camera, stageLabels);
+const renderer = createRenderer(canvas, world, camera, stageLabels, position => { views.focus(position, performance.now() / 1000); updateViews(); });
 function updateQuality() {
   for (const button of document.querySelectorAll('[data-quality]')) button.setAttribute('aria-pressed', String(button.dataset.quality === quality.level));
   document.querySelector('#quality-hint').hidden = !quality.slowHint;

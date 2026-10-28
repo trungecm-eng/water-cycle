@@ -1,8 +1,10 @@
+import { createWindArrow } from './wind-arrow.js';
 import * as THREE from '../../vendor/three.module.min.js';
 import { content } from '../content.js';
 import { stageColors } from '../art/stage-labels.js';
 
-export function createStageLabels(canvas, observer, world) {
+export function createStageLabels(canvas, observer, world, focus) {
+  const wind = createWindArrow(canvas, world);
   const layer = document.createElement('div');
   layer.className = 'stage-labels';
   canvas.parentElement.append(layer);
@@ -16,6 +18,10 @@ export function createStageLabels(canvas, observer, world) {
     number.textContent = index + 1;
     button.append(number, name);
     button.hidden = true;
+    button.addEventListener('click', () => {
+      const position = snapshot[id]?.position;
+      if (position) focus([...position]);
+    });
     layer.append(button);
     return [id, button];
   }));
@@ -36,6 +42,7 @@ export function createStageLabels(canvas, observer, world) {
       const frozen = paused && now >= controlAnimationUntil;
       snapshot = observer.update(world, previous === undefined || frozen ? 0 : now - previous);
       previous = now;
+      wind.update(camera, enabled);
       const rect = canvas.getBoundingClientRect();
       for (const [id, state] of Object.entries(snapshot)) {
         const element = elements[id];
@@ -48,7 +55,29 @@ export function createStageLabels(canvas, observer, world) {
         element.style.top = `${rect.top + window.scrollY + (1 - point.y) * rect.height / 2}px`;
         element.style.pointerEvents = state.visible ? 'auto' : 'none';
       }
+      arrangeLabels(canvas);
     },
-    snapshot: () => ({ stageLabelsEnabled: enabled, stageLabels: structuredClone(snapshot) })
+    snapshot: () => ({ ...wind.snapshot(), stageLabelsEnabled: enabled, stageLabels: structuredClone(snapshot) })
   };
+}
+
+// Keep every visible chip readable while preserving its world-space click target.
+function arrangeLabels(canvas) {
+  const placed = [];
+  const bounds = canvas.getBoundingClientRect();
+  for (const element of canvas.parentElement.querySelectorAll('.map-label:not([hidden]), .stage-label:not([hidden])')) {
+    let box = element.getBoundingClientRect();
+    for (let attempt = 0; attempt < 40; attempt++) {
+      const conflict = placed.find(other => box.left < other.right + 5 && box.right + 5 > other.left && box.top < other.bottom + 5 && box.bottom + 5 > other.top);
+      if (!conflict) break;
+      const shift = conflict.bottom + 6 - box.top;
+      element.style.top = `${parseFloat(element.style.top) + shift}px`;
+      box = element.getBoundingClientRect();
+    }
+    if (box.bottom > bounds.bottom) {
+      element.style.top = `${parseFloat(element.style.top) - (box.bottom - bounds.bottom)}px`;
+      box = element.getBoundingClientRect();
+    }
+    placed.push(box);
+  }
 }

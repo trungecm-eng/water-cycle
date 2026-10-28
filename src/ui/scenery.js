@@ -7,7 +7,7 @@ import { generateTrees } from '../art/trees.js';
 import { createAtmosphere } from './atmosphere.js';
 import { mapData } from '../map-data.js';
 
-export function decorateScene(scene, canvas, world) {
+export function decorateScene(scene, canvas, world, focus) {
   const settings = config.scenery;
   scene.fog = new THREE.Fog(config.colors.sky, settings.fogNear, settings.fogFar);
   const sky = new THREE.Mesh(new THREE.SphereGeometry(settings.skyRadius, 24, 12),
@@ -104,8 +104,10 @@ export function decorateScene(scene, canvas, world) {
   labelLayer.className = 'map-labels';
   canvas.parentElement.append(labelLayer);
   const labels = mapData.labels.map(data => {
-    const element = document.createElement('span');
+    const element = document.createElement('button');
     element.className = 'map-label';
+    element.type = 'button';
+    element.addEventListener('click', () => focus([...data.position]));
     element.dataset.region = data.id;
     element.textContent = content.regions[data.id];
     labelLayer.append(element);

@@ -40,7 +40,7 @@ function waterGeometry(positions) {
   return geometry;
 }
 
-export function createRenderer(canvas, world, orbit, stageObserver) {
+export function createRenderer(canvas, world, orbit, stageObserver, focus) {
   // Probe first: three.js logs an error when it has to discover this failure itself.
   let context;
   try { context = canvas.getContext('webgl2', { antialias: true, alpha: false }); } catch { /* Show the fallback below. */ }
@@ -114,8 +114,8 @@ export function createRenderer(canvas, world, orbit, stageObserver) {
     side: THREE.DoubleSide, transparent: true, opacity: 0.75, depthWrite: false }));
   foam.name = 'shore-foam';
   scene.add(foam);
-  const scenery = decorateScene(scene, canvas, world);
-  const stages = createStageLabels(canvas, stageObserver, world);
+  const scenery = decorateScene(scene, canvas, world, focus);
+  const stages = createStageLabels(canvas, stageObserver, world, focus);
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(world.options.n * 3), 3));
   geometry.setAttribute('color', new THREE.Float32BufferAttribute(new Float32Array(world.options.n * 3), 3));
