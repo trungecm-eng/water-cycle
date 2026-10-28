@@ -37,12 +37,27 @@ export function generateHeightmap(data = mapData) {
       const mountainEnvelope = Math.max(0, Math.min(1, (data.mountainEdge - x) / 80));
       height = Math.max(height, data.plain.base + mountainEnvelope
         * (56 * mountainMass + 24 * ridge));
+
+      let corridorDistance = Infinity;
+      for (const stream of data.streams) for (let i = 1; i < stream.points.length; i++) {
+        const [ax, az] = stream.points[i - 1], [bx, bz] = stream.points[i];
+        const sx = bx - ax, sz = bz - az;
+        const t = Math.max(0, Math.min(1, ((x-ax)*sx + (z-az)*sz) / (sx*sx + sz*sz)));
+        corridorDistance = Math.min(corridorDistance, Math.hypot(x-ax-sx*t, z-az-sz*t));
+      }
+      const corridorBlend = Math.max(0, Math.min(1, (corridorDistance - 60) / 30));
       for (const peak of data.peaks) {
         const dx = (x - peak.x) / peak.radiusX;
         const dz = (z - peak.z) / peak.radiusZ;
         const angle = Math.atan2(dz, dx);
-        const distance = Math.hypot(dx, dz) * (1 + 0.18 * Math.sin(3 * angle + peak.z / 90)
-          + 0.1 * Math.sin(5 * angle + peak.x / 60));
+        // Keep summit relief and stream corridors stable while breaking the
+        // rotational outline of the broad flanks into asymmetric rock spurs.
+        const summitBlend = Math.max(0, Math.min(1, (Math.hypot(x - peak.x, z - peak.z) - 40) / 35));
+        const edgeBlend = Math.max(0, Math.min(1, (data.mountainEdge - x) / 80));
+        const spurBlend = edgeBlend * summitBlend * summitBlend * (3 - 2 * summitBlend)
+          * corridorBlend * corridorBlend * (3 - 2 * corridorBlend);
+        const distance = Math.hypot(dx, dz) * (1 + (0.18 + 0.22 * spurBlend) * Math.sin(3 * angle + peak.z / 90)
+          + (0.1 + 0.12 * spurBlend) * Math.sin(5 * angle + peak.x / 60));
         const shoulder = Math.max(0, 1 - distance);
         // A broad lower flank carries the narrow summit. Using only the
         // summit envelope produces isolated spires with almost vertical feet.

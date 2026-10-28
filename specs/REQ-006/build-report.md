@@ -451,3 +451,18 @@ Kiểm thử cuối: toàn bộ `node --test` **105/105**, không fail/skip/canc
 - Chụp và xem `screenshots/26-distant-stream-banks.png`: Cao, 1920 × 1080, dọc sông, paused từ 0 giây, console sạch. Núi vẫn nhọn, suối còn mép gấp/hở; giữ bảng QA bắt buộc 1/2 chưa đạt và chín ảnh/evidence nghiệm thu cũ. Chưa kiểm bốn góc/mực thấp–đầy, mọi e2e, FPS hoặc ngân sách cuối. **10b/10c/10 còn mở; trả continue**.
 - Tiếp theo cần thay đổi tổng thể hình khối núi/giao tuyến bờ, tránh tiếp tục hiệu chỉnh hệ số nhỏ mà coi là hoàn tất. Bảo toàn sáu đỉnh và bất biến mô phỏng; kiểm cả đỉnh/nội thất hai lưới. Sau khi ảnh đạt, QA bốn góc/mực thấp–đầy, chụp lại chín ảnh/bảng QA và chạy đủ 10c.
 - Không có notes.md/eval REQ-006. Lệnh: `node --test`, `node --test test/water-audit.test.js`, `node scripts/audit-water-banks.mjs > specs/REQ-006/water-bank-audit.json`, `node e2e/art-strata.e2e.mjs`, `node e2e/art-trees.e2e.mjs`. Server Python đã dừng. Script chụp và log /tmp không bền vững. Commit dùng danh tính từng lệnh; không sửa git config/tệp cấm.
+
+
+## Mốc 10b-25 — Nhánh đá bất đối xứng trên sườn ngoài
+
+Tăng biến dạng theo góc trên sườn ngoài để phá dáng elip đều: giữ nguyên trong bán kính 40 quanh đỉnh, chuyển mượt trong 35 đơn vị tiếp theo; giữ hành lang cách các đoạn suối 60 đơn vị rồi chuyển mượt trong 30 đơn vị; giảm về 0 ở biên núi–đồng bằng. Phép tính khoảng cách tới hành lang dùng chung cho các đỉnh tại mỗi điểm lưới. Vẫn dùng một lớp địa hình, không đổi World/RNG/hằng số vật lý hay tọa độ kênh. Không thêm lớp chi tiết hoặc geometry phủ bờ.
+
+Thử tăng biến dạng toàn sườn làm chỉ còn năm đỉnh và hỏng kiểm tra bờ nước; đã bỏ. Thử bảo vệ đỉnh/suối nhưng không giảm ở biên núi làm phần dư đồng bằng 8,09, vượt giới hạn; đã bỏ. Bản giữ lại đạt sáu đỉnh ở cả hai mặt, độ lệch chuẩn dốc mô phỏng **1,837352952**, mặt vẽ **1,786594417**; phần dư đồng bằng lần lượt **2,642840243 / 2,642481048** (2.950 mẫu); đỉnh cao nhất **293,838221629**. Độ lệch chuẩn độ cao trên đường elip bán kính tương đối 1 quanh núi phía bắc tăng từ **15,355147865** lên **27,108106509** (72 mẫu); test mới giữ ngưỡng ≥24. Đây là chỉ số hồi quy độ bất đối xứng, không thay QA hình ảnh.
+
+Audit giữ mọi assertion hiện có. Cực đại đỉnh ba suối Thấp **13,538889 / 27,921874 / 32,722755**, Cao **17,468895 / 31,812517 / 30,129832**. Suối thứ ba tăng nhẹ so với mốc 10b-24; không tuyên bố cải thiện bờ ở phiên này. Min nội thất ba suối Thấp **1,302128 / 0,116465 / 1,044346**, Cao **3,048296 / 3,199878 / 3,027745**; không mẫu suối bị đất che. Sông giữ min nội thất Thấp **-0,009630** (trong dung sai 0,05), Cao **0,899950**. Đây là lấy mẫu hữu hạn.
+
+Đã chụp và xem bốn ảnh Cao 1920 × 1080: `screenshots/27-spurs-overview.png`, `27-spurs-sea.png`, `27-spurs-mountain.png`, `27-spurs-river.png`. Tất cả paused từ 0 giây, hồ 20, ao 11,6, console sạch. Có nhánh đá/phụ đỉnh rõ hơn nhưng vẫn có đỉnh nhọn và vách dốc, mép suối còn gấp/hở; **giữ QA bắt buộc 1/2 chưa đạt**. Không thay bộ chín ảnh/evidence nghiệm thu, chưa kiểm bốn góc ở mực thấp–đầy.
+
+E2e `art-trees`, `art-strata`, `art-budget`, `cycle-flow`, `core-3d` đạt, console sạch; cycle-flow gồm luồng chính, gián đoạn và URL. Cây 2.200/400, hạt bất biến khi đổi chất lượng. Budget khi đủ các giai đoạn tại **70,65 giây**: Cao **67 lần vẽ / 224.608 tam giác**, Thấp **66 / 84.598**; Mặt Trời nằm trong khung ở bốn góc hai mức. Chưa chạy mọi e2e REQ-005/006, FPS hoặc kiểm cuối 10c; không dùng các kết quả này để đóng 10c.
+
+Kiểm thử Node cuối trên code đã gom phép đo hành lang và có test mới: `node --test` **108/108**, 0 fail/skip/cancelled, exit 0, **113,332 giây**, chạy riêng sau khi mọi trình duyệt đóng. Không hạ assertion hoặc sửa test cũ. Đóng mốc 10b-25; bước 10b/10c/10 còn mở. Server Python đã dừng.

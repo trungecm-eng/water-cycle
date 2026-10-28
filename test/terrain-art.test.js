@@ -110,3 +110,18 @@ test('northern mountain retains a broad middle slope below its sharp summit', ()
   }
   assert.ok(area >= 11000, `narrow middle slope: ${area} square units`);
 });
+
+
+test('northern mountain flanks retain asymmetric rock spurs beyond the summit', t => {
+  const map = generateHeightmap();
+  // Follow one elliptical contour around the northern massif. The previous
+  // conical flank varied by only 15.355 units at the same radius; sampling
+  // the final height field catches regression to a rotationally even slope.
+  const heights = Array.from({ length: 72 }, (_, i) => {
+    const angle = i * 2 * Math.PI / 72;
+    return heightAt(map, 94 + 65 * Math.cos(angle), 156 + 100 * Math.sin(angle));
+  });
+  const variation = deviation(heights);
+  t.diagnostic(JSON.stringify({ flankHeightStd: variation }));
+  assert.ok(variation >= 24, `rotationally even flank: ${variation}`);
+});
