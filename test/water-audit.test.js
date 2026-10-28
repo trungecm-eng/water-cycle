@@ -121,3 +121,17 @@ test('clearance extrema retain exact positions and choose the first tied vertex'
   });
   assert.deepEqual(Array.from(positions), before);
 });
+
+
+test('tapered headwaters reduce the third stream source overhang at both qualities', () => {
+  const map = generateDrainage();
+  for (const cells of [80, 160]) {
+    const streams = auditChannelBanks(map, cells).channels.filter(channel => channel.type === 'stream');
+    // Previously 69.22 / 55.63: this is a regression bound, not shoreline acceptance.
+    assert.ok(streams[2].rendered.maximumGap < (cells === 80 ? 67 : 52));
+    for (const stream of streams) {
+      assert.equal(stream.rendered.coveredVertices, 0);
+      assert.ok(stream.rendered.minimumGap > 0.05);
+    }
+  }
+});

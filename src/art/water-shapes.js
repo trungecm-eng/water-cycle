@@ -138,10 +138,17 @@ function channelPoints(map, channel) {
 export function channelRibbon(map, channel) {
   const positions = [];
   const path = channelPoints(map,channel);
+  let sourceDistance = 0;
   const edges = path.map(([x,y,z], i) => {
+    if (i > 0) sourceDistance += Math.hypot(x - path[i - 1][0], z - path[i - 1][2]);
     const a = path[Math.max(0,i-1)], b = path[Math.min(path.length-1,i+1)];
     const length = Math.hypot(b[0]-a[0],b[2]-a[2]) || 1;
-    const width = (channel.type === 'river' ? 4 : 2.5) + i / Math.max(1,path.length-1) * 2;
+    const progress = i / Math.max(1, path.length - 1);
+    // A spring begins at a point, then opens over forty world units.
+    // Use distance rather than sample count so smoothing density cannot
+    // change the physical length of the tapered headwater.
+    const sourceTaper = channel.type === 'stream' ? Math.min(1, sourceDistance / 40) : 1;
+    const width = ((channel.type === 'river' ? 4 : 2.5) + progress * 2) * sourceTaper;
     return [-1,1].map(side => [x-(b[2]-a[2])/length*width*side,y,z+(b[0]-a[0])/length*width*side]);
   });
   for (let i=1;i<edges.length;i++) for (const p of [edges[i-1][0],edges[i-1][1],edges[i][0],edges[i][0],edges[i-1][1],edges[i][1]]) positions.push(...p);

@@ -226,3 +226,23 @@ test('rendered reservoir water intersects the uploaded terrain at both qualities
   }
   assert.deepEqual(Array.from(map.heights), original);
 });
+
+
+test('spring ribbons begin at a point and open gradually without changing their route', () => {
+  for (const channel of map.channels.filter(channel => channel.type === 'stream')) {
+    const before = Array.from(map.heights);
+    const surface = channelRibbon(map, channel);
+    assert.deepEqual(surface.slice(0, 3), surface.slice(3, 6));
+    const source = channel.path[0];
+    assert.equal(surface[0], source % map.stride * map.spacing);
+    assert.equal(surface[2], Math.floor(source / map.stride) * map.spacing);
+    let lastWidth = 0;
+    for (let i = 0; i < surface.length; i += 18) {
+      const width = Math.hypot(surface[i] - surface[i + 3], surface[i + 2] - surface[i + 5]);
+      assert.ok(width >= lastWidth - 1e-9);
+      lastWidth = width;
+    }
+    assert.ok(lastWidth > 8, 'downstream water retains its full width');
+    assert.deepEqual(Array.from(map.heights), before);
+  }
+});
