@@ -59,6 +59,8 @@ export function createRenderer(canvas, world, orbit) {
   sunlight.position.set(...config.sunlight.position);
   sunlight.shadow.mapSize.set(config.quality.shadowMapSize, config.quality.shadowMapSize);
   Object.assign(sunlight.shadow.camera, { left: -config.quality.shadowExtent, right: config.quality.shadowExtent, top: config.quality.shadowExtent, bottom: -config.quality.shadowExtent, near: config.quality.shadowNear, far: config.quality.shadowFar });
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  sunlight.shadow.radius = config.quality.shadowRadius;
   sunlight.shadow.bias = config.quality.shadowBias;
   sunlight.target.position.set(world.map.size / 2, 0, world.map.size / 2);
   scene.add(sunlight.target);

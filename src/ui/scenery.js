@@ -3,6 +3,7 @@ import { content } from '../content.js';
 import * as THREE from '../../vendor/three.module.min.js';
 import { config } from '../config.js';
 import { heightAt } from '../sim/heightmap.js';
+import { generateStrata } from '../art/strata.js';
 import { mapData } from '../map-data.js';
 
 export function decorateScene(scene, canvas, world) {
@@ -12,33 +13,39 @@ export function decorateScene(scene, canvas, world) {
     new THREE.ShaderMaterial({ side: THREE.BackSide, depthWrite: false,
       uniforms: { low: { value: new THREE.Color(config.colors.sky) }, high: { value: new THREE.Color(config.colors.skyHigh) } },
       vertexShader: 'varying vec3 direction; void main(){direction=position; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
-      fragmentShader: 'uniform vec3 low; uniform vec3 high; varying vec3 direction; void main(){float t=clamp(normalize(direction).y,0.0,1.0);gl_FragColor=vec4(mix(low,high,t),1.0);}' }));
+      fragmentShader: `uniform vec3 low; uniform vec3 high; varying vec3 direction;
+        void main(){float t=smoothstep(-0.7,0.2,normalize(direction).y);gl_FragColor=vec4(mix(low,high,t),1.0);
+        #include <tonemapping_fragment>
+        #include <colorspace_fragment>
+        }` }));
   scene.add(sky);
   const walls = new THREE.Group();
   walls.name = 'strata';
   const map = world.map;
-  for (const [bottom, top, color] of [[settings.base, settings.soilBottom, config.colors.rock], [settings.soilBottom, null, config.colors.soil]]) {
-    const positions = [];
-    const edges = [Array.from({ length: map.stride }, (_, i) => i), Array.from({ length: map.stride }, (_, i) => i * map.stride + map.cells),
-      Array.from({ length: map.stride }, (_, i) => map.cells * map.stride + i), Array.from({ length: map.stride }, (_, i) => i * map.stride)];
-    for (const edge of edges) for (let i = 1; i < edge.length; i++) {
-      const a = edge[i - 1], b = edge[i];
-      const ax = a % map.stride * map.spacing, az = Math.floor(a / map.stride) * map.spacing;
-      const bx = b % map.stride * map.spacing, bz = Math.floor(b / map.stride) * map.spacing;
-      const ay = top ?? map.heights[a], by = top ?? map.heights[b];
-      positions.push(ax,bottom,az, bx,bottom,bz, ax,ay,az, ax,ay,az, bx,bottom,bz, bx,by,bz);
-    }
+  const strata = generateStrata(map);
+  for (let layer = 0; layer < strata[0].layers.length; layer++) {
     const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geometry.setAttribute('position', new THREE.Float32BufferAttribute(strata.flatMap(edge => edge.layers[layer].positions), 3));
     geometry.computeVertexNormals();
-    walls.add(new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({ color, flatShading: true, side: THREE.DoubleSide })));
+    walls.add(new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({
+      color: config.colors[strata[0].layers[layer].color], flatShading: true, side: THREE.DoubleSide })));
   }
-  // A translucent eastern face exposes the sea depth above the cut seabed.
-  const seaFace = new THREE.Mesh(new THREE.PlaneGeometry(map.size, settings.seaDepth),
-    new THREE.MeshStandardMaterial({ color: config.colors.seaDeep, transparent: true, opacity: settings.seaFaceOpacity, side: THREE.DoubleSide }));
-  seaFace.rotation.y = Math.PI / 2;
-  seaFace.position.set(map.size, -settings.seaDepth / 2, map.size / 2);
+  const seaGeometry = new THREE.BufferGeometry();
+  seaGeometry.setAttribute('position', new THREE.Float32BufferAttribute(strata.flatMap(edge => edge.water), 3));
+  seaGeometry.computeVertexNormals();
+  const seaFace = new THREE.Mesh(seaGeometry, new THREE.MeshStandardMaterial({
+    color: config.colors.seaDeep, transparent: true, opacity: settings.seaFaceOpacity, side: THREE.DoubleSide }));
+  seaFace.name = 'sea-cutaway';
   walls.add(seaFace);
+  const shadow = new THREE.Mesh(new THREE.PlaneGeometry(map.size * 1.65, map.size * 1.65),
+    new THREE.ShaderMaterial({ transparent: true, depthWrite: false,
+      uniforms: { color: { value: new THREE.Color(config.colors.groundShadow) } },
+      vertexShader: 'varying vec2 coord; void main(){coord=uv*2.0-1.0;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
+      fragmentShader: 'uniform vec3 color; varying vec2 coord; void main(){float r=length(coord);float alpha=0.19*(1.0-smoothstep(0.35,1.0,r));gl_FragColor=vec4(color,alpha);}' }));
+  shadow.rotation.x = -Math.PI / 2;
+  shadow.position.set(map.size / 2, settings.base - 6, map.size / 2);
+  shadow.name = 'base-shadow';
+  scene.add(shadow);
   scene.add(walls);
   const wavePositions = [];
   for (let z = settings.waveSpacing; z < map.size; z += settings.waveSpacing) {
@@ -95,6 +102,7 @@ export function decorateScene(scene, canvas, world) {
   return {
     setQuality(settings) { quality = settings; waves.visible = settings.waves; lastClusters = undefined; },
     update(camera) {
+      sky.position.copy(camera.position);
       waves.position.z = Math.sin(world.time * settings.waveSpeed) * settings.waveTravel;
       for (const mesh of streaks.children) {
         const { channel, offset } = mesh.userData;
@@ -145,7 +153,7 @@ export function decorateScene(scene, canvas, world) {
       }
     },
     snapshot() {
-      return Object.freeze({ objects: Object.freeze(scene.children.map(child => child.name).filter(Boolean)), labels: Object.freeze([...labelSnapshot]),
+      return Object.freeze({ objects: Object.freeze(scene.children.map(child => child.name).filter(Boolean)), strataLayers: strata[0].layers.length, seaCutaway: seaFace.geometry.attributes.position.count > 0, labels: Object.freeze([...labelSnapshot]),
         effects: Object.freeze({ wavesVisible: waves.visible, cloudBlocks: clouds.children.length, time: world.time, waveOffset: waves.position.z, flowPositions: Object.freeze(streaks.children.map(mesh => Object.freeze(mesh.position.toArray()))) }) });
     }
   };
