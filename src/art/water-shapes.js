@@ -201,7 +201,8 @@ export function waterBedHeight(map, x, z, data = mapData) {
       const a=points[i-1], b=points[i];
       if (x < Math.min(a[0],b[0])-bankOuterRadius || x > Math.max(a[0],b[0])+bankOuterRadius || z < Math.min(a[2],b[2])-bankOuterRadius || z > Math.max(a[2],b[2])+bankOuterRadius) continue;
       const dx=b[0]-a[0], dz=b[2]-a[2];
-      const t=Math.max(0,Math.min(1,((x-a[0])*dx+(z-a[2])*dz)/(dx*dx+dz*dz || 1)));
+      const projection=((x-a[0])*dx+(z-a[2])*dz)/(dx*dx+dz*dz || 1);
+      const t=Math.max(0,Math.min(1,projection));
       const distance=Math.hypot(x-a[0]-dx*t,z-a[2]-dz*t);
       // A shallower stream bed reduces exposed edges. Keep 3.7 units of
       // clearance so the 80-cell land mesh still leaves every ribbon visible.
@@ -210,7 +211,11 @@ export function waterBedHeight(map, x, z, data = mapData) {
       // do not cut a flat trench across the neighboring upstream slope.
       // Keep clearance within nine units for the coarser rendering grid.
       const bankRise = channel.type === 'stream' ? Math.max(0, distance - 9) * 1.5 : 0;
-      height = Math.min(height, recessedBank(originalHeight, a[1]*(1-t)+b[1]*t-depth+bankRise, distance));
+      // Extend the river slope upstream of each segment instead of carving
+      // its lower endpoint height into the preceding bank. Streams need a
+      // separate coarse-grid treatment before applying the same correction.
+      const upstreamRise = channel.type === 'river' ? Math.max(0, -projection) * (a[1] - b[1]) : 0;
+      height = Math.min(height, recessedBank(originalHeight, a[1]*(1-t)+b[1]*t-depth+bankRise+upstreamRise, distance));
     }
   }
   return height;

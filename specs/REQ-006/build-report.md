@@ -359,3 +359,14 @@ Giảm độ sâu khắc mặt vẽ suối từ 4 xuống 3,7 đơn vị. Không
 Audit tái lập: suối đầu có khoảng hở cực đại Thấp/Cao **20,261271 / 22,717849**; suối thứ hai **52,467390 / 36,257185**; suối thứ ba **69,222263 / 55,631194**. Khoảng hở nhỏ nhất trên lưới Thấp của hai suối sau chỉ **0,060212 / 0,108243**, vì vậy không tiếp tục giảm độ sâu tùy ý. Cực đại lớn ở suối thứ ba gần như không thay đổi: cần xử lý hình học đường tâm/bờ tổng thể.
 
 Toàn bộ Node **95/95**, 0 fail/skip/cancelled, **112,119 giây**, chạy riêng không trình duyệt. E2e **art-strata, art-trees** đạt, console sạch, cây 2.200/400 và hạt bất biến khi đổi mức. Mặt vẽ còn 6 đỉnh, độ lệch chuẩn dốc **1,622273730**, phần dư đồng bằng **2,642467559**. Chụp/xem `screenshots/19-shallower-streams.png`, Cao 1920 × 1080, dọc sông, paused ban đầu. Núi còn nhọn và suối còn gấp khúc; giữ bảng QA bắt buộc 1/2 chưa đạt và bộ chín ảnh/evidence cũ. Chưa QA bốn góc/mực thấp–đầy, chưa chạy mọi e2e/FPS/ngân sách cuối. **10b/10c/10 tiếp tục mở.**
+
+
+## Mốc 10b-16 — khắc bờ sông theo độ dốc thượng lưu
+
+Phép khắc trước đây chặn tham số chiếu vào từng đoạn ở [0, 1], vì vậy đầu đoạn hạ lưu khắc cùng độ cao thấp vào phần bờ phía thượng lưu. Với riêng sông, ngoại suy độ dốc về phía trước đầu đoạn để giảm phần khắc thấp sai vị trí. Không đổi đường tâm, độ rộng, độ sâu, World/RNG hay bản đồ mô phỏng. Áp dụng ngoại suy cho suối (kể cả bản giới hạn 0,5 hoặc chỉ ngoài bán kính 9) gây che nước trên lưới Thấp, đã bỏ hoàn toàn; giữ nguyên mọi assertion cũ.
+
+Audit tái lập bằng `node scripts/audit-water-banks.mjs > specs/REQ-006/water-bank-audit.json`: sông Thấp có khoảng hở **0,315779–3,204882**, Cao **0,934411–3,492402** (cực đại cũ **3,768914 / 4,035716**). Test mới chặn cực đại dưới 3,3/3,6 và khoảng hở nhỏ nhất trên 0,05. Suối giữ nguyên: cực đại **20,261271 / 22,717849**, **52,467390 / 36,257185**, **69,222263 / 55,631194** (Thấp/Cao). Đây là cải thiện cục bộ sông, chưa phải nghiệm thu AC-7.
+
+Toàn bộ `node --test` **96/96**, 0 fail/skip/cancelled, **108,238 giây**, exit 0, chạy riêng trước trình duyệt. E2e **art-strata, art-trees** đạt, console sạch, cây **2.200/400**, hạt bất biến khi chuyển chất lượng. Mặt vẽ vẫn **6 đỉnh**, độ lệch chuẩn dốc **1,622273730**, phần dư đồng bằng **2,642467559** / 2.950 mẫu. Server Python đã dừng sau kiểm thử.
+
+Đã chụp/xem `screenshots/20-river-slope-banks.png`, Cao 1920 × 1080, dọc sông, paused ban đầu. Núi vẫn quá nhọn, suối còn gấp/răng cưa; giữ bảng QA bắt buộc 1/2 chưa đạt và chín ảnh/evidence cũ. Chưa QA bốn góc/mực thấp–đầy, chưa chạy mọi e2e/FPS/ngân sách cuối. **10b/10c/10 tiếp tục mở; trả continue.**

@@ -246,3 +246,17 @@
 - Chụp/xem `screenshots/19-shallower-streams.png`, Cao 1920 × 1080, góc dọc sông, paused ban đầu. Núi vẫn nhọn, suối vẫn gấp khúc. Không thay bộ chín ảnh/evidence hoặc bảng QA 1/2 chưa đạt. Chỉ đóng **10b-15**, giữ **10b/10c/10 mở; trả continue**.
 - Tiếp theo: sửa tổng thể hình khối núi và giao tuyến bờ/đường tâm suối, nhất là suối thứ ba; kiểm AC-2 và mọi bất biến mô phỏng. Sau đó QA bốn góc/mực thấp–đầy, chụp lại chín ảnh và bảng QA; cuối cùng 10c toàn bộ Node/e2e REQ-004/005/006, FPS hai mức, ngân sách cuối và rà README/package. Chưa chạy các kiểm tra cuối này ở phiên hiện tại.
 - Lệnh: `node --test`, `node scripts/audit-water-banks.mjs > specs/REQ-006/water-bank-audit.json`, `node e2e/art-strata.e2e.mjs`, `node e2e/art-trees.e2e.mjs`; server Python quản lý try/finally. Commit dùng `git -c user.name='Dev Agent' -c user.email='dev-agent@example.com' commit ...`, không sửa cấu hình git/tệp cấm. Log/script /tmp không bền vững; ảnh và số đo cần giữ đã lưu repo.
+
+
+## Phiên build 2026-10-28 — Mốc 10b-16: khắc bờ sông theo độ dốc thượng lưu
+
+Phép khắc trước đây chặn tham số chiếu vào từng đoạn ở [0, 1], vì vậy đầu đoạn hạ lưu khắc cùng độ cao thấp vào phần bờ phía thượng lưu. Với riêng sông, ngoại suy độ dốc về phía trước đầu đoạn để giảm phần khắc thấp sai vị trí. Không đổi đường tâm, độ rộng, độ sâu, World/RNG hay bản đồ mô phỏng. Áp dụng ngoại suy cho suối (kể cả bản giới hạn 0,5 hoặc chỉ ngoài bán kính 9) gây che nước trên lưới Thấp, đã bỏ hoàn toàn; giữ nguyên mọi assertion cũ.
+
+Audit tái lập bằng `node scripts/audit-water-banks.mjs > specs/REQ-006/water-bank-audit.json`: sông Thấp có khoảng hở **0,315779–3,204882**, Cao **0,934411–3,492402** (cực đại cũ **3,768914 / 4,035716**). Test mới chặn cực đại dưới 3,3/3,6 và khoảng hở nhỏ nhất trên 0,05. Suối giữ nguyên: cực đại **20,261271 / 22,717849**, **52,467390 / 36,257185**, **69,222263 / 55,631194** (Thấp/Cao). Đây là cải thiện cục bộ sông, chưa phải nghiệm thu AC-7.
+
+Toàn bộ `node --test` **96/96**, 0 fail/skip/cancelled, **108,238 giây**, exit 0, chạy riêng trước trình duyệt. E2e **art-strata, art-trees** đạt, console sạch, cây **2.200/400**, hạt bất biến khi chuyển chất lượng. Mặt vẽ vẫn **6 đỉnh**, độ lệch chuẩn dốc **1,622273730**, phần dư đồng bằng **2,642467559** / 2.950 mẫu. Server Python đã dừng sau kiểm thử.
+
+Đã chụp/xem `screenshots/20-river-slope-banks.png`, Cao 1920 × 1080, dọc sông, paused ban đầu. Núi vẫn quá nhọn, suối còn gấp/răng cưa; giữ bảng QA bắt buộc 1/2 chưa đạt và chín ảnh/evidence cũ. Chưa QA bốn góc/mực thấp–đầy, chưa chạy mọi e2e/FPS/ngân sách cuối. **10b/10c/10 tiếp tục mở; trả continue.**
+
+- Tiếp theo: sửa tổng thể hình khối núi và giao tuyến bờ/đường tâm suối, đặc biệt suối thứ ba. Tránh tiếp tục giảm độ sâu hoặc ngoại suy suối tùy ý: khoảng hở Thấp của hai suối sau chỉ 0,060212/0,108243. Cần bảo toàn sáu đỉnh, chỉ số AC-2 và mọi test mô phỏng. Sau đó QA bốn góc/mực thấp–đầy, chụp lại chín ảnh và cập nhật bảng QA; cuối cùng 10c mọi Node/e2e REQ-004/005/006, FPS hai mức, ngân sách cuối và rà README/package.
+- Không có notes.md hoặc eval REQ-006. Lệnh: `node --test`, `node scripts/audit-water-banks.mjs`, `node e2e/art-strata.e2e.mjs`, `node e2e/art-trees.e2e.mjs`. Server `python3 -m http.server 8000` quản lý bằng Python Popen try/finally. Commit bằng danh tính tạm `git -c user.name='Dev Agent' -c user.email='dev-agent@example.com' commit ...`. Không sửa tệp cấm. Script/log trong /tmp không bền vững; ảnh và số đo cần giữ đã lưu repo.

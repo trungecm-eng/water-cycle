@@ -89,3 +89,14 @@ test('shallower stream beds reduce edge gaps and retain positive mesh clearance'
     assert.ok(streams[0].rendered.maximumGap < (cells === 80 ? 20.4 : 22.8));
   }
 });
+
+test('river banks extend segment slopes upstream without burying ribbon edges', () => {
+  const map = generateDrainage();
+  for (const cells of [80, 160]) {
+    const river = auditChannelBanks(map, cells).channels.find(channel => channel.type === 'river');
+    assert.equal(river.rendered.coveredVertices, 0);
+    assert.ok(river.rendered.minimumGap > 0.05);
+    // Constant endpoint excavation produced gaps of 3.77 / 4.04 units.
+    assert.ok(river.rendered.maximumGap < (cells === 80 ? 3.3 : 3.6));
+  }
+});
