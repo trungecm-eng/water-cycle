@@ -40,3 +40,13 @@ Thay đổi test của bước 2:
 - `e2e/ui-quality.e2e.mjs`: giữ kiểm tỷ lệ tam giác 4:1 và bất biến khi chuyển mức; bổ sung số tam giác chính xác 51.200/12.800, số ruộng không đổi và đối tượng `shore-foam`.
 
 Kiểm thử bước 2: toàn bộ `node --test` đạt **58/58** trong **137,906 giây**. Sau khi thay cấu hình từ `terrainStep` sang `terrainCells`, chạy lại nhóm `test/quality.test.js` + `test/terrain-colors.test.js`: 8/8 đạt. `e2e/ui-quality.e2e.mjs`, `e2e/scenery.e2e.mjs` và `e2e/cycle-flow.e2e.mjs` đều đạt, gồm luồng gián đoạn và URL; console không lỗi. Chưa chạy toàn bộ e2e khác hoặc đánh giá hình ảnh AC-13/AC-15; dành cho các bước 9–10.
+
+## Bước 3 — Mặt nước và lòng dẫn
+
+Thêm module thuần `water-shapes.js`: cắt tam giác mặt nước theo giao tuyến địa hình với mực nước, giới hạn hồ/ao bằng viền có nhiễu góc tất định. Viền co/giãn theo `reservoirs.level`; chỉ dựng lại geometry khi mực nước đổi. Không có thành đứng của hồ/ao. Biển dùng cùng phép cắt theo địa hình, màu chuyển từ nhạt tới đậm theo khoảng cách tới đường bờ thực tế; sóng vẫn chỉ bật ở Cao.
+
+Sông/suối dùng dải rộng dần, bo các góc bậc thang bằng hai lượt corner cutting. Dải nối hồ tới đầu sông nội suy từ mực hồ xuống đầu sông. Lòng dẫn **khi vẽ** được hạ cục bộ để lưới Thấp không che mất nước; đây là chỉnh lòng dẫn đồ họa, không thêm lớp nhiễu địa hình và không thay đổi dữ liệu World, thoát nước hay hằng số vật lý. Các chỉ số núi/đồng bằng của bước 1 tiếp tục đo trên lưới mô phỏng; cần rà lại chỉ số trên bề mặt vẽ cuối cùng ở bước 10 nếu các bước sau còn chỉnh hình dạng. Dải sáng nay nội suy liên tục giữa các ô theo thời gian, thay vì nhảy từng ô.
+
+Ba test mới: mặt nước tất định, khớp mực và nằm trong lòng chảo; kênh rộng dần và lòng dẫn thấp hơn mặt nước; nối hồ tới đúng đầu sông, không sửa mảng độ cao mô phỏng. Toàn bộ `node --test` đạt 61/61 trong 154,702 giây; sau tinh chỉnh bo kênh và giới hạn viền đã chạy lại ba test nước, đều đạt. Không đổi kỳ vọng kiểm thử cũ.
+
+`e2e/scenery.e2e.mjs`, `e2e/core-3d.e2e.mjs`, `e2e/cycle-flow.e2e.mjs` đạt (luồng chính, gián đoạn và URL). Chụp thử bốn góc nhìn Thấp vào `/tmp/req006-water-{overview,sea,mountain,river}.png`, console sạch. Rà ảnh phát hiện kênh bị lưới Thấp che; đã sửa bằng bo kênh và hạ lòng dẫn. Các ảnh tạm không thay bộ ảnh nghiệm thu Cao/Thấp hoặc xác nhận AC-7/AC-13 cuối cùng ở bước 9–10.

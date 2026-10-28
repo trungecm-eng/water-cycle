@@ -2,6 +2,7 @@ import { qualityLevels } from '../quality.js';
 import { content } from '../content.js';
 import * as THREE from '../../vendor/three.module.min.js';
 import { config } from '../config.js';
+import { heightAt } from '../sim/heightmap.js';
 import { mapData } from '../map-data.js';
 
 export function decorateScene(scene, canvas, world) {
@@ -97,8 +98,12 @@ export function decorateScene(scene, canvas, world) {
       waves.position.z = Math.sin(world.time * settings.waveSpeed) * settings.waveTravel;
       for (const mesh of streaks.children) {
         const { channel, offset } = mesh.userData;
-        const index = channel[Math.floor((world.time * settings.flowSpeed + offset * channel.length) % channel.length)];
-        mesh.position.set(index % map.stride * map.spacing, map.heights[index] + settings.flowHeight, Math.floor(index / map.stride) * map.spacing);
+        const progress = (world.time * settings.flowSpeed + offset * channel.length) % (channel.length - 1);
+        const a = channel[Math.floor(progress)], b = channel[Math.floor(progress) + 1];
+        const t = progress % 1;
+        const x = (a % map.stride * (1-t) + b % map.stride * t) * map.spacing;
+        const z = (Math.floor(a / map.stride) * (1-t) + Math.floor(b / map.stride) * t) * map.spacing;
+        mesh.position.set(x, heightAt(map,x,z) + settings.flowHeight, z);
       }
       if (lastClusters !== world.clusters) {
         lastClusters = world.clusters;

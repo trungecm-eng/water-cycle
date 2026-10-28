@@ -15,3 +15,11 @@
 - Tiếp theo **bước 3**: thay mặt nước ô vuông hiện có bằng viền tự nhiên/lòng chảo, xử lý dải nối hồ–sông, mực nước và dải sáng. Sau đó thực hiện tuần tự bước 4–10. Núi hiện có sáu đỉnh cao hẹp; cần rà hình ảnh tổng thể khi thêm chân núi/rừng và ở vòng QA cuối để đánh giá vẻ tự nhiên. Mặt cắt, trời, cây, mây, Mặt Trời, nhãn giai đoạn vẫn chưa nâng cấp.
 - `terrainStep` đã được thay bằng `terrainCells`; test quality và e2e quality đã cập nhật, các cặp thay đổi ghi trong `build-report.md`. Không đổi quy luật hoặc hằng số vật lý `World`.
 - Git chưa cấu hình danh tính. Commit dùng tùy chọn từng lệnh: `git -c user.name='Dev Agent' -c user.email='dev-agent@example.com' commit -m '...'`; không sửa cấu hình `.git`. Server thử cổng 8000 được dừng khi kết thúc phiên; cần chạy lại ở phiên sau.
+
+## Phiên build 2026-10-28 — Bước 3
+
+- Hoàn tất bước 3: module thuần `water-shapes.js` tạo mặt hồ/ao/biển cắt theo địa hình và mực nước; viền hồ/ao bất quy tắc tất định; kênh rộng dần và bo góc; dải nối hồ–sông. Renderer cập nhật mặt hồ/ao khi mực đổi, biển chuyển màu theo khoảng cách bờ, dải sáng chảy nội suy liên tục. Sóng Cao giữ cơ chế hiện có.
+- Không đổi World hoặc địa hình mô phỏng. Có hạ lòng dẫn **chỉ khi vẽ** bằng `waterBedHeight` để tránh lưới Thấp che dải nước (ảnh thử ban đầu cho thấy lỗi này). Không phải phương án hai lớp nhiễu núi; xem giải thích trong báo cáo build. Khi hoàn thiện hình ảnh cần đo lại AC-2 trên bề mặt vẽ cuối cùng, loại hành lang kênh đúng phạm vi test.
+- Kiểm thử: `node --test` 61/61 trong 154,702 giây; ba test nước chạy lại sau chỉnh cuối đều đạt. Các e2e scenery, core-3d và cycle-flow đều đạt; cycle-flow gồm luồng gián đoạn và URL. Bốn góc nhìn Thấp đã chụp thử ở `/tmp`, không lỗi console; đây chưa phải bộ ảnh nghiệm thu AC-7/13. Không đổi kỳ vọng test cũ trong bước này.
+- Tiếp theo **bước 4**: mặt cắt 3–5 lớp, trời xanh → kem, bóng đáy và đánh giá bóng mềm. Sau đó cây (5), mây/mưa/Mặt Trời (6), nhãn (7–8), e2e/tài liệu/QA tổng thể (9–10). Chưa kết luận đạt AC tổng thể và chưa chạy mọi e2e REQ-005.
+- Lệnh chạy vẫn là `node --test`, server `python3 -m http.server 8000`; Playwright toàn cục qua `e2e/browser.mjs`. Danh tính commit dùng `git -c user.name='Dev Agent' -c user.email='dev-agent@example.com' commit ...`, không sửa `.git`. Server dừng khi kết thúc phiên.

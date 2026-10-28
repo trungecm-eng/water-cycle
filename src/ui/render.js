@@ -3,8 +3,8 @@ import { content } from '../content.js';
 import * as THREE from '../../vendor/three.module.min.js';
 import { decorateScene } from './scenery.js';
 import { config } from '../config.js';
-import { heightAt } from '../sim/heightmap.js';
 import { colorAt, coastlineSamples } from '../art/terrain-colors.js';
+import { basinSurface, channelRibbon, lakeConnection, waterBedHeight } from '../art/water-shapes.js';
 import { generateFields, fieldAt } from '../art/fields.js';
 
 function terrainGeometry(map, cells, fields) {
@@ -14,7 +14,7 @@ function terrainGeometry(map, cells, fields) {
   const samples = [];
   for (let row = 0; row <= cells; row++) for (let column = 0; column <= cells; column++) {
     const x = column * spacing, z = row * spacing;
-    samples.push({ point: [x, heightAt(map, x, z), z],
+    samples.push({ point: [x, waterBedHeight(map, x, z), z],
       color: new THREE.Color(colorAt(map, x, z, fieldAt(fields, x, z))).toArray() });
   }
   const stride = cells + 1;
@@ -32,19 +32,7 @@ function terrainGeometry(map, cells, fields) {
   return geometry;
 }
 
-// Water follows the same nearest-grid footprints used by reservoir collision.
-function waterGeometry(map, indices, channel = false) {
-  const positions = [];
-  const half = map.spacing / 2;
-  for (const index of indices) {
-    const x = index % map.stride * map.spacing;
-    const z = Math.floor(index / map.stride) * map.spacing;
-    const left = Math.max(0, x - half), right = Math.min(map.size, x + half);
-    const near = Math.max(0, z - half), far = Math.min(map.size, z + half);
-    const y = channel ? map.heights[index] + config.rendering.waterOffset : 0;
-    positions.push(left, y, near, left, y, far, right, y, near,
-      right, y, near, left, y, far, right, y, far);
-  }
+function waterGeometry(positions) {
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
   geometry.computeVertexNormals();
@@ -80,17 +68,21 @@ export function createRenderer(canvas, world, orbit) {
     new THREE.MeshStandardMaterial({ vertexColors: true, flatShading: true, roughness: 1 }));
   terrain.name = 'terrain';
   scene.add(terrain);
+  const coast = coastlineSamples(world.map);
+  const shorelineX = z => coast[Math.min(coast.length - 1, Math.round(z / world.map.size * (coast.length - 1)))][0];
   const surfaces = {};
   for (const id of ['sea', 'lake', 'pond', 'river', 'stream']) {
-    const indices = world.map.regions.flatMap((region, index) => region === id ? [index] : []);
-    const mesh = new THREE.Mesh(waterGeometry(world.map, indices, id === 'river' || id === 'stream'),
+    const positions = ['river', 'stream'].includes(id)
+      ? world.map.channels.filter(channel => channel.type === id).flatMap(channel => channelRibbon(world.map, channel))
+      : basinSurface(world.map, id, world.reservoirs.level(id));
+    const mesh = new THREE.Mesh(waterGeometry(positions),
       new THREE.MeshStandardMaterial({ color: config.colors[id], transparent: true,
         opacity: config.rendering.waterOpacity, roughness: 0.25, side: THREE.DoubleSide }));
     if (id === 'sea') {
       const positions = mesh.geometry.attributes.position;
       const colors = [];
       for (let i = 0; i < positions.count; i++) {
-        const blend = Math.max(0, Math.min(1, (positions.getX(i) - config.scenery.waveStart) / (world.map.size - config.scenery.waveStart)));
+        const blend = Math.max(0, Math.min(1, (positions.getX(i) - shorelineX(positions.getZ(i))) / (world.map.size - shorelineX(positions.getZ(i)))));
         colors.push(...new THREE.Color(config.colors.sea).lerp(new THREE.Color(config.colors.seaDeep), blend).toArray());
       }
       mesh.geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
@@ -98,9 +90,13 @@ export function createRenderer(canvas, world, orbit) {
       mesh.material.vertexColors = true;
     }
     mesh.name = id;
+    mesh.userData.level = world.reservoirs.level(id === 'river' || id === 'stream' ? 'sea' : id);
     surfaces[id] = mesh;
     scene.add(mesh);
   }
+  const connector = new THREE.Mesh(waterGeometry(lakeConnection(world.map, world.reservoirs.level('lake'))), surfaces.lake.material);
+  connector.name = 'lake-outlet';
+  scene.add(connector);
   const shoreline = coastlineSamples(world.map);
   const foamPositions = [];
   for (let i = 1; i < shoreline.length; i++) {
@@ -161,8 +157,18 @@ export function createRenderer(canvas, world, orbit) {
       const view = orbit.snapshot();
       camera.position.set(view.position.x, view.position.y, view.position.z);
       camera.lookAt(...view.target);
-      for (const id of ['sea', 'lake', 'pond']) {
-        surfaces[id].position.y = world.reservoirs.level(id);
+      for (const id of ['lake', 'pond']) {
+        const level = world.reservoirs.level(id);
+        if (surfaces[id].userData.level !== level) {
+          surfaces[id].geometry.dispose();
+          surfaces[id].geometry = waterGeometry(basinSurface(world.map, id, level));
+          surfaces[id].userData.level = level;
+          if (id === 'lake') {
+            connector.geometry.dispose();
+            connector.geometry = waterGeometry(lakeConnection(world.map, level));
+            connector.visible = world.reservoirs.count(id) > 0;
+          }
+        }
         surfaces[id].visible = world.reservoirs.count(id) > 0;
       }
       sunlight.intensity = config.rendering.sunlight * (0.7 + world.sun / 100 * 0.3);
