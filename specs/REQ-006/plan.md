@@ -42,5 +42,6 @@ Mỗi bước gồm code và test của bước đó; `node --test` xanh và cá
   - [x] 10b-25. Tạo nhánh đá bất đối xứng trên sườn ngoài, giữ vùng đỉnh/hành lang suối/đồng bằng; đo độ biến thiên sườn, kiểm toàn bộ Node và hồi quy trình duyệt, chụp bốn góc. QA hình khối/bờ nước tổng thể vẫn thuộc 10b.
   - [x] 10b-26. Giữ bề rộng dải nối hồ–sông vuông góc hướng chảy, tránh suy biến khi cửa thoát dọc trục Z; kiểm năm hướng, toàn bộ Node, e2e cây/mặt cắt và ảnh dọc sông. QA dáng núi/bờ nước tổng thể vẫn thuộc 10b.
   - [x] 10b-27. Nâng sống nối giữa các khối núi, giữ vùng đỉnh và hành lang lưu vực; kiểm địa hình/nước, toàn bộ test hiện có và test yên núi mới, e2e cây/mặt cắt/luồng/ngân sách, chụp toàn cảnh và dọc sông. QA hình ảnh tổng thể vẫn thuộc 10b.
+  - [x] 10b-28. Mở mặt nước sông trong lòng dẫn và cắt theo tam giác đất Float32 ở hai mức; dùng chung vùng bờ để loại cây/ruộng, kiểm hồi quy, ngân sách và ảnh dọc sông. Chưa đóng QA núi/suối tổng thể.
   - [ ] 10b. Sửa dáng núi, lòng chảo/mép nước và độ rõ màn mưa theo bảng QA bước 9; đo lại địa hình vẽ, chụp ảnh và cập nhật bảng QA.
   - [ ] 10c. Chạy đầy đủ Node/e2e, FPS hai mức, ngân sách cuối, rà README/package và ghi bàn giao cuối.

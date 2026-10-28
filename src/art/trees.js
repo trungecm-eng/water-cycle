@@ -1,3 +1,4 @@
+import { riverBankContains } from './channel-surface.js';
 import { config } from '../config.js';
 import { mapData } from '../map-data.js';
 import { mulberry32 } from '../sim/rng.js';
@@ -23,7 +24,7 @@ export function generateTrees(map, count = config.quality.levels.high.trees, dat
       const tz = z + (random() - 0.5) * spacing * 0.8;
       const sample = terrainSample(map, tx, tz);
       const rank = random();
-      if (!treeEligible(sample) || fieldAt(fields, tx, tz)) continue;
+      if (!treeEligible(sample) || fieldAt(fields, tx, tz) || riverBankContains(map, tx, tz)) continue;
       const cluster = valueNoise(tx / 65, tz / 65, data.seed ^ 0x9ab4);
       const weight = sample.region === 'plain' ? 0.12 : 1;
       candidates.push({ x: tx, y: waterBedHeight(map, tx, tz, data), z: tz, region: sample.region,

@@ -1,3 +1,4 @@
+import { riverBankContains } from './channel-surface.js';
 import { mapData } from '../map-data.js';
 import { config } from '../config.js';
 import { mulberry32 } from '../sim/rng.js';
@@ -21,7 +22,7 @@ export function generateFields(map, data = mapData) {
     for (let z = field.z - margin; z <= field.z + field.depth + margin; z += map.spacing / 3) {
       for (let x = field.x - margin; x <= field.x + field.width + margin; x += map.spacing / 3) {
         const sample = terrainSample(map, x, z);
-        if (sample.region !== 'plain' || sample.slope > config.art.fieldSlope) eligible = false;
+        if (sample.region !== 'plain' || sample.slope > config.art.fieldSlope || riverBankContains(map, x, z)) eligible = false;
       }
     }
     if (!eligible || fields.some(other => field.x < other.x + other.width + margin && field.x + field.width + margin > other.x
