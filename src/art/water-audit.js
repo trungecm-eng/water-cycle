@@ -1,4 +1,5 @@
 import { channelRibbon, waterBedHeight } from './water-shapes.js';
+import { renderedRiverSurface } from './channel-surface.js';
 
 // Interpolate the exact triangle split and Float32 vertices used by render.js.
 export function renderedTriangleHeight(heights, cells, size, x, z) {
@@ -22,8 +23,8 @@ export function measureSurfaceClearance(positions, terrainHeight, tolerance = 0.
     vertices: gaps.length,
     floatingVertices: gaps.filter(gap => gap > tolerance).length,
     coveredVertices: gaps.filter(gap => gap < -tolerance).length,
-    minimumGap: gaps.length ? Math.min(...gaps) : null,
-    maximumGap: gaps.length ? Math.max(...gaps) : null
+    minimumGap: gaps.length ? gaps.reduce((minimum, gap) => Math.min(minimum, gap), Infinity) : null,
+    maximumGap: gaps.length ? gaps.reduce((maximum, gap) => Math.max(maximum, gap), -Infinity) : null
   };
 }
 
@@ -63,16 +64,18 @@ export function locateClearanceExtrema(positions, terrainHeight) {
 // This is a diagnostic, not an acceptance verdict: ribbon endpoint edges may
 // meet another water surface instead of dry land. Report every occurrence,
 // including duplicates, to keep counts comparable with renderer triangles.
-export function auditChannelBanks(map, cells) {
+export function auditChannelBanks(map, cells, { actualSurface = false } = {}) {
   const stride = cells + 1, spacing = map.size / cells;
   const heights = Float32Array.from({ length: stride * stride }, (_, i) =>
     waterBedHeight(map, i % stride * spacing, Math.floor(i / stride) * spacing));
   const renderedHeight = (x, z) => renderedTriangleHeight(heights, cells, map.size, x, z);
   return {
     cells,
+    geometry: actualSurface ? 'rendered-surface' : 'legacy-ribbon',
     tolerance: 0.05,
     channels: map.channels.filter(channel => ['river', 'stream'].includes(channel.type)).map(channel => {
-      const positions = Float32Array.from(channelRibbon(map, channel));
+      const positions = Float32Array.from(actualSurface && channel.type === 'river'
+        ? renderedRiverSurface(map, channel, cells) : channelRibbon(map, channel));
       const samples = sampleSurfaceTriangles(positions);
       return {
         interior: {

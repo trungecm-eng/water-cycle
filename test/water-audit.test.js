@@ -224,3 +224,33 @@ test('distant stream banks reduce high-grid excavation while preserving interior
     }
   }
 });
+
+test('actual surface audit measures uploaded river triangles and preserves legacy stream results', () => {
+  const map = generateDrainage();
+  const before = Array.from(map.heights);
+  for (const cells of [80, 160]) {
+    const legacy = auditChannelBanks(map, cells);
+    const actual = auditChannelBanks(map, cells, { actualSurface: true });
+    assert.equal(legacy.geometry, 'legacy-ribbon');
+    assert.equal(actual.geometry, 'rendered-surface');
+    const river = actual.channels.find(channel => channel.type === 'river');
+    assert.ok(river.rendered.vertices > legacy.channels.find(channel => channel.type === 'river').rendered.vertices);
+    assert.equal(river.rendered.coveredVertices, 0);
+    assert.equal(river.interior.rendered.coveredVertices, 0);
+    assert.ok(Math.abs(river.rendered.minimumGap) < 0.001);
+    assert.equal(river.interior.rendered.vertices, river.rendered.vertices / 3 * 7);
+    assert.deepEqual(actual.channels.filter(channel => channel.type === 'stream'),
+      legacy.channels.filter(channel => channel.type === 'stream'));
+    assert.deepEqual(actual, auditChannelBanks(map, cells, { actualSurface: true }));
+  }
+  assert.deepEqual(Array.from(map.heights), before);
+});
+
+test('clearance aggregation supports large uploaded meshes without argument overflow', () => {
+  const positions = new Float32Array(600000);
+  positions[1] = 2;
+  const result = measureSurfaceClearance(positions, () => 1);
+  assert.equal(result.vertices, 200000);
+  assert.equal(result.minimumGap, -1);
+  assert.equal(result.maximumGap, 1);
+});

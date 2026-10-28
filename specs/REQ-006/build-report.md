@@ -497,3 +497,14 @@ Kiểm thử Node cuối trên code đã gom phép đo hành lang và có test m
 - E2e `art-trees`, `art-strata`, `art-budget`, `cycle-flow` đạt; cycle-flow gồm luồng chính/gián đoạn/URL. Sau chỉnh vật liệu chạy lại ba e2e đầu, console sạch. Ngân sách bản cuối khi đủ các giai đoạn tại **70,65 giây**: Cao **66 lần vẽ / 240.781 tam giác**, Thấp **65 / 92.079**. Mặt Trời trong khung bốn góc hai mức, hạt không đổi khi chuyển chất lượng.
 - Đã xem hai ảnh `screenshots/30-fitted-river-{high,low}.png`, 1920×1080, dọc sông, paused từ 0 giây. Khung dừng: Cao **63 / 237.909**, Thấp **62 / 89.169**. Sông rộng hơn, mép nhiều đoạn chạm đất và cây không mọc giữa sông; còn mép răng cưa ở Thấp, đoạn cửa biển và chuyển màu hồ–sông cần QA tiếp. Núi vẫn nhọn/vách dốc, bờ ba suối chưa sửa. Giữ QA bắt buộc 1/2 chưa đạt và bộ chín ảnh/evidence cũ.
 - **Giới hạn phép đo:** `water-bank-audit.json` và test audit cũ vẫn đo `channelRibbon` nguyên bản để giữ hồi quy đáy/đường tâm; chúng không phải phép đo mặt sông mở rộng đang vẽ. Phép kiểm mặt mới nằm ở `test/channel-surface.test.js`. Bề rộng mở rộng có giới hạn, không khẳng định mọi mép sông đều chạm đất, không coi AC-7/13 hoàn tất. Chưa đo FPS cuối hoặc chạy toàn bộ e2e REQ-005/006.
+
+## Mốc 10b-29 — Audit đúng mặt sông đang vẽ
+
+`node scripts/audit-water-banks.mjs` hiện ghi `levels` cho geometry thực tải lên GPU: sông cắt theo tam giác đất, suối vẫn dùng dải gốc; `legacyLevels` giữ phép đo dải cũ để so hồi quy. Mỗi level có trường `geometry` phân biệt rõ. Không đổi renderer, địa hình hay World. Bộ tổng hợp min/max dùng reduce để hỗ trợ lưới nhiều mẫu mà không tràn giới hạn đối số JavaScript.
+
+| Lưới | Số đỉnh sông (kể trùng) | Mẫu đỉnh/cạnh/tâm | Min khoảng hở | Max khoảng hở | Mẫu bị đất che quá 0,05 |
+|---|---:|---:|---:|---:|---:|
+| 80 | 26.847 | 62.643 | -0,000017627 | 3,225000381 | 0 |
+| 160 | 52.923 | 123.487 | -0,000020935 | 3,772948742 | 0 |
+
+Giá trị âm nhỏ xuất hiện sau khi chuyển tọa độ sang Float32. Số mẫu cao hơn đất gồm cả phần giữa dòng và các giao tuyến nước–nước; không thể dùng số đó làm số mép bờ hở. Audit vẫn lấy mẫu hữu hạn, chưa chứng minh toàn mặt hoặc kết luận AC-7/13. Chưa bổ sung phép trích cạnh biên chỉ tiếp giáp đất. Không thay bằng chứng ảnh hoặc đóng QA núi/suối còn mở.

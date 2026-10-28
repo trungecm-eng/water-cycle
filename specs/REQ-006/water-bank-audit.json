@@ -1,8 +1,9 @@
 {
-  "description": "Đo khoảng cách thẳng đứng từ đỉnh biên dải nước tới mặt đất; số dương là nước cao hơn đất. Đây là chẩn đoán, không phải kết luận nghiệm thu. Số đỉnh bao gồm các đỉnh trùng và cửa nối vùng nước. Mục interior lấy mẫu ba đỉnh, ba trung điểm cạnh và tâm mỗi tam giác; đây là phép lấy mẫu hữu hạn, không chứng minh toàn mặt không xuyên đất.",
-  "levels": [
+  "description": "legacyLevels đo dải gốc để so hồi quy; levels đo mặt nước thực sự được tải lên GPU (sông cắt tam giác, suối dải gốc). Đo khoảng cách thẳng đứng từ các đỉnh tam giác nước tới mặt đất; số dương là nước cao hơn đất. Đây là chẩn đoán, không phải kết luận nghiệm thu. Số đỉnh bao gồm các đỉnh trùng và cửa nối vùng nước. Mục interior lấy mẫu ba đỉnh, ba trung điểm cạnh và tâm mỗi tam giác; đây là phép lấy mẫu hữu hạn, không chứng minh toàn mặt không xuyên đất.",
+  "legacyLevels": [
     {
       "cells": 80,
+      "geometry": "legacy-ribbon",
       "tolerance": 0.05,
       "channels": [
         {
@@ -393,6 +394,7 @@
     },
     {
       "cells": 160,
+      "geometry": "legacy-ribbon",
       "tolerance": 0.05,
       "channels": [
         {
@@ -487,6 +489,790 @@
                 ],
                 "groundHeight": 4.930105293919332,
                 "gap": 3.550393019984477
+              }
+            }
+          }
+        },
+        {
+          "interior": {
+            "samplesPerTriangle": 7,
+            "rendered": {
+              "vertices": 1218,
+              "floatingVertices": 1218,
+              "coveredVertices": 0,
+              "minimumGap": 3.0482958239782594,
+              "maximumGap": 18.48466464696449
+            },
+            "extrema": {
+              "minimum": {
+                "vertex": 1213,
+                "position": [
+                  322.9166564941406,
+                  12.350000381469727,
+                  650.3333129882812
+                ],
+                "groundHeight": 9.301704557491467,
+                "gap": 3.0482958239782594
+              },
+              "maximum": {
+                "vertex": 425,
+                "position": [
+                  231.01161193847656,
+                  91.11496353149414,
+                  715.9883422851562
+                ],
+                "groundHeight": 72.63029888452965,
+                "gap": 18.48466464696449
+              }
+            }
+          },
+          "type": "stream",
+          "source": 7098,
+          "analytic": {
+            "vertices": 522,
+            "floatingVertices": 522,
+            "coveredVertices": 0,
+            "minimumGap": 3.6999894979127426,
+            "maximumGap": 19.128708930958894
+          },
+          "rendered": {
+            "vertices": 522,
+            "floatingVertices": 522,
+            "coveredVertices": 0,
+            "minimumGap": 3.0482958239782594,
+            "maximumGap": 17.46889493811871
+          },
+          "extrema": {
+            "analytic": {
+              "minimum": {
+                "vertex": 518,
+                "position": [
+                  322.9166564941406,
+                  12.350000381469727,
+                  641.3333129882812
+                ],
+                "groundHeight": 8.650010883556984,
+                "gap": 3.6999894979127426
+              },
+              "maximum": {
+                "vertex": 176,
+                "position": [
+                  229.34878540039062,
+                  93.60943603515625,
+                  716.4144897460938
+                ],
+                "groundHeight": 74.48072710419736,
+                "gap": 19.128708930958894
+              }
+            },
+            "rendered": {
+              "minimum": {
+                "vertex": 521,
+                "position": [
+                  322.9166564941406,
+                  12.350000381469727,
+                  650.3333129882812
+                ],
+                "groundHeight": 9.301704557491467,
+                "gap": 3.0482958239782594
+              },
+              "maximum": {
+                "vertex": 176,
+                "position": [
+                  229.34878540039062,
+                  93.60943603515625,
+                  716.4144897460938
+                ],
+                "groundHeight": 76.14054109703754,
+                "gap": 17.46889493811871
+              }
+            }
+          }
+        },
+        {
+          "interior": {
+            "samplesPerTriangle": 7,
+            "rendered": {
+              "vertices": 938,
+              "floatingVertices": 938,
+              "coveredVertices": 0,
+              "minimumGap": 3.1998779207747443,
+              "maximumGap": 31.8125174744426
+            },
+            "extrema": {
+              "minimum": {
+                "vertex": 933,
+                "position": [
+                  319.73468017578125,
+                  12.350000381469727,
+                  607.3486328125
+                ],
+                "groundHeight": 9.150122460694982,
+                "gap": 3.1998779207747443
+              },
+              "maximum": {
+                "vertex": 548,
+                "position": [
+                  269.359619140625,
+                  100.49845123291016,
+                  566.2303466796875
+                ],
+                "groundHeight": 68.68593375846756,
+                "gap": 31.8125174744426
+              }
+            }
+          },
+          "type": "stream",
+          "source": 4771,
+          "analytic": {
+            "vertices": 402,
+            "floatingVertices": 402,
+            "coveredVertices": 0,
+            "minimumGap": 3.699998910892681,
+            "maximumGap": 32.67120354080738
+          },
+          "rendered": {
+            "vertices": 402,
+            "floatingVertices": 402,
+            "coveredVertices": 0,
+            "minimumGap": 3.1998779207747443,
+            "maximumGap": 31.8125174744426
+          },
+          "extrema": {
+            "analytic": {
+              "minimum": {
+                "vertex": 293,
+                "position": [
+                  278.5030517578125,
+                  54.190189361572266,
+                  583.4190063476562
+                ],
+                "groundHeight": 50.490190450679584,
+                "gap": 3.699998910892681
+              },
+              "maximum": {
+                "vertex": 236,
+                "position": [
+                  269.359619140625,
+                  100.49845123291016,
+                  566.2303466796875
+                ],
+                "groundHeight": 67.82724769210277,
+                "gap": 32.67120354080738
+              }
+            },
+            "rendered": {
+              "minimum": {
+                "vertex": 401,
+                "position": [
+                  319.73468017578125,
+                  12.350000381469727,
+                  607.3486328125
+                ],
+                "groundHeight": 9.150122460694982,
+                "gap": 3.1998779207747443
+              },
+              "maximum": {
+                "vertex": 236,
+                "position": [
+                  269.359619140625,
+                  100.49845123291016,
+                  566.2303466796875
+                ],
+                "groundHeight": 68.68593375846756,
+                "gap": 31.8125174744426
+              }
+            }
+          }
+        },
+        {
+          "interior": {
+            "samplesPerTriangle": 7,
+            "rendered": {
+              "vertices": 2506,
+              "floatingVertices": 2506,
+              "coveredVertices": 0,
+              "minimumGap": 3.0277446090848983,
+              "maximumGap": 30.129832482263453
+            },
+            "extrema": {
+              "minimum": {
+                "vertex": 2265,
+                "position": [
+                  435.85020446777344,
+                  16.12309169769287,
+                  532.9017028808594
+                ],
+                "groundHeight": 13.095347088607973,
+                "gap": 3.0277446090848983
+              },
+              "maximum": {
+                "vertex": 646,
+                "position": [
+                  252.99473571777344,
+                  130.03248596191406,
+                  326.3951110839844
+                ],
+                "groundHeight": 99.90265347965061,
+                "gap": 30.129832482263453
+              }
+            }
+          },
+          "type": "stream",
+          "source": 2247,
+          "analytic": {
+            "vertices": 1074,
+            "floatingVertices": 1074,
+            "coveredVertices": 0,
+            "minimumGap": 3.69998652620201,
+            "maximumGap": 30.222984255430305
+          },
+          "rendered": {
+            "vertices": 1074,
+            "floatingVertices": 1074,
+            "coveredVertices": 0,
+            "minimumGap": 3.1849988127150564,
+            "maximumGap": 30.129832482263453
+          },
+          "extrema": {
+            "analytic": {
+              "minimum": {
+                "vertex": 1070,
+                "position": [
+                  462.8333435058594,
+                  8.558623313903809,
+                  552.0833129882812
+                ],
+                "groundHeight": 4.858636787701799,
+                "gap": 3.69998652620201
+              },
+              "maximum": {
+                "vertex": 278,
+                "position": [
+                  252.99473571777344,
+                  130.03248596191406,
+                  326.3951110839844
+                ],
+                "groundHeight": 99.80950170648376,
+                "gap": 30.222984255430305
+              }
+            },
+            "rendered": {
+              "minimum": {
+                "vertex": 1073,
+                "position": [
+                  453.8333435058594,
+                  8.558623313903809,
+                  552.0833129882812
+                ],
+                "groundHeight": 5.373624501188752,
+                "gap": 3.1849988127150564
+              },
+              "maximum": {
+                "vertex": 278,
+                "position": [
+                  252.99473571777344,
+                  130.03248596191406,
+                  326.3951110839844
+                ],
+                "groundHeight": 99.90265347965061,
+                "gap": 30.129832482263453
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "levels": [
+    {
+      "cells": 80,
+      "geometry": "rendered-surface",
+      "tolerance": 0.05,
+      "channels": [
+        {
+          "interior": {
+            "samplesPerTriangle": 7,
+            "rendered": {
+              "vertices": 62643,
+              "floatingVertices": 58740,
+              "coveredVertices": 0,
+              "minimumGap": -0.000017626855989938406,
+              "maximumGap": 3.2250003814697266
+            },
+            "extrema": {
+              "minimum": {
+                "vertex": 13239,
+                "position": [
+                  494.13238525390625,
+                  7.449446201324463,
+                  549.3767700195312
+                ],
+                "groundHeight": 7.449463828180453,
+                "gap": -0.000017626855989938406
+              },
+              "maximum": {
+                "vertex": 1367,
+                "position": [
+                  412.5,
+                  9.683623313903809,
+                  600
+                ],
+                "groundHeight": 6.458622932434082,
+                "gap": 3.2250003814697266
+              }
+            }
+          },
+          "type": "river",
+          "source": 5665,
+          "analytic": {
+            "vertices": 26847,
+            "floatingVertices": 26180,
+            "coveredVertices": 492,
+            "minimumGap": -1.039405814615053,
+            "maximumGap": 3.8406251770678947
+          },
+          "rendered": {
+            "vertices": 26847,
+            "floatingVertices": 24159,
+            "coveredVertices": 0,
+            "minimumGap": -0.000017626855989938406,
+            "maximumGap": 3.2250003814697266
+          },
+          "extrema": {
+            "analytic": {
+              "minimum": {
+                "vertex": 21363,
+                "position": [
+                  681.888671875,
+                  0.6680847406387329,
+                  535.3699951171875
+                ],
+                "groundHeight": 1.707490555253786,
+                "gap": -1.039405814615053
+              },
+              "maximum": {
+                "vertex": 3083,
+                "position": [
+                  453.515625,
+                  8.699248313903809,
+                  558.984375
+                ],
+                "groundHeight": 4.858623136835914,
+                "gap": 3.8406251770678947
+              }
+            },
+            "rendered": {
+              "minimum": {
+                "vertex": 5675,
+                "position": [
+                  494.13238525390625,
+                  7.449446201324463,
+                  549.3767700195312
+                ],
+                "groundHeight": 7.449463828180453,
+                "gap": -0.000017626855989938406
+              },
+              "maximum": {
+                "vertex": 587,
+                "position": [
+                  412.5,
+                  9.683623313903809,
+                  600
+                ],
+                "groundHeight": 6.458622932434082,
+                "gap": 3.2250003814697266
+              }
+            }
+          }
+        },
+        {
+          "interior": {
+            "samplesPerTriangle": 7,
+            "rendered": {
+              "vertices": 1218,
+              "floatingVertices": 1218,
+              "coveredVertices": 0,
+              "minimumGap": 1.3021280106622726,
+              "maximumGap": 14.444002034058808
+            },
+            "extrema": {
+              "minimum": {
+                "vertex": 590,
+                "position": [
+                  246.5465545654297,
+                  58.931766510009766,
+                  703.9337158203125
+                ],
+                "groundHeight": 57.62963849934749,
+                "gap": 1.3021280106622726
+              },
+              "maximum": {
+                "vertex": 706,
+                "position": [
+                  262.4349670410156,
+                  45.72470474243164,
+                  686.7193603515625
+                ],
+                "groundHeight": 31.280702708372832,
+                "gap": 14.444002034058808
+              }
+            }
+          },
+          "type": "stream",
+          "source": 7098,
+          "analytic": {
+            "vertices": 522,
+            "floatingVertices": 522,
+            "coveredVertices": 0,
+            "minimumGap": 3.6999894979127426,
+            "maximumGap": 19.128708930958894
+          },
+          "rendered": {
+            "vertices": 522,
+            "floatingVertices": 522,
+            "coveredVertices": 0,
+            "minimumGap": 1.3021280106622726,
+            "maximumGap": 13.538888737778198
+          },
+          "extrema": {
+            "analytic": {
+              "minimum": {
+                "vertex": 518,
+                "position": [
+                  322.9166564941406,
+                  12.350000381469727,
+                  641.3333129882812
+                ],
+                "groundHeight": 8.650010883556984,
+                "gap": 3.6999894979127426
+              },
+              "maximum": {
+                "vertex": 176,
+                "position": [
+                  229.34878540039062,
+                  93.60943603515625,
+                  716.4144897460938
+                ],
+                "groundHeight": 74.48072710419736,
+                "gap": 19.128708930958894
+              }
+            },
+            "rendered": {
+              "minimum": {
+                "vertex": 254,
+                "position": [
+                  246.5465545654297,
+                  58.931766510009766,
+                  703.9337158203125
+                ],
+                "groundHeight": 57.62963849934749,
+                "gap": 1.3021280106622726
+              },
+              "maximum": {
+                "vertex": 302,
+                "position": [
+                  263.8674011230469,
+                  43.62766647338867,
+                  683.85595703125
+                ],
+                "groundHeight": 30.088777735610474,
+                "gap": 13.538888737778198
+              }
+            }
+          }
+        },
+        {
+          "interior": {
+            "samplesPerTriangle": 7,
+            "rendered": {
+              "vertices": 938,
+              "floatingVertices": 938,
+              "coveredVertices": 0,
+              "minimumGap": 0.11646453336347662,
+              "maximumGap": 27.921874282993315
+            },
+            "extrema": {
+              "minimum": {
+                "vertex": 933,
+                "position": [
+                  319.73468017578125,
+                  12.350000381469727,
+                  607.3486328125
+                ],
+                "groundHeight": 12.23353584810625,
+                "gap": 0.11646453336347662
+              },
+              "maximum": {
+                "vertex": 464,
+                "position": [
+                  253.78750610351562,
+                  156.66445922851562,
+                  550.8999633789062
+                ],
+                "groundHeight": 128.7425849455223,
+                "gap": 27.921874282993315
+              }
+            }
+          },
+          "type": "stream",
+          "source": 4771,
+          "analytic": {
+            "vertices": 402,
+            "floatingVertices": 402,
+            "coveredVertices": 0,
+            "minimumGap": 3.699998910892681,
+            "maximumGap": 32.67120354080738
+          },
+          "rendered": {
+            "vertices": 402,
+            "floatingVertices": 402,
+            "coveredVertices": 0,
+            "minimumGap": 0.11646453336347662,
+            "maximumGap": 27.921874282993315
+          },
+          "extrema": {
+            "analytic": {
+              "minimum": {
+                "vertex": 293,
+                "position": [
+                  278.5030517578125,
+                  54.190189361572266,
+                  583.4190063476562
+                ],
+                "groundHeight": 50.490190450679584,
+                "gap": 3.699998910892681
+              },
+              "maximum": {
+                "vertex": 236,
+                "position": [
+                  269.359619140625,
+                  100.49845123291016,
+                  566.2303466796875
+                ],
+                "groundHeight": 67.82724769210277,
+                "gap": 32.67120354080738
+              }
+            },
+            "rendered": {
+              "minimum": {
+                "vertex": 401,
+                "position": [
+                  319.73468017578125,
+                  12.350000381469727,
+                  607.3486328125
+                ],
+                "groundHeight": 12.23353584810625,
+                "gap": 0.11646453336347662
+              },
+              "maximum": {
+                "vertex": 200,
+                "position": [
+                  253.78750610351562,
+                  156.66445922851562,
+                  550.8999633789062
+                ],
+                "groundHeight": 128.7425849455223,
+                "gap": 27.921874282993315
+              }
+            }
+          }
+        },
+        {
+          "interior": {
+            "samplesPerTriangle": 7,
+            "rendered": {
+              "vertices": 2506,
+              "floatingVertices": 2506,
+              "coveredVertices": 0,
+              "minimumGap": 1.0443455180991634,
+              "maximumGap": 32.72275475332518
+            },
+            "extrema": {
+              "minimum": {
+                "vertex": 327,
+                "position": [
+                  215.49510192871094,
+                  130.03248596191406,
+                  284.50489807128906
+                ],
+                "groundHeight": 128.9881404438149,
+                "gap": 1.0443455180991634
+              },
+              "maximum": {
+                "vertex": 653,
+                "position": [
+                  247.00526428222656,
+                  130.03248596191406,
+                  327.250732421875
+                ],
+                "groundHeight": 97.30973120858889,
+                "gap": 32.72275475332518
+              }
+            }
+          },
+          "type": "stream",
+          "source": 2247,
+          "analytic": {
+            "vertices": 1074,
+            "floatingVertices": 1074,
+            "coveredVertices": 0,
+            "minimumGap": 3.69998652620201,
+            "maximumGap": 30.222984255430305
+          },
+          "rendered": {
+            "vertices": 1074,
+            "floatingVertices": 1074,
+            "coveredVertices": 0,
+            "minimumGap": 1.2445467362878944,
+            "maximumGap": 32.72275475332518
+          },
+          "extrema": {
+            "analytic": {
+              "minimum": {
+                "vertex": 1070,
+                "position": [
+                  462.8333435058594,
+                  8.558623313903809,
+                  552.0833129882812
+                ],
+                "groundHeight": 4.858636787701799,
+                "gap": 3.69998652620201
+              },
+              "maximum": {
+                "vertex": 278,
+                "position": [
+                  252.99473571777344,
+                  130.03248596191406,
+                  326.3951110839844
+                ],
+                "groundHeight": 99.80950170648376,
+                "gap": 30.222984255430305
+              }
+            },
+            "rendered": {
+              "minimum": {
+                "vertex": 803,
+                "position": [
+                  394.3089599609375,
+                  18.86727523803711,
+                  493.7118835449219
+                ],
+                "groundHeight": 17.622728501749215,
+                "gap": 1.2445467362878944
+              },
+              "maximum": {
+                "vertex": 281,
+                "position": [
+                  247.00526428222656,
+                  130.03248596191406,
+                  327.250732421875
+                ],
+                "groundHeight": 97.30973120858889,
+                "gap": 32.72275475332518
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "cells": 160,
+      "geometry": "rendered-surface",
+      "tolerance": 0.05,
+      "channels": [
+        {
+          "interior": {
+            "samplesPerTriangle": 7,
+            "rendered": {
+              "vertices": 123487,
+              "floatingVertices": 119412,
+              "coveredVertices": 0,
+              "minimumGap": -0.000020935079097839093,
+              "maximumGap": 3.772948741912842
+            },
+            "extrema": {
+              "minimum": {
+                "vertex": 92444,
+                "position": [
+                  669.947265625,
+                  1.3235244750976562,
+                  530.052734375
+                ],
+                "groundHeight": 1.323545410176754,
+                "gap": -0.000020935079097839093
+              },
+              "maximum": {
+                "vertex": 14765,
+                "position": [
+                  456.25,
+                  8.631571769714355,
+                  556.25
+                ],
+                "groundHeight": 4.858623027801514,
+                "gap": 3.772948741912842
+              }
+            }
+          },
+          "type": "river",
+          "source": 5665,
+          "analytic": {
+            "vertices": 52923,
+            "floatingVertices": 51939,
+            "coveredVertices": 565,
+            "minimumGap": -0.5204814105592614,
+            "maximumGap": 3.8406251770678956
+          },
+          "rendered": {
+            "vertices": 52923,
+            "floatingVertices": 50256,
+            "coveredVertices": 0,
+            "minimumGap": -0.000020935079097839093,
+            "maximumGap": 3.772948741912842
+          },
+          "extrema": {
+            "analytic": {
+              "minimum": {
+                "vertex": 48449,
+                "position": [
+                  715.7559204101562,
+                  -0.6445018649101257,
+                  527.3736572265625
+                ],
+                "groundHeight": -0.12402045435086428,
+                "gap": -0.5204814105592614
+              },
+              "maximum": {
+                "vertex": 5948,
+                "position": [
+                  450.78125,
+                  8.699248313903809,
+                  556.25
+                ],
+                "groundHeight": 4.858623136835913,
+                "gap": 3.8406251770678956
+              }
+            },
+            "rendered": {
+              "minimum": {
+                "vertex": 39620,
+                "position": [
+                  669.947265625,
+                  1.3235244750976562,
+                  530.052734375
+                ],
+                "groundHeight": 1.323545410176754,
+                "gap": -0.000020935079097839093
+              },
+              "maximum": {
+                "vertex": 6329,
+                "position": [
+                  456.25,
+                  8.631571769714355,
+                  556.25
+                ],
+                "groundHeight": 4.858623027801514,
+                "gap": 3.772948741912842
               }
             }
           }
