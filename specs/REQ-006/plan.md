@@ -45,5 +45,6 @@ Mỗi bước gồm code và test của bước đó; `node --test` xanh và cá
   - [x] 10b-28. Mở mặt nước sông trong lòng dẫn và cắt theo tam giác đất Float32 ở hai mức; dùng chung vùng bờ để loại cây/ruộng, kiểm hồi quy, ngân sách và ảnh dọc sông. Chưa đóng QA núi/suối tổng thể.
   - [x] 10b-29. Bổ sung audit mặt sông thực tải lên GPU ở 80/160, giữ riêng dải cũ để đối chiếu; kiểm Float32, mẫu nội thất và bộ tổng hợp lưới lớn. Không đổi hình ảnh hoặc đóng QA tổng thể.
   - [x] 10b-30. Mở mặt ba suối và cắt theo tam giác đất như sông; dựng lại khi chuyển chất lượng, loại cây/ruộng khỏi vùng bờ chung, cập nhật audit mặt thực và kiểm hồi quy hai lưới. Còn vệt khúc uốn và đoạn nước cao hơn đáy; chưa đóng QA tổng thể.
+  - [x] 10b-31. Dùng màu trực tiếp cho sông/suối để bỏ vệt tối do chiếu sáng mặt sau ở khúc uốn; kiểm hồi quy hai lưới, ngân sách và ảnh Cao/Thấp. QA dáng núi/giao tuyến bờ tổng thể vẫn mở.
   - [ ] 10b. Sửa dáng núi, lòng chảo/mép nước và độ rõ màn mưa theo bảng QA bước 9; đo lại địa hình vẽ, chụp ảnh và cập nhật bảng QA.
   - [ ] 10c. Chạy đầy đủ Node/e2e, FPS hai mức, ngân sách cuối, rà README/package và ghi bàn giao cuối.

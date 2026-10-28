@@ -85,9 +85,14 @@ export function createRenderer(canvas, world, orbit, stageObserver, focus) {
       ? world.map.channels.filter(channel => channel.type === id).flatMap(channel => renderedRiverSurface(world.map, channel, terrainCells))
       : id === 'sea' ? basinSurface(world.map, id, world.reservoirs.level(id))
         : renderedBasinSurface(world.map, id, world.reservoirs.level(id), terrainCells);
-    const mesh = new THREE.Mesh(waterGeometry(positions, ['river', 'stream'].includes(id)),
-      new THREE.MeshStandardMaterial({ color: config.colors[id], transparent: !['river', 'stream'].includes(id),
-        opacity: ['river', 'stream'].includes(id) ? 1 : config.rendering.waterOpacity, roughness: 0.25, side: THREE.DoubleSide }));
+    // Steep headwaters expose both sides of the folded surface. Use the
+    // palette color directly so back-face lighting cannot draw dark bend stripes.
+    const channelSurface = ['river', 'stream'].includes(id);
+    const material = channelSurface
+      ? new THREE.MeshBasicMaterial({ color: config.colors[id], side: THREE.DoubleSide })
+      : new THREE.MeshStandardMaterial({ color: config.colors[id], transparent: true,
+        opacity: config.rendering.waterOpacity, roughness: 0.25, side: THREE.DoubleSide });
+    const mesh = new THREE.Mesh(waterGeometry(positions, channelSurface), material);
     if (id === 'sea') {
       const positions = mesh.geometry.attributes.position;
       const colors = [];
