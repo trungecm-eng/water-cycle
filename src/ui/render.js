@@ -3,22 +3,26 @@ import { content } from '../content.js';
 import * as THREE from '../../vendor/three.module.min.js';
 import { decorateScene } from './scenery.js';
 import { config } from '../config.js';
+import { heightAt } from '../sim/heightmap.js';
+import { colorAt, coastlineSamples } from '../art/terrain-colors.js';
+import { generateFields, fieldAt } from '../art/fields.js';
 
-function terrainGeometry(map, step = 1) {
+function terrainGeometry(map, cells, fields) {
   const positions = [];
   const colors = [];
-  const point = index => [index % map.stride * map.spacing, map.heights[index], Math.floor(index / map.stride) * map.spacing];
-  for (let row = 0; row < map.cells; row += step) for (let column = 0; column < map.cells; column += step) {
-    const a = row * map.stride + column;
-    for (const triangle of [[a, a + map.stride * step, a + step], [a + step, a + map.stride * step, a + map.stride * step + step]]) {
-      for (const index of triangle) {
-        positions.push(...point(index));
-        const region = map.regions[index];
-        const color = region === 'mountain'
-          ? map.heights[index] > 210 ? config.colors.summit : map.heights[index] > 85 ? config.colors.slope : config.colors.foothill
-          : region === 'pond' ? config.colors.mud : config.colors[region] ?? config.colors.plain;
-        colors.push(...new THREE.Color(color).toArray());
-      }
+  const spacing = map.size / cells;
+  const samples = [];
+  for (let row = 0; row <= cells; row++) for (let column = 0; column <= cells; column++) {
+    const x = column * spacing, z = row * spacing;
+    samples.push({ point: [x, heightAt(map, x, z), z],
+      color: new THREE.Color(colorAt(map, x, z, fieldAt(fields, x, z))).toArray() });
+  }
+  const stride = cells + 1;
+  for (let row = 0; row < cells; row++) for (let column = 0; column < cells; column++) {
+    const a = row * stride + column;
+    for (const index of [a, a + stride, a + 1, a + 1, a + stride, a + stride + 1]) {
+      positions.push(...samples[index].point);
+      colors.push(...samples[index].color);
     }
   }
   const geometry = new THREE.BufferGeometry();
@@ -71,7 +75,8 @@ export function createRenderer(canvas, world, orbit) {
   sunlight.target.position.set(world.map.size / 2, 0, world.map.size / 2);
   scene.add(sunlight.target);
   scene.add(sunlight);
-  const terrain = new THREE.Mesh(terrainGeometry(world.map),
+  const fields = generateFields(world.map);
+  const terrain = new THREE.Mesh(terrainGeometry(world.map, qualityLevels.high.terrainCells, fields),
     new THREE.MeshStandardMaterial({ vertexColors: true, flatShading: true, roughness: 1 }));
   terrain.name = 'terrain';
   scene.add(terrain);
@@ -96,6 +101,20 @@ export function createRenderer(canvas, world, orbit) {
     surfaces[id] = mesh;
     scene.add(mesh);
   }
+  const shoreline = coastlineSamples(world.map);
+  const foamPositions = [];
+  for (let i = 1; i < shoreline.length; i++) {
+    const a = shoreline[i - 1], b = shoreline[i];
+    const width = config.art.foamWidth;
+    foamPositions.push(...a, ...b, b[0] + width, b[1], b[2],
+      ...a, b[0] + width, b[1], b[2], a[0] + width, a[1], a[2]);
+  }
+  const foamGeometry = new THREE.BufferGeometry();
+  foamGeometry.setAttribute('position', new THREE.Float32BufferAttribute(foamPositions, 3));
+  const foam = new THREE.Mesh(foamGeometry, new THREE.MeshBasicMaterial({ color: config.colors.foam,
+    side: THREE.DoubleSide, transparent: true, opacity: 0.75, depthWrite: false }));
+  foam.name = 'shore-foam';
+  scene.add(foam);
   const scenery = decorateScene(scene, canvas, world);
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(world.options.n * 3), 3));
@@ -117,11 +136,11 @@ export function createRenderer(canvas, world, orbit) {
   const camera = new THREE.PerspectiveCamera(config.camera.fov, 1, config.camera.near, config.camera.far);
   return {
     webgl2: true,
-    snapshot: () => Object.freeze({ ...scenery.snapshot(), terrainTriangles: terrain.geometry.attributes.position.count / 3, shadows: renderer.shadowMap.enabled, pixelRatio: renderer.getPixelRatio() }),
+    snapshot: () => Object.freeze({ ...scenery.snapshot(), fields: fields.length, terrainTriangles: terrain.geometry.attributes.position.count / 3, shadows: renderer.shadowMap.enabled, pixelRatio: renderer.getPixelRatio() }),
     setQuality(level) {
       const settings = qualityLevels[level];
       terrain.geometry.dispose();
-      terrain.geometry = terrainGeometry(world.map, settings.terrainStep);
+      terrain.geometry = terrainGeometry(world.map, settings.terrainCells, fields);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, settings.pixelRatio));
       renderer.shadowMap.enabled = settings.shadows;
       sunlight.castShadow = settings.shadows;

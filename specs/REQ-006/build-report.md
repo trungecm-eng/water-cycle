@@ -25,3 +25,18 @@ Kiểm thử bước 1: toàn bộ 51 test hiện có đạt trong 150,274 giây
 - `e2e/cycle-flow.e2e.mjs`: trước đây luồng chính chạy Cao ×1, luồng gián đoạn Cao ×8; nay cả hai chạy Thấp ×8 theo quy định cho kiểm thử không đánh giá ảnh. Giữ nguyên kiểm tra mốc thời gian mô phỏng. Lần chạy Cao trước chuyển đổi: luồng chính đạt; luồng gián đoạn lỗi do `quality.slowHint` chuyển từ false sang true trong phép so snapshot khi tạm dừng. Các URL riêng vẫn giữ tốc độ cần kiểm tra và thêm `quality=low`.
 
 Chạy lại `e2e/cycle-flow.e2e.mjs` ở Thấp ×8: cả luồng chính, luồng gián đoạn và các URL đều đạt, console không lỗi.
+
+## Bước 2 — Lưới, màu, ruộng và bọt bờ
+
+Lưới vẽ nội suy từ lưới mô phỏng: Cao 160 × 160 (51.200 tam giác), Thấp 80 × 80 (12.800 tam giác). Chuyển chất lượng chỉ thay geometry, không tạo lại `World`. `terrainSample` tính độ cao, vùng và độ dốc; `terrainColor` chọn màu từ bảng dữ liệu theo thứ tự nước → cát → tuyết → sườn dốc → ruộng → chân núi/đồng bằng. Value noise theo seed riêng chọn hai sắc xanh cho vùng đất thoải. Tuyết là màu trắng ngà ở độ cao từ 230, không có vật lý tuyết.
+
+36 ô ruộng hình chữ nhật đặt bằng RNG riêng của bản đồ; kiểm tra toàn bộ diện tích và vùng đệm 12 đơn vị, loại nước/kênh/cát/dốc. Ruộng chỉ tô màu đỉnh, không thêm mesh. Bọt là một dải mảnh men theo đường giao giữa địa hình và mực biển tìm bằng chia đôi, tránh đặt dưới phần đất bờ. `__sim.scene.fields` cho biết số ô ruộng.
+
+Bốn test mới kiểm màu theo độ cao/độ dốc/nhiễu và vùng nước/cát, ruộng tất định không đè vùng cấm, bọt bám đường mực nước, trạng thái và RNG World giống nhau sau khi tính đồ họa ở hai mức. Ảnh xem thử ở `/tmp/req006-step2.png` chỉ phục vụ rà trong phiên; chưa phải bộ ảnh nghiệm thu bước 9. Cây, nước mới, mặt cắt mới và các hiệu ứng còn lại chưa được thực hiện.
+
+Thay đổi test của bước 2:
+
+- `test/quality.test.js`: trước kiểm `terrainStep=2`, nay kiểm trực tiếp `terrainCells=160/80` vì renderer đã dùng lưới nội suy riêng thay vì bỏ cách đỉnh lưới mô phỏng.
+- `e2e/ui-quality.e2e.mjs`: giữ kiểm tỷ lệ tam giác 4:1 và bất biến khi chuyển mức; bổ sung số tam giác chính xác 51.200/12.800, số ruộng không đổi và đối tượng `shore-foam`.
+
+Kiểm thử bước 2: toàn bộ `node --test` đạt **58/58** trong **137,906 giây**. Sau khi thay cấu hình từ `terrainStep` sang `terrainCells`, chạy lại nhóm `test/quality.test.js` + `test/terrain-colors.test.js`: 8/8 đạt. `e2e/ui-quality.e2e.mjs`, `e2e/scenery.e2e.mjs` và `e2e/cycle-flow.e2e.mjs` đều đạt, gồm luồng gián đoạn và URL; console không lỗi. Chưa chạy toàn bộ e2e khác hoặc đánh giá hình ảnh AC-13/AC-15; dành cho các bước 9–10.

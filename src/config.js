@@ -13,11 +13,14 @@ export const config = deepFreeze({
     fov: 45, referenceAspect: 5 / 3, near: 1, far: 6000 },
   stats: { trendWindow: 10, trendEnter: 3, trendExit: 1 },
   quality: { slowFps: 30, slowDuration: 5, levels: {
-    high: { terrainStep: 1, waves: true, shadows: true, cloudBlocks: 9, pixelRatio: 2 },
-    low: { terrainStep: 2, waves: false, shadows: false, cloudBlocks: 4, pixelRatio: 1 }
+    high: { terrainCells: 160, waves: true, shadows: true, cloudBlocks: 9, pixelRatio: 2 },
+    low: { terrainCells: 80, waves: false, shadows: false, cloudBlocks: 4, pixelRatio: 1 }
   }, shadowMapSize: 1024, shadowExtent: 900, shadowNear: 1, shadowFar: 2500, shadowBias: -0.001 },
   rendering: { maxPixelRatio: 2, ambientLight: 1.6, sunlight: 2.2, waterOpacity: 0.72,
     particleSize: 4, waterOffset: 0.15 },
+  art: { snowHeight: 230, slopeThreshold: 1.1, foothillHeight: 65, colorNoiseScale: 65,
+    fieldSlope: 0.25, fieldCount: 36, fieldAttempts: 600, bankClearance: 12,
+    foamSegments: 220, foamWidth: 4 },
   scenery: { base: -95, soilBottom: -55, seaDepth: 45, seaFaceOpacity: 0.55,
     fogNear: 2000, fogFar: 4800, skyRadius: 2900, waveSpacing: 60, waveStart: 810,
     waveLength: 28, waveHeight: 0.7, waveOpacity: 0.32, waveSpeed: 0.45, waveTravel: 8,
@@ -33,5 +36,5 @@ export const config = deepFreeze({
   cloud: { clusterRadius: 40, cloudMinSize: 30, rainStartSize: 80, rainRate: 0.15, coldRainFactor: 3 },
   sun: { x: 840, y: 510, radius: 34 },
   visual: { particleRadius: 2, vaporOpacity: 0.14, cloudOpacity: 0.12, shakeAmplitude: 1.5, shakeFrequency: 24, rayRadius: 2.5 },
-  colors: { sky: '#cdeefa', skyHigh: '#78b8de', seaDeep: '#338d9f', foam: '#d4f5f5', cloudDark: '#7e8c9e', sea: '#63bdbf', beach: '#efdda4', plain: '#91bd79', foothill: '#618765', slope: '#ac947f', summit: '#969aa0', soil: '#997356', rock: '#777d87', mud: '#8a755d', river: '#72c6e8', stream: '#72c6e8', pond: '#72c6e8', terrain: '#708756', lake: '#85c9ec', water: '#197bc2', vapor: '#ffffff', cloud: '#ffffff', rain: '#145b98', runoff: '#145b98', sun: '#ffcf50', ray: '#f4b942', text: '#16364c' }
+  colors: { sky: '#cdeefa', skyHigh: '#78b8de', seaDeep: '#338d9f', foam: '#d4f5f5', cloudDark: '#7e8c9e', sea: '#63bdbf', beach: '#efdda4', plain: '#91bd79', plainLight: '#b2ce92', foothillLight: '#769774', snow: '#fff5e1', fieldGold: '#dfd8a2', fieldSage: '#b7c88f', fieldMint: '#c5d8a8', foothill: '#618765', slope: '#ac947f', summit: '#969aa0', soil: '#997356', rock: '#777d87', mud: '#8a755d', river: '#72c6e8', stream: '#72c6e8', pond: '#72c6e8', terrain: '#708756', lake: '#85c9ec', water: '#197bc2', vapor: '#ffffff', cloud: '#ffffff', rain: '#145b98', runoff: '#145b98', sun: '#ffcf50', ray: '#f4b942', text: '#16364c' }
 });
