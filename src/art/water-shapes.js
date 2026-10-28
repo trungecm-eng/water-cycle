@@ -50,9 +50,11 @@ function reservoirBowl(region, x, z, seed) {
   const rim = 1 + 0.045 * Math.sin(angle * 5 + seed) + 0.035 * Math.cos(angle * 3);
   const radius = Math.hypot(dx, dz) / rim;
   const fullLevel = region.bottom + region.capacity * region.levelPerParticle;
+  // Keep only a small freeboard above the maximum water level so the
+  // reservoir reads as a recess rather than a raised embankment.
   // Continue at rim height outside the bowl; extrapolating the parabola
   // before blending creates a raised mound around otherwise low terrain.
-  return { radius, height: region.bottom + (fullLevel + 3 - region.bottom) * Math.min(radius, 1) ** 2 };
+  return { radius, height: region.bottom + (fullLevel + 0.5 - region.bottom) * Math.min(radius, 1) ** 2 };
 }
 
 export function reservoirBedHeight(map, id, x, z, data = mapData) {

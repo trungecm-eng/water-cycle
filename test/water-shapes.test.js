@@ -126,7 +126,7 @@ test('reservoir shoreline edges meet the same fixed bowl used by the land mesh',
 test('outer reservoir banks never overshoot the rim or original terrain', () => {
   for (const id of ['lake', 'pond']) {
     const region = mapData.reservoirs[id];
-    const rimHeight = region.bottom + region.capacity * region.levelPerParticle + 3;
+    const rimHeight = region.bottom + region.capacity * region.levelPerParticle + 0.5;
     for (let angle = 0; angle < Math.PI * 2; angle += 0.1) {
       const rim = 1 + 0.045 * Math.sin(angle * 5 + mapData.seed) + 0.035 * Math.cos(angle * 3);
       for (let radius = 1; radius <= 1.8; radius += 0.025) {
@@ -137,6 +137,22 @@ test('outer reservoir banks never overshoot the rim or original terrain', () => 
         assert.ok(height <= Math.max(rimHeight, original) + 1e-9, `${id}: raised outer bank at ${x},${z}`);
         assert.ok(height >= Math.min(rimHeight, original) - 1e-9);
       }
+    }
+  }
+});
+
+
+test('reservoir rims stay within half a unit of full water without spilling', () => {
+  for (const id of ['lake', 'pond']) {
+    const region = mapData.reservoirs[id];
+    const fullLevel = region.bottom + region.capacity * region.levelPerParticle;
+    for (let angle = 0; angle < Math.PI * 2; angle += 0.05) {
+      const rim = 1 + 0.045 * Math.sin(angle * 5 + mapData.seed) + 0.035 * Math.cos(angle * 3);
+      const x = region.x + Math.cos(angle) * region.radiusX * rim;
+      const z = region.z + Math.sin(angle) * region.radiusZ * rim;
+      const height = reservoirBedHeight(map, id, x, z);
+      assert.ok(height > fullLevel, `${id}: full water spills over the rim`);
+      assert.ok(height <= fullLevel + 0.5 + 1e-9, `${id}: excessive freeboard`);
     }
   }
 });
