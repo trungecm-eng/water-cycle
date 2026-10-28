@@ -1,5 +1,6 @@
 import { mapData } from '../map-data.js';
 import { mulberry32 } from './rng.js';
+import { valueNoise, ridgedNoise } from '../art/noise.js';
 
 export function coastX(z, data = mapData) {
   return data.coast.x + data.coast.amplitude * Math.sin(z / data.coast.wavelength);
@@ -23,9 +24,16 @@ export function generateHeightmap(data = mapData) {
       regions[index] = 'sea';
     } else {
       let height = data.plain.base + (shore - x) * data.plain.slope;
+      // Broad rolling plains and sharp, asymmetric ridges share the drainage mesh.
+      height += 10 * (valueNoise(x / 85, z / 85, data.seed ^ 0x41ad) - 0.5);
+      const ridge = ridgedNoise(x / 24, z / 24, data.seed ^ 0x7321);
       for (const peak of data.peaks) {
-        const distance = Math.hypot((x - peak.x) / peak.radiusX, (z - peak.z) / peak.radiusZ);
-        height = Math.max(height, data.plain.base + peak.height * Math.max(0, 1 - distance));
+        const dx = (x - peak.x) / peak.radiusX;
+        const dz = (z - peak.z) / peak.radiusZ;
+        const distance = Math.hypot(dx, dz);
+        const shoulder = Math.max(0, 1 - distance);
+        height = Math.max(height, data.plain.base + peak.height * shoulder ** 1.5
+          + 80 * ridge * Math.sin(Math.PI * Math.min(1, shoulder)));
       }
       heights[index] = height + noise;
       regions[index] = x < data.mountainEdge ? 'mountain' : x > shore - data.coast.beachWidth ? 'beach' : 'plain';

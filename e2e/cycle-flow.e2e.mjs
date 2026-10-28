@@ -38,7 +38,7 @@ async function runFlow(interrupted) {
       }
       requestAnimationFrame(observe);
     });
-    await page.goto(`${baseUrl}/${interrupted ? '?speed=8' : ''}`);
+    await page.goto(`${baseUrl}/?quality=low&speed=8`);
     await page.waitForFunction(() => window.__sim);
     assert.equal(await page.evaluate(() => document.body.scrollWidth <= innerWidth), true);
     assert.equal(await page.locator('#legend li').count(), 5);
@@ -124,7 +124,7 @@ async function runFlow(interrupted) {
         && Object.values(window.__sim.counts).reduce((a, b) => a + b, 0) === 1000;
     }), true);
     assert.deepEqual(errors, []);
-    console.log(JSON.stringify({ flow: interrupted ? 'interrupted' : 'default x1', evidence }));
+    console.log(JSON.stringify({ flow: interrupted ? 'interrupted' : 'default accelerated', evidence }));
   } finally {
     await page.close();
   }
@@ -140,7 +140,7 @@ async function checkUrls() {
     const page = await browser.newPage();
     const errors = trackErrors(page);
     try {
-      await page.goto(`${baseUrl}/${query}`);
+      await page.goto(`${baseUrl}/${query}&quality=low`);
       await page.waitForFunction(() => window.__sim);
       assert.deepEqual(await page.evaluate(() => {
         const sim = window.__sim;
