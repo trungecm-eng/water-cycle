@@ -81,6 +81,12 @@ function channelPoints(map, channel) {
     rounded.push(points.at(-1));
     points = rounded;
   }
+  // Corner cutting changes horizontal coordinates. Interpolated endpoint
+  // heights can bridge a valley, so cap the rounded centerline at its local
+  // terrain before carving the matching visible bed.
+  points = points.map(([x, y, z]) => [x, Math.min(y, heightAt(map, x, z) + 0.35), z]);
+  // A local cap can introduce a dip; carry it downstream to avoid uphill water.
+  for (let i = 1; i < points.length; i++) points[i][1] = Math.min(points[i][1], points[i - 1][1]);
   channelCache.set(channel,points);
   return points;
 }

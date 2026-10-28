@@ -29,6 +29,24 @@ test('channel ribbons widen downstream and follow their carved beds', () => {
   }
 });
 
+test('rounded channel centerlines stay below local terrain and never flow uphill', () => {
+  for (const channel of map.channels.filter(c => ['river', 'stream'].includes(c.type))) {
+    const surface = channelRibbon(map, channel);
+    let previous = Infinity;
+    for (let i = 0; i < surface.length; i += 18) {
+      for (const offset of [0, 6]) {
+        const opposite = offset === 0 ? 3 : 15;
+        const x = (surface[i + offset] + surface[i + opposite]) / 2;
+        const z = (surface[i + offset + 2] + surface[i + opposite + 2]) / 2;
+        const y = surface[i + offset + 1];
+        assert.ok(y <= heightAt(map, x, z) + 0.350001, `suspended centerline at ${x},${z}`);
+        assert.ok(y <= previous + 1e-9, `uphill channel at ${x},${z}`);
+        previous = y;
+      }
+    }
+  }
+});
+
 test('lake connector reaches the river and its visible bed is recessed', () => {
   const original = Array.from(map.heights);
   const surface = lakeConnection(map,20);
