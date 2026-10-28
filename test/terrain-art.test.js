@@ -136,3 +136,23 @@ test('interior saddles join the massifs above the lower mountain shoulders', () 
     assert.ok(heightAt(map, 94, z) > 145, `low inter-massif saddle at z=${z}`);
   }
 });
+
+test('western mountain folds remain continuous along the range without flattening the ribs', t => {
+  const map = generateHeightmap();
+  let along = 0, across = 0, samples = 0;
+  // Sample the western flank between the northern and middle crowns, away
+  // from stream carving. Second differences measure small-scale kinks while
+  // removing the overall slope. The old isotropic folds averaged 6.017
+  // units along this transect, interrupting the longitudinal rock ribs.
+  for (let x = 20; x <= 70; x += 10) for (let z = 300; z <= 400; z += 10) {
+    const center = heightAt(map, x, z);
+    along += Math.abs(heightAt(map, x, z - 10) + heightAt(map, x, z + 10) - 2 * center);
+    across += Math.abs(heightAt(map, x - 10, z) + heightAt(map, x + 10, z) - 2 * center);
+    samples++;
+  }
+  along /= samples;
+  across /= samples;
+  t.diagnostic(JSON.stringify({ alongRangeCurvature: along, acrossRangeCurvature: across }));
+  assert.ok(along < 4.5, `broken longitudinal folds: ${along}`);
+  assert.ok(across > 6, `flattened rock ribs: ${across}`);
+});

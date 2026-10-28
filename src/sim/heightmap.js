@@ -53,6 +53,12 @@ export function generateHeightmap(data = mapData) {
       const saddleBlend = Math.max(0, Math.min(1, (summitDistance - 40) / 40));
       const catchmentBlend = Math.max(0, Math.min(1, (corridorDistance - 90) / 30));
       const endBlend = Math.max(0, Math.min(1, (z - 250) / 50));
+      // Stretch flank folds along the range so they read as rock ribs rather
+      // than isolated bumps. Preserve summit crowns and stream catchments.
+      const flankBlend = saddleBlend * saddleBlend * (3 - 2 * saddleBlend)
+        * corridorBlend * corridorBlend * (3 - 2 * corridorBlend);
+      const flankRidge = ridge + flankBlend
+        * (ridgedNoise(x / 18, z / 65, data.seed ^ 0x7321) - ridge);
       const ridgeBlend = saddleBlend * saddleBlend * (3 - 2 * saddleBlend)
         * catchmentBlend * catchmentBlend * (3 - 2 * catchmentBlend)
         * endBlend * endBlend * (3 - 2 * endBlend);
@@ -75,7 +81,7 @@ export function generateHeightmap(data = mapData) {
         // summit envelope produces isolated spires with almost vertical feet.
         height = Math.max(height, data.plain.base + peak.height * (0.55 * Math.max(0, 1 - distance / 1.65) ** 1.1
           + 0.45 * shoulder ** 2.5)
-          + 80 * ridge * Math.sin(Math.PI * Math.min(1, shoulder)));
+          + 80 * flankRidge * Math.sin(Math.PI * Math.min(1, shoulder)));
       }
       heights[index] = height + noise;
       regions[index] = x < data.mountainEdge ? 'mountain' : x > shore - data.coast.beachWidth ? 'beach' : 'plain';
