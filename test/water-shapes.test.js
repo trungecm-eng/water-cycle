@@ -261,3 +261,28 @@ test('spring sources sit below the uncarved terrain triangles at every quality',
     }
   }
 });
+
+
+test('river rounds a right-angle drainage bend into turns below fifteen degrees', () => {
+  const flatMap = { cells: 4, stride: 5, spacing: 10, size: 40,
+    heights: new Float64Array(25).fill(10) };
+  const channel = { type: 'river', path: [0, 1, 2, 7, 12] };
+  const surface = channelRibbon(flatMap, channel);
+  const centers = [];
+  for (let i = 0; i < surface.length; i += 18) {
+    centers.push([(surface[i] + surface[i + 3]) / 2,
+      (surface[i + 2] + surface[i + 5]) / 2]);
+  }
+  centers.push([(surface.at(-12) + surface.at(-3)) / 2,
+    (surface.at(-10) + surface.at(-1)) / 2]);
+  assert.deepEqual(centers[0], [0, 0]);
+  assert.deepEqual(centers.at(-1), [20, 20]);
+  for (let i = 1; i + 1 < centers.length; i++) {
+    const a = centers[i].map((v, axis) => v - centers[i - 1][axis]);
+    const b = centers[i + 1].map((v, axis) => v - centers[i][axis]);
+    const cosine = (a[0] * b[0] + a[1] * b[1]) / (Math.hypot(...a) * Math.hypot(...b));
+    const angle = Math.acos(Math.max(-1, Math.min(1, cosine))) * 180 / Math.PI;
+    // Two passes left 26.565-degree turns on this bend.
+    assert.ok(angle < 15, `sharp river bend: ${angle}`);
+  }
+});

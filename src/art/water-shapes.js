@@ -118,7 +118,9 @@ function channelPoints(map, channel) {
   let points = channel.path.map(index => [index % map.stride * map.spacing,
     map.heights[index] + 0.35, Math.floor(index / map.stride) * map.spacing]);
   // Corner cutting preserves endpoints and rounds grid stair steps.
-  for (let pass = 0; pass < 2; pass++) {
+  // The broad river needs one extra pass to soften right-angle drainage
+  // bends; retain stream sampling to preserve its steep-bank clearances.
+  for (let pass = 0; pass < (channel.type === 'river' ? 3 : 2); pass++) {
     const rounded = [points[0]];
     for (let i=1;i<points.length;i++) {
       for (const t of [0.25,0.75]) rounded.push(points[i-1].map((v,j) => v*(1-t)+points[i][j]*t));
