@@ -350,3 +350,12 @@ Báo cáo audit tái lập bằng `node scripts/audit-water-banks.mjs > specs/RE
 Toàn bộ `node --test` cuối **94/94**, 0 fail/skip/cancelled, **108,127 giây**, chạy riêng trước trình duyệt. Giữ sáu đỉnh; dốc mặt vẽ **1,622160492**, phần dư đồng bằng **2,642467559** / 2.950 mẫu. E2e **art-strata**, **art-trees** đạt, console sạch, cây **2.200/400**, hạt bất biến khi đổi mức. Server đã dừng.
 
 Đã chụp/xem `screenshots/18-steeper-stream-banks.png`, Cao 1920 × 1080, dọc sông, paused ban đầu, hồ 20/ao 11,6. Núi vẫn nhọn, suối vẫn gấp/răng cưa; không thay chín ảnh/evidence hoặc bảng QA bắt buộc 1/2 chưa đạt. Chưa QA bốn góc/mực thấp–đầy, chưa chạy mọi e2e/FPS/ngân sách cuối. **10b/10c/10 còn mở; trả continue.** Cần sửa tổng thể giao tuyến kênh (đặc biệt suối thứ ba) và dáng núi; không tiếp tục tăng hệ số tùy ý vì khoảng hở nhỏ nhất trên lưới Thấp hiện chỉ khoảng 0,35–0,38 ở hai suối sau.
+
+
+## Mốc 10b-15 — giảm nhẹ độ sâu khắc suối
+
+Giảm độ sâu khắc mặt vẽ suối từ 4 xuống 3,7 đơn vị. Không đổi World, RNG, bản đồ mô phỏng, đường tâm, độ rộng nước hoặc sông. Thử nghiệm độ sâu 3 làm nước bị che trên lưới Thấp, đã bỏ; giữ nguyên mọi assertion cũ. Test mới kiểm tất cả suối còn khoảng hở >0,05 trên lưới 80/160, đáy tính toán nông hơn 3,75 và cực đại suối đầu <20,4/22,8. Đây là cải thiện cục bộ, không phải nghiệm thu giao tuyến bờ.
+
+Audit tái lập: suối đầu có khoảng hở cực đại Thấp/Cao **20,261271 / 22,717849**; suối thứ hai **52,467390 / 36,257185**; suối thứ ba **69,222263 / 55,631194**. Khoảng hở nhỏ nhất trên lưới Thấp của hai suối sau chỉ **0,060212 / 0,108243**, vì vậy không tiếp tục giảm độ sâu tùy ý. Cực đại lớn ở suối thứ ba gần như không thay đổi: cần xử lý hình học đường tâm/bờ tổng thể.
+
+Toàn bộ Node **95/95**, 0 fail/skip/cancelled, **112,119 giây**, chạy riêng không trình duyệt. E2e **art-strata, art-trees** đạt, console sạch, cây 2.200/400 và hạt bất biến khi đổi mức. Mặt vẽ còn 6 đỉnh, độ lệch chuẩn dốc **1,622273730**, phần dư đồng bằng **2,642467559**. Chụp/xem `screenshots/19-shallower-streams.png`, Cao 1920 × 1080, dọc sông, paused ban đầu. Núi còn nhọn và suối còn gấp khúc; giữ bảng QA bắt buộc 1/2 chưa đạt và bộ chín ảnh/evidence cũ. Chưa QA bốn góc/mực thấp–đầy, chưa chạy mọi e2e/FPS/ngân sách cuối. **10b/10c/10 tiếp tục mở.**

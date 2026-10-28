@@ -75,3 +75,17 @@ test('steeper outer stream banks reduce upstream gaps without hiding water', () 
     assert.ok(streams[1].rendered.maximumGap < (cells === 80 ? 53 : 37));
   }
 });
+
+
+test('shallower stream beds reduce edge gaps and retain positive mesh clearance', () => {
+  const map = generateDrainage();
+  for (const cells of [80, 160]) {
+    const streams = auditChannelBanks(map, cells).channels.filter(channel => channel.type === 'stream');
+    for (const stream of streams) {
+      assert.equal(stream.rendered.coveredVertices, 0);
+      assert.ok(stream.rendered.minimumGap > 0.05);
+      assert.ok(stream.analytic.minimumGap < 3.75);
+    }
+    assert.ok(streams[0].rendered.maximumGap < (cells === 80 ? 20.4 : 22.8));
+  }
+});

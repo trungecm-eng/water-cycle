@@ -203,7 +203,9 @@ export function waterBedHeight(map, x, z, data = mapData) {
       const dx=b[0]-a[0], dz=b[2]-a[2];
       const t=Math.max(0,Math.min(1,((x-a[0])*dx+(z-a[2])*dz)/(dx*dx+dz*dz || 1)));
       const distance=Math.hypot(x-a[0]-dx*t,z-a[2]-dz*t);
-      const depth = channel.type === 'river' ? 1 : 4;
+      // A shallower stream bed reduces exposed edges. Keep 3.7 units of
+      // clearance so the 80-cell land mesh still leaves every ribbon visible.
+      const depth = channel.type === 'river' ? 1 : 3.7;
       // Raise the outer stream bank gradually so low downstream segments
       // do not cut a flat trench across the neighboring upstream slope.
       // Keep clearance within nine units for the coarser rendering grid.

@@ -29,5 +29,6 @@ Mỗi bước gồm code và test của bước đó; `node --test` xanh và cá
   - [x] 10b-12. Giảm độ sâu lòng sông để thu hẹp khoảng hở mép nước, kiểm cả lưới 80/160 và ảnh dọc sông; chưa đóng QA suối/núi tổng thể.
   - [x] 10b-13. Nâng dần bờ ngoài suối để hạn chế đoạn hạ lưu khắc sâu vào sườn phía trên; kiểm nước không bị che ở hai lưới, toàn bộ Node, e2e mặt cắt/cây và ảnh dọc sông. QA tổng thể vẫn thuộc 10b.
   - [x] 10b-14. Tăng độ dốc nâng bờ ngoài suối, giữ vùng hở trên lưới Thấp; kiểm hồi quy khoảng hở hai suối đầu, toàn bộ Node, e2e cây/mặt cắt và ảnh dọc sông. Hai suối cải thiện cục bộ; QA tổng thể vẫn thuộc 10b.
+  - [x] 10b-15. Giảm nhẹ độ sâu khắc suối từ 4 xuống 3,7, giữ khoảng hở dương trên lưới 80/160; chạy toàn bộ Node, e2e cây/mặt cắt và ảnh dọc sông. QA hình khối và giao tuyến bờ tổng thể vẫn thuộc 10b.
   - [ ] 10b. Sửa dáng núi, lòng chảo/mép nước và độ rõ màn mưa theo bảng QA bước 9; đo lại địa hình vẽ, chụp ảnh và cập nhật bảng QA.
   - [ ] 10c. Chạy đầy đủ Node/e2e, FPS hai mức, ngân sách cuối, rà README/package và ghi bàn giao cuối.
