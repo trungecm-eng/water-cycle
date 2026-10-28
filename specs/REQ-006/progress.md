@@ -438,3 +438,10 @@ Toàn bộ `node --test` **104/104**, 0 fail/skip/cancelled, exit 0, **109,752 g
 - Đã xem `screenshots/34-eastern-shoulders-overview.png` và `34-eastern-shoulders-river.png`, Cao 1920×1080, paused từ 0 giây, console sạch. Vai núi rộng hơn nhưng chóp chính vẫn nhọn/vách dốc và suối vẫn như dải đổ xuống. **QA bắt buộc 1/2 chưa đạt; 10b/10c/10 còn mở**, giữ bộ chín ảnh/evidence cũ. README/package đã rà, không cần đổi cho sửa cục bộ này. Trả `continue` ở commit sạch.
 - Tiếp theo cần giải quyết hình khối chóp/sườn và độ dốc/giao tuyến nước tổng thể, kiểm cửa biển/hồ–sông ở mực thấp–đầy; giữ sáu đỉnh/ngưỡng dốc và mọi bất biến mô phỏng. Khi ảnh đạt mới chụp lại chín ảnh/bảng QA, chạy mọi e2e REQ-004/005/006, đo FPS hai mức và hoàn tất 10c. Không coi số đo diện tích sườn hoặc audit lấy mẫu là đạt AC-7/13.
 - Không có notes.md/eval REQ-006. Lệnh hoạt động: `node --test`, `node --test test/terrain-art.test.js`, `node scripts/audit-water-banks.mjs`, bốn e2e nêu trên; server `python3 -m http.server 8000`. Lệnh ghép chụp/cây/mặt cắt/ngân sách bị dừng mã 143 trong ngân sách, không có lỗi assertion; đã chạy lại riêng ngân sách và cycle-flow đạt exit 0. Script/log thử trong /tmp không bền vững, ảnh cần giữ đã lưu repo. Server dừng trước commit. Commit dùng danh tính từng lệnh, không sửa git config/tệp cấm.
+
+
+## Phiên build 2026-10-28 — Đóng 10b theo ghi chú của người dùng
+
+- Đọc notes.md mới nhất (12:43): người dùng chấp nhận hiện trạng, dừng chỉnh dáng núi/mép nước/màn mưa. Đánh dấu 10b xong theo quyết định này, giữ các nhận xét QA cũ làm lịch sử, không đổi chúng thành kết luận ảnh đạt.
+- Bỏ thử nghiệm chóp núi trong commit tự lưu 2ebd3f6, khôi phục heightmap đúng mốc fb7c3fe mà người dùng đã xem. Không đổi quy luật World, test hoặc hằng số vật lý.
+- Chạy toàn bộ Node trên mã khôi phục thành công; kết quả chi tiết và các e2e/FPS sẽ ghi ở mốc 10c. Tiếp theo chỉ làm 10c và 10, không tối ưu đồ họa thêm.

@@ -81,17 +81,7 @@ export function generateHeightmap(data = mapData) {
         const easternFlank = Math.max(0, Math.min(1, dx / 0.6));
         const footprintDistance = radialDistance + 0.8 * spurBlend
           * easternFlank * easternFlank * (3 - 2 * easternFlank) * (ridgeDistance - radialDistance);
-        // Fold the upper flank into unequal planar ribs, fading before the
-        // summit samples and drainage corridors so their relief stays intact.
-        const crownRadius = Math.hypot(x - peak.x, z - peak.z);
-        const crownIn = Math.max(0, Math.min(1, (crownRadius - 18) / 22));
-        const crownOut = Math.max(0, Math.min(1, (100 - crownRadius) / 35));
-        const crownBlend = crownIn * crownIn * (3 - 2 * crownIn)
-          * crownOut * crownOut * (3 - 2 * crownOut)
-          * corridorBlend * corridorBlend * (3 - 2 * corridorBlend);
-        const foldedDistance = Math.max(Math.abs(dx + 0.35 * dz), Math.abs(0.65 * dz - 0.2 * dx));
-        const upperDistance = footprintDistance + 0.75 * crownBlend * (foldedDistance - footprintDistance);
-        const distance = upperDistance * (1 + (0.18 + 0.22 * spurBlend) * Math.sin(3 * angle + peak.z / 90)
+        const distance = footprintDistance * (1 + (0.18 + 0.22 * spurBlend) * Math.sin(3 * angle + peak.z / 90)
           + (0.1 + 0.12 * spurBlend) * Math.sin(5 * angle + peak.x / 60));
         const shoulder = Math.max(0, 1 - distance);
         // A broad lower flank carries the narrow summit. Using only the

@@ -48,5 +48,5 @@ Mỗi bước gồm code và test của bước đó; `node --test` xanh và cá
   - [x] 10b-31. Dùng màu trực tiếp cho sông/suối để bỏ vệt tối do chiếu sáng mặt sau ở khúc uốn; kiểm hồi quy hai lưới, ngân sách và ảnh Cao/Thấp. QA dáng núi/giao tuyến bờ tổng thể vẫn mở.
   - [x] 10b-32. Kéo nếp gồ ghề thành gân đá dọc sườn ngoài, giữ vùng đỉnh/hành lang suối; kiểm độ liên tục sườn, địa hình/nước/mô phỏng và ảnh. QA hình khối/giao tuyến bờ tổng thể vẫn thuộc 10b.
   - [x] 10b-33. Mở vai núi phía đông bằng bao sống xiên bất đối xứng, bảo vệ đỉnh/suối và gân đá phía tây; kiểm diện tích sườn, toàn bộ Node, hồi quy trình duyệt và ảnh. QA hình khối/bờ nước tổng thể vẫn thuộc 10b.
-  - [ ] 10b. Sửa dáng núi, lòng chảo/mép nước và độ rõ màn mưa theo bảng QA bước 9; đo lại địa hình vẽ, chụp ảnh và cập nhật bảng QA.
+  - [x] 10b. Người dùng chấp nhận hiện trạng (notes.md ngày 2026-10-28 12:43); dừng chỉnh dáng núi, mép nước và màn mưa. Các nhận xét QA trước đây được giữ làm lịch sử.
   - [ ] 10c. Chạy đầy đủ Node/e2e, FPS hai mức, ngân sách cuối, rà README/package và ghi bàn giao cuối.
