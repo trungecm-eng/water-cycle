@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { generateDrainage } from '../src/sim/drainage.js';
+import { mapData } from '../src/map-data.js';
 import { heightAt } from '../src/sim/heightmap.js';
 import { basinSurface, channelRibbon, lakeConnection, waterBedHeight, reservoirBedHeight, basinTerrainHeight } from '../src/art/water-shapes.js';
 const map = generateDrainage();
@@ -119,4 +120,23 @@ test('reservoir shoreline edges meet the same fixed bowl used by the land mesh',
     assert.ok(areas[0] < areas[1] && areas[1] < areas[2], `${id}: shoreline must grow with level`);
   }
   assert.deepEqual(Array.from(map.heights), original);
+});
+
+
+test('outer reservoir banks never overshoot the rim or original terrain', () => {
+  for (const id of ['lake', 'pond']) {
+    const region = mapData.reservoirs[id];
+    const rimHeight = region.bottom + region.capacity * region.levelPerParticle + 3;
+    for (let angle = 0; angle < Math.PI * 2; angle += 0.1) {
+      const rim = 1 + 0.045 * Math.sin(angle * 5 + mapData.seed) + 0.035 * Math.cos(angle * 3);
+      for (let radius = 1; radius <= 1.8; radius += 0.025) {
+        const x = region.x + Math.cos(angle) * region.radiusX * rim * radius;
+        const z = region.z + Math.sin(angle) * region.radiusZ * rim * radius;
+        const original = heightAt(map, x, z);
+        const height = reservoirBedHeight(map, id, x, z);
+        assert.ok(height <= Math.max(rimHeight, original) + 1e-9, `${id}: raised outer bank at ${x},${z}`);
+        assert.ok(height >= Math.min(rimHeight, original) - 1e-9);
+      }
+    }
+  }
 });
