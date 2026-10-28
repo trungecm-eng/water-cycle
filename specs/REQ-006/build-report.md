@@ -127,17 +127,17 @@ Các cặp điều chỉnh e2e cũ trong bước này (không bỏ phép kiểm)
 
 Các script chụp ảnh cũ, measure-fps, kiểm URL mặc định/tốc độ sai và ui-quality giữ cấu hình riêng cần cho mục đích kiểm tra.
 
-### Bảng QA hình ảnh bước 9 (chưa phải nghiệm thu đạt)
+### Bảng QA hình ảnh — cập nhật mốc 10b-6 (chưa nghiệm thu đạt)
 
-Các ảnh trong `screenshots/` là bằng chứng thực tế; không suy ra đạt hình ảnh từ số đếm mesh hoặc test logic. **AC-13 hiện chưa đạt**: còn các mục bắt buộc cần sửa trong bước 10 trước khi kết luận hoàn thành.
+Đã chụp và xem lại đủ chín ảnh Cao 1920 × 1080 ở mốc 10b-6, sau sửa 10a–10b-5; `evidence.json` là bằng chứng của bộ ảnh mới. **AC-13 vẫn chưa đạt** vì mục 1 và 2 còn “không”. Các ghi chép bước 9/phiên cũ phía dưới là lịch sử, không phải kết luận cho bộ ảnh mới.
 
 | Mục | Có/không | Ảnh và nhận xét |
 | --- | --- | --- |
-| 1. Núi gồ ghề, không dạng nón | Không | 01-overview, 02-sea, 03-mountain: sáu đỉnh vẫn quá cao hẹp, rời nhau, sườn chưa tạo cảm giác dãy núi có sống/phụ đỉnh |
-| 2. Hồ/ao lòng chảo, không nổi, hồ liền sông | Không | 03-mountain, 04-river: hồ nối sông nhưng mép trước còn như mặt đĩa cao, lòng dẫn cạnh sông có vách/răng cưa; cần sửa mặt vẽ, không đổi vật lý tùy tiện |
+| 1. Núi gồ ghề, không dạng nón | Không | 01-overview, 02-sea, 03-mountain: chân núi đã nối nhau, sườn có nếp nhưng sáu đỉnh vẫn giống chóp cao hẹp; chưa tạo sống/phụ đỉnh đủ rõ |
+| 2. Hồ/ao lòng chảo, không nổi, hồ liền sông | Không | 03-mountain, 04-river, 07-forest-fields: có bờ lòng chảo và đường nối, nhưng hồ còn như đĩa trên ụ đất; ao có mép đất dựng, cửa hồ xuống sông quá dốc. Cần sửa tiếp mặt vẽ và kiểm mực thấp–đầy |
 | 3. Không tia nắng dài tỏa khắp cảnh | Có | 01-overview, 02-sea: chỉ vài nét ngắn trên nước |
-| 4. Mây bông và màn mưa rõ | Không | 05-mountain-rain, 06-sea-rain: mây có khối, mưa biển thấy các nét xanh nhưng mưa núi quá khó thấy ở toàn cảnh, cần tăng độ rõ mà giữ ngân sách |
-| 5. Nhãn đúng chỗ, không che nhau | Không | 06-sea-rain, 09-four-stages: logic chọn cụm đúng nhưng cần rà nhãn Mưa với vị trí mây trong ảnh, độ trễ khi speed=8 và nguy cơ panel che nhãn; art-labels chỉ chứng minh không giao hộp chip, chưa chứng minh điều này |
+| 4. Mây bông và màn mưa rõ | Có | 03-mountain, 05-mountain-rain, 06-sea-rain: khối mây bông, màn nét xanh từ đáy mây xuống núi/biển nhìn rõ; ảnh toàn cảnh vẫn thấy mưa núi |
+| 5. Nhãn đúng chỗ, không che nhau | Có | 01-overview, 05-mountain-rain, 06-sea-rain, 09-four-stages: chip Mưa sát cụm đang mưa, ở biển khi Gió 0; đủ bốn chip rõ ở 09, không chồng nhau hoặc bị panel che ở góc mặc định. Đây là QA bộ ảnh, không khẳng định mọi khung chuyển động đều đạt |
 | 6. Đỉnh trắng | Có | 01-overview, 03-mountain |
 | 7. Rừng chân núi và đồng bằng | Có | 01-overview, 03-mountain, 07-forest-fields |
 | 8. Ô ruộng | Có | 01-overview, 07-forest-fields |
@@ -148,7 +148,7 @@ Các ảnh trong `screenshots/` là bằng chứng thực tế; không suy ra đ
 | 13. Trời xanh–kem | Có | 01-overview, 02-sea |
 | 14. Mũi tên theo Gió | Có | 01-overview/05-mountain-rain có mũi tên, 06-sea-rain Gió 0 ẩn; tăng chiều dài/độ đậm kiểm bằng test thuần |
 
-Ưu tiên đầu bước 10: sửa bốn mục bắt buộc trên, bổ sung bằng chứng kiểm phần vẽ cuối cùng (đặc biệt địa hình/nước và nhãn với mây), chạy lại ảnh và bảng này. Không trả `done` dù mọi test tự động đang xanh khi các mục bắt buộc hình ảnh còn “không”. Không cần hỏi người để sửa các vấn đề đã xác định trong phạm vi.
+Ưu tiên còn lại bước 10 sau mốc 10b-6: sửa hai mục bắt buộc 1–2, QA lòng chảo/cửa thoát ở nhiều mực, rồi chạy lại bộ ảnh và bảng này. Không trả `done` dù mọi test tự động đang xanh khi các mục bắt buộc hình ảnh còn “không”. Không cần hỏi người để sửa các vấn đề đã xác định trong phạm vi.
 
 Điều chỉnh thêm khi chạy lại e2e cũ:
 
@@ -244,3 +244,20 @@ Thêm test `mountain shoulders form a continuous elevated range between summits`
 Ảnh thử Cao 1920 × 1080, góc toàn cảnh, tạm dừng ban đầu: `screenshots/11-mountain-mass.png`. Đã xem: chân núi tạo dãy liên kết, sườn có nếp và các đỉnh không còn tiết diện đều. Phần đỉnh vẫn cao nhọn; ảnh này chưa đủ đánh dấu mục 1 hoặc toàn bộ bảng QA đạt. Không thay chín ảnh/evidence nghiệm thu cũ. Cần rà thêm góc núi/biển/dọc sông, cửa thoát và nhiều mực hồ/ao; chụp lại chín ảnh và đánh giá mưa/nhãn/panel trước khi đóng 10b. Mốc 10c và bước 10 tổng thể vẫn mở.
 
 - E2e cuối: **art-trees, art-stage-labels, art-labels** (1280 × 800 và 1920 × 1080), **scenery, art-budget, cycle-flow** (chính, gián đoạn, URL) đều đạt, console sạch, wrapper exit 0. Cây 2.200/400; budget cùng trạng thái **70,65 giây**: Cao **67 calls / 223.416 triangles**, Thấp **66 / 84.216**; hạt bất biến khi đổi mức, Mặt Trời trong khung bốn góc mỗi mức. Không phải FPS cuối. Đã đánh dấu riêng 10b-5; 10b/10c/10 giữ mở. Server đã dừng, `git diff --check` sạch.
+
+
+## Mốc 10b-6 — chụp lại bộ ảnh và cập nhật QA
+
+Không thay World, RNG, dữ liệu địa hình hay mã vẽ. Cập nhật kịch bản ảnh để quan sát đúng sản phẩm sau 10a: tiến nhanh ở Thấp ×8 trong viewport 1280 × 800, khi cả bốn nhãn có đối tượng bám thì chuyển ×1, giữ nguyên điều kiện cả bốn visible và opacity ≥ 0,95, pause ngay trong callback. Chỉ sau đó đổi viewport 1920 × 1080 và Cao để chụp. Mọi ảnh cuối vẫn ở Cao/1920 × 1080; không thay bằng ảnh Thấp hoặc trạng thái mô phỏng giả.
+
+Cặp kiểm ảnh mưa đổi từ “bất kỳ cụm mưa trong vùng + opacity ≥ 0,25” thành “đúng cụm mà `rain.target` bám + centroid và nhãn cùng thuộc vùng yêu cầu + cách neo ≤ 60 + opacity ≥ 0,95”. Khi có đối tượng trong vùng ở ×8, chuyển ×1 để giữ nhãn kịp mờ hiện; không giảm ngưỡng hoặc bỏ phép kiểm. `evidence.json` bổ sung snapshot `reservoirs` ở mỗi ảnh để đối chiếu mực nước. Log tên từng ảnh giúp phân biệt đang chờ hoạt động với đang chụp trên WebGL phần mềm.
+
+Lượt gốc chờ bốn nhãn opaque ở ×8 timeout 120 giây. Lượt thử chỉ thêm ×1 nhưng giữ viewport lớn đã bị dừng trong khi chụp ảnh; không dùng ảnh/evidence dở của lượt đó làm bằng chứng. Lượt cuối với script hiện tại **đạt đủ chín ảnh**, Chromium 140.0.7339.16, console sạch; bảy ảnh đầu cùng thời điểm **134,9333 giây**, mưa núi **89,5833 giây**, mưa biển Gió 0 **28,2333 giây**. Thời điểm 134,9333 của ảnh bốn nhãn không phải bằng chứng luồng ×1 có mưa trong 120 giây; luồng đó vẫn do art-flow kiểm riêng.
+
+Đã xem đủ chín ảnh, cập nhật bảng 14 mục phía trên theo thực tế: mục 4/5 chuyển Có; mục 1/2 vẫn Không. Cây/ruộng, màu đồng bằng, đỉnh trắng, bọt, trời và mặt cắt thấy được; biển chuyển màu nhẹ như trước. Mặt Trời có trong bốn góc. Chưa kết luận AC-7/13 hoặc toàn REQ đạt.
+
+Chẩn đoán mặt vẽ ở ao (x=560,z=280): theo hướng +x, bán kính chuẩn hóa 1,3, mặt mô phỏng **5,853650741** nhưng mặt vẽ **21,185907653**; tại 1,1 là **7,585762308 / 18,622181593**. Lòng chảo bình phương tiếp tục tăng ngoài mép rồi mới hòa về nền, tạo ụ đất cao. Phần sửa sau cần xử lý cả hình dáng bờ ngoài và cửa thoát; không chỉ clip lại mặt nước. Chưa thay thuật toán từ phép đo này.
+
+Kiểm thử Node mốc 10b-6: **83/83**, 0 fail/skip/cancelled, **111,368 giây** (wrapper **111,401 giây**, exit 0), chạy riêng không trình duyệt. Các test mô phỏng/thoát nước/nhịp/gió/bảo toàn và đo mặt vẽ vẫn đạt; số đo địa hình không đổi so với 10b-5. Đây là lần đầu lượt tổng thể đã bao gồm test khối chân núi mới (83 test). Không đổi assertion Node hoặc mã sản phẩm.
+
+E2e hồi quy cuối mốc 10b-6: **art-stage-labels** và **art-labels** (1280 × 800, 1920 × 1080) đều đạt, console sạch, wrapper exit 0. Bao gồm bám cụm, N/L, không giao hộp nhãn, bấm nhãn giai đoạn/vùng, chuyển và ngắt camera, Gió 0. Không chạy mọi e2e/FPS/ngân sách cuối ở mốc này; vẫn thuộc 10c. Server đã dừng.
