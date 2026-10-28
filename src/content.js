@@ -39,8 +39,9 @@ export const panelMarkup = `  <main>
       <fieldset><legend>Chất lượng đồ họa</legend><button type="button" data-quality="high">Cao</button><button type="button" data-quality="low">Thấp</button></fieldset>
       <div id="quality-hint" role="status" hidden><p>Máy chạy chậm, thử chất lượng Thấp?</p><button id="quality-lower" type="button">Chuyển sang Thấp</button><button id="quality-dismiss" type="button">Đóng gợi ý</button></div>
       <button id="toggle-labels" type="button" aria-pressed="true">Nhãn bản đồ</button>
+      <button id="toggle-stage-labels" type="button" aria-pressed="true">Nhãn giai đoạn</button>
     </section>
-    <p class="hint">Phím tắt: Space — tạm dừng / tiếp tục; 1–4 — tốc độ; R — đặt lại; kéo chuột / mũi tên — xoay; lăn chuột / + / − — thu phóng; L — bật / tắt nhãn; B — thu gọn / mở bảng.</p>
+    <p class="hint">Phím tắt: Space — tạm dừng / tiếp tục; 1–4 — tốc độ; R — đặt lại; kéo chuột / mũi tên — xoay; lăn chuột / + / − — thu phóng; L — nhãn bản đồ; N — nhãn giai đoạn; B — thu gọn / mở bảng.</p>
     </details><details data-group="statistics" open><summary>Số liệu</summary><section class="information" aria-label="Thông tin mô phỏng">
       <div>
         <h2>Thời gian mô phỏng</h2>
@@ -85,7 +86,7 @@ export const content = {
   seconds: 'giây', units: 'đơn vị', idle: 'Nước đang ở trong các vùng chứa', emptyPond: 'Ao đã cạn',
   webglError: 'Không thể khởi tạo WebGL2. Hãy bật tăng tốc đồ họa hoặc mở bằng trình duyệt hỗ trợ WebGL2.',
   states: { water: 'Nước trong vùng chứa', vapor: 'Hơi nước', cloud: 'Giọt mây', rain: 'Giọt mưa', runoff: 'Nước chảy trên đất' },
-  stages: { vapor: 'Bốc hơi', cloud: 'Ngưng tụ thành mây', rain: 'Mưa rơi', runoff: 'Chảy về vùng chứa' },
+  stages: { vapor: 'Bốc hơi', cloud: 'Ngưng tụ', rain: 'Mưa', runoff: 'Dòng chảy' },
   distribution: { sea: 'Biển', lake: 'Hồ', pond: 'Ao', airborne: 'Trên không', rain: 'Đang rơi', runoff: 'Đang chảy' },
   descriptions: { water: 'Nước được giữ trong biển, hồ hoặc ao.', vapor: 'Nước bốc hơi và bay lên khi được làm nóng.', cloud: 'Hơi nước gặp lạnh ngưng tụ thành giọt mây.', rain: 'Giọt nước từ mây rơi xuống mặt đất.', runoff: 'Nước theo sông, suối và mặt đất về vùng chứa.' },
   initialLevel: 'Mực ban đầu', currentLevel: 'Mực hiện tại', total: 'Tổng',

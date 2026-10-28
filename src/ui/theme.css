@@ -23,3 +23,7 @@
   --font-heading: 21px;
   --shadow: 0 6px 24px #16364c22;
 }
+
+.stage-labels { position: absolute; inset: 0; pointer-events: none; }
+.stage-label { position: absolute; transform: translate(-50%, -50%); border: 1px solid var(--stage-color); border-radius: 20px; padding: 4px 10px 4px 4px; background: #fffaf0; color: #16364c; box-shadow: 0 2px 5px #243d4826; white-space: nowrap; pointer-events: auto; }
+.stage-label span { display: inline-grid; place-items: center; width: 23px; height: 23px; margin-right: 6px; border-radius: 50%; background: var(--stage-color); color: white; font-weight: bold; }

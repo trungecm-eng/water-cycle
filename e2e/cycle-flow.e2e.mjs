@@ -72,7 +72,7 @@ async function runFlow(interrupted) {
     const effects = await page.evaluate(() => window.__sim.scene.effects);
     await page.waitForTimeout(200);
     assert.deepEqual(await page.evaluate(() => window.__sim.scene.effects), effects);
-    const stageNames = { vapor: 'Bốc hơi', cloud: 'Ngưng tụ thành mây', rain: 'Mưa rơi', runoff: 'Chảy về vùng chứa' };
+    const stageNames = { vapor: 'Bốc hơi', cloud: 'Ngưng tụ', rain: 'Mưa', runoff: 'Dòng chảy' };
     const pausedCounts = await page.evaluate(() => window.__sim.counts);
     assert.equal(await page.locator('[data-hud="stages"]').textContent(),
       Object.entries(stageNames).filter(([state]) => pausedCounts[state] > 0).map(([, name]) => name).join(' · '));

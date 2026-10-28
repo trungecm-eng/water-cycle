@@ -1,3 +1,4 @@
+import { stageColors } from '../art/stage-labels.js';
 import { config } from '../config.js';
 import { content } from '../content.js';
 import { RainTally } from '../stats/rain-tally.js';
@@ -58,7 +59,7 @@ export function createStatistics(root, world) {
     const item = root.createElement('li');
     const swatch = root.createElement('span');
     swatch.className = 'swatch';
-    swatch.style.backgroundColor = config.colors[id];
+    swatch.style.backgroundColor = stageColors[id];
     item.append(swatch, label);
     root.querySelector('#active-stages').append(item);
     return [id, item];

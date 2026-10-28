@@ -1,3 +1,4 @@
+import { createStageLabels } from './stage-labels.js';
 import { qualityLevels } from '../quality.js';
 import { content } from '../content.js';
 import * as THREE from '../../vendor/three.module.min.js';
@@ -39,7 +40,7 @@ function waterGeometry(positions) {
   return geometry;
 }
 
-export function createRenderer(canvas, world, orbit) {
+export function createRenderer(canvas, world, orbit, stageObserver) {
   // Probe first: three.js logs an error when it has to discover this failure itself.
   let context;
   try { context = canvas.getContext('webgl2', { antialias: true, alpha: false }); } catch { /* Show the fallback below. */ }
@@ -114,6 +115,7 @@ export function createRenderer(canvas, world, orbit) {
   foam.name = 'shore-foam';
   scene.add(foam);
   const scenery = decorateScene(scene, canvas, world);
+  const stages = createStageLabels(canvas, stageObserver, world);
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(world.options.n * 3), 3));
   geometry.setAttribute('color', new THREE.Float32BufferAttribute(new Float32Array(world.options.n * 3), 3));
@@ -129,7 +131,7 @@ export function createRenderer(canvas, world, orbit) {
   const camera = new THREE.PerspectiveCamera(config.camera.fov, 1, config.camera.near, config.camera.far);
   return {
     webgl2: true,
-    snapshot: () => Object.freeze({ ...scenery.snapshot(), fields: fields.length, terrainTriangles: terrain.geometry.attributes.position.count / 3, shadows: renderer.shadowMap.enabled, pixelRatio: renderer.getPixelRatio() }),
+    snapshot: () => Object.freeze({ ...scenery.snapshot(), ...stages.snapshot(), fields: fields.length, terrainTriangles: terrain.geometry.attributes.position.count / 3, shadows: renderer.shadowMap.enabled, pixelRatio: renderer.getPixelRatio() }),
     setQuality(level) {
       const settings = qualityLevels[level];
       terrain.geometry.dispose();
@@ -142,7 +144,7 @@ export function createRenderer(canvas, world, orbit) {
       scenery.setQuality(settings);
       scene.traverse(object => { if (object.material) object.material.needsUpdate = true; });
     },
-    render() {
+    render(paused = false) {
       const width = canvas.clientWidth;
       const height = canvas.clientHeight;
       renderer.setSize(width, height, false);
@@ -197,6 +199,7 @@ export function createRenderer(canvas, world, orbit) {
       geometry.attributes.color.needsUpdate = true;
       camera.updateMatrixWorld();
       scenery.update(camera);
+      stages.update(camera, paused);
       renderer.render(scene, camera);
     }
   };

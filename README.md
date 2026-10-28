@@ -37,7 +37,7 @@ Cảnh chiếm toàn cửa sổ; bảng trong mờ bên phải rộng tối đa 
 
 Chất lượng Cao có bóng, sóng và mây nhiều khối; Thấp giảm lưới địa hình, bỏ bóng/sóng, giảm khối mây và tỷ lệ điểm ảnh. Đổi mức giữ mô phỏng và camera. Nếu Cao chạy dưới 30 FPS trong năm giây liên tiếp, gợi ý chuyển Thấp hiện lên; có thể đóng, không tự đổi mức.
 
-Nhóm Số liệu có thời gian, thanh “Nước đang ở đâu” (sáu đoạn cộng đúng 100%), cột Hồ và ao có vạch ban đầu/mũi tên xu hướng 10 giây, “Mưa rơi ở đâu” (năm vùng, số giọt và phần trăm), và bốn giai đoạn “Đang diễn ra”. “Xóa bộ đếm” chỉ xóa mốc đếm mưa, không đổi hạt hay thời gian; Đặt lại cũng xóa bộ đếm. Chú giải giải thích năm loại hạt và bảy vùng.
+Nhóm Số liệu có thời gian, thanh “Nước đang ở đâu” (sáu đoạn cộng đúng 100%), cột Hồ và ao có vạch ban đầu/mũi tên xu hướng 10 giây, “Mưa rơi ở đâu” (năm vùng, số giọt và phần trăm), và bốn giai đoạn “Đang diễn ra”: **Bốc hơi, Ngưng tụ, Mưa, Dòng chảy**. Các nhãn giai đoạn trong cảnh có số 1–4, bám hoạt động thật và dùng cùng màu với thẻ/chú giải. Phím N hoặc nút “Nhãn giai đoạn” bật tắt riêng với nhãn bản đồ (L). “Xóa bộ đếm” chỉ xóa mốc đếm mưa, không đổi hạt hay thời gian; Đặt lại cũng xóa bộ đếm. Chú giải giải thích năm loại hạt và bảy vùng.
 
 Để thử thí nghiệm: đặt Gió 0, xóa bộ đếm, chờ khoảng 60 giây mô phỏng và đọc tỷ lệ mưa Biển/Núi. Đặt Gió 100, xóa bộ đếm, chờ thêm 60 giây và so tỷ lệ Núi. Có thể tạm dừng để đọc số.
 

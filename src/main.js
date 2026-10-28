@@ -1,3 +1,4 @@
+import { StageLabels } from './art/stage-labels.js';
 import { QualityMonitor, parseQuality } from './quality.js';
 import { content } from './content.js';
 import { createPanel } from './ui/panel.js';
@@ -16,8 +17,10 @@ const panel = createPanel(document);
 document.title = content.title;
 const options = parseParams(window.location.search);
 const world = new World(options);
+const stageLabels = new StageLabels();
+stageLabels.sample(world);
 const statistics = createStatistics(document, world);
-const clock = new Clock(() => { world.step(); statistics.sample(); }, options);
+const clock = new Clock(() => { world.step(); statistics.sample(); stageLabels.sample(world); }, options);
 const canvas = document.querySelector('#world');
 const camera = new Camera(world.map, world.reservoirs);
 const views = new ViewTransition(camera, parseView(window.location.search));
@@ -31,7 +34,7 @@ for (const button of [...viewButtons, document.querySelector('#default-view')]) 
 }
 updateViews();
 const quality = new QualityMonitor(parseQuality(window.location.search));
-const renderer = createRenderer(canvas, world, camera);
+const renderer = createRenderer(canvas, world, camera, stageLabels);
 function updateQuality() {
   for (const button of document.querySelectorAll('[data-quality]')) button.setAttribute('aria-pressed', String(button.dataset.quality === quality.level));
   document.querySelector('#quality-hint').hidden = !quality.slowHint;
@@ -50,7 +53,7 @@ Object.defineProperty(window, '__sim', {
   }
 });
 let previous;
-bindControls(document, world, clock, () => { previous = undefined; statistics.sample(); });
+bindControls(document, world, clock, () => { previous = undefined; statistics.sample(); stageLabels.sample(world); });
 const updateHud = createHud(document);
 function frame(timestamp) {
   if (previous !== undefined) clock.advance((timestamp - previous) / 1000);
@@ -59,7 +62,7 @@ function frame(timestamp) {
   views.update(timestamp / 1000);
   quality.frame(timestamp / 1000, document.hidden);
   updateQuality();
-  renderer.render();
+  renderer.render(clock.paused);
   updateHud(world, clock);
   statistics.render();
   requestAnimationFrame(frame);
