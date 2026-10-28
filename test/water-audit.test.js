@@ -135,3 +135,18 @@ test('tapered headwaters reduce the third stream source overhang at both qualiti
     }
   }
 });
+
+
+test('triangle-aware stream routes reduce headwater overhang below thirty-three units', () => {
+  const map = generateDrainage();
+  for (const cells of [80, 160]) {
+    const streams = auditChannelBanks(map, cells).channels.filter(channel => channel.type === 'stream');
+    // Before triangle-aware routing: 66.77 / 51.83 units at the third spring.
+    assert.ok(streams[2].rendered.maximumGap < 33);
+    assert.ok(streams[1].rendered.maximumGap < 38);
+    for (const stream of streams) {
+      assert.equal(stream.rendered.coveredVertices, 0);
+      assert.ok(stream.rendered.minimumGap > 0.05);
+    }
+  }
+});

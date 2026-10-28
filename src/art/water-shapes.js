@@ -1,5 +1,6 @@
 import { heightAt } from '../sim/heightmap.js';
 import { mapData } from '../map-data.js';
+import { config } from '../config.js';
 
 // Clip terrain triangles at the water plane: every shoreline vertex is an
 // intersection with the existing basin, rather than an exposed vertical wall.
@@ -128,7 +129,22 @@ function channelPoints(map, channel) {
   // Corner cutting changes horizontal coordinates. Interpolated endpoint
   // heights can bridge a valley, so cap the rounded centerline at its local
   // terrain before carving the matching visible bed.
-  points = points.map(([x, y, z]) => [x, Math.min(y, heightAt(map, x, z) + 0.35), z]);
+  points = points.map(([x, y, z]) => {
+    let ceiling = heightAt(map, x, z);
+    // Bilinear sampling can sit above a triangle across a steep saddle.
+    // Use every supported grid so the route stays identical on quality changes.
+    if (channel.type === 'stream') for (const { terrainCells: cells } of Object.values(config.quality.levels)) {
+      const spacing = map.size / cells;
+      const column = Math.min(cells - 1, Math.floor(x / spacing));
+      const row = Math.min(cells - 1, Math.floor(z / spacing));
+      const u = x / spacing - column, v = z / spacing - row;
+      const h = (dx, dz) => heightAt(map, (column + dx) * spacing, (row + dz) * spacing);
+      const ground = u + v <= 1 ? h(0, 0) * (1-u-v) + h(1, 0) * u + h(0, 1) * v
+        : h(1, 1) * (u+v-1) + h(0, 1) * (1-u) + h(1, 0) * (1-v);
+      ceiling = Math.min(ceiling, ground);
+    }
+    return [x, Math.min(y, ceiling + 0.35), z];
+  });
   // A local cap can introduce a dip; carry it downstream to avoid uphill water.
   for (let i = 1; i < points.length; i++) points[i][1] = Math.min(points[i][1], points[i - 1][1]);
   channelCache.set(channel,points);
@@ -211,9 +227,11 @@ export function waterBedHeight(map, x, z, data = mapData) {
       const projection=((x-a[0])*dx+(z-a[2])*dz)/(dx*dx+dz*dz || 1);
       const t=Math.max(0,Math.min(1,projection));
       const distance=Math.hypot(x-a[0]-dx*t,z-a[2]-dz*t);
-      // A shallower stream bed reduces exposed edges. Keep 3.7 units of
-      // clearance so the 80-cell land mesh still leaves every ribbon visible.
-      const depth = channel.type === 'river' ? 1 : 3.7;
+      // Lowering the route to a coarse terrain triangle can create a steeper
+      // bank. Add five percent of that lowering to the bed clearance locally;
+      // a uniform deeper bed would widen gaps along the entire river network.
+      const routeLowering = Math.max(0, heightAt(map, a[0], a[2]) + 0.35 - a[1]);
+      const depth = channel.type === 'river' ? 1 : 3.7 + 0.05 * routeLowering;
       // Raise the outer stream bank gradually so low downstream segments
       // do not cut a flat trench across the neighboring upstream slope.
       // Keep clearance within nine units for the coarser rendering grid.

@@ -246,3 +246,18 @@ test('spring ribbons begin at a point and open gradually without changing their 
     assert.deepEqual(Array.from(map.heights), before);
   }
 });
+
+
+test('spring sources sit below the uncarved terrain triangles at every quality', async () => {
+  const { renderedTriangleHeight } = await import('../src/art/water-audit.js');
+  for (const cells of [80, 160]) {
+    const stride = cells + 1, spacing = map.size / cells;
+    const heights = Float32Array.from({ length: stride * stride }, (_, i) =>
+      heightAt(map, i % stride * spacing, Math.floor(i / stride) * spacing));
+    for (const channel of map.channels.filter(channel => channel.type === 'stream')) {
+      const [x, y, z] = channelRibbon(map, channel);
+      assert.ok(y <= renderedTriangleHeight(heights, cells, map.size, x, z) + 0.35001,
+        `${cells}: spring source bridges the rendered mountain slope`);
+    }
+  }
+});
