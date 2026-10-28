@@ -162,3 +162,16 @@ Ngân sách lần chạy lại tại **77,85 giây**, cùng hạt tạm dừng: 
 Ảnh mưa riêng không đòi opacity 0,95: thử ngưỡng đó có thể không gặp trạng thái đủ lâu ở ×8 (timeout), nên chụp khi nhãn đang hiện ≥ 0,25 và có centroid cụm **đang mưa thật** trên núi/biển đúng trường hợp. Ảnh bốn giai đoạn vẫn đòi cả bốn nhãn ≥ 0,95. Kịch bản kiểm và bấm pause trong cùng callback để không lỡ khung; không thay mô phỏng hoặc dựng dữ liệu giả. Bảng QA vẫn đánh dấu lỗi độ rõ/vị trí, không dùng việc script chụp thành công để kết luận đạt.
 
 Lượt `art-screenshots` cuối hoàn tất đủ chín ảnh Cao và evidence, console sạch; đã xem lại ảnh bốn góc, rừng/ruộng, mặt cắt và hai ảnh mưa. Ảnh 09 có đủ bốn chip rõ; ảnh 05 thấy mưa núi còn thưa và nhãn Mưa ở xa cụm, ảnh 06 có nhãn Mưa mờ trên biển và màn mưa xuống nước. Bảng QA “không” ở mục 1, 2, 4, 5 vẫn giữ, cần sửa ở bước 10. Đây là hoàn thành **bộ công cụ/bằng chứng bước 9**, không phải kết luận AC-13 hoặc toàn REQ đạt.
+
+
+## Bước 10a — Giới hạn hiển thị nhãn khi đổi mục tiêu xa
+
+Bước 10 được chia thành các mốc 10a–10c để lưu commit hoàn chỉnh cho từng sửa lỗi QA. Bước 10 tổng thể vẫn chưa hoàn tất.
+
+Nguyên nhân nhãn Mưa có thể cách xa mây: khi cụm đang bám tan hoặc một cụm khác vượt ngưỡng trễ, vị trí cũ vẫn được làm trơn với bước tối đa 12 đơn vị, trong khi opacity tiếp tục tăng. Nhãn vì thế có thể hiện rõ trong lúc đi ngang bầu trời tới cụm mới. Giữ nguyên cách chọn mục tiêu, ngưỡng trễ và giới hạn chuyển động; thêm `config.art.labelAnchorDistance = 60`. Khi còn cách mục tiêu hơn 60 đơn vị, nhãn mờ đi trong 0,4 giây và không nhận bấm; đến gần mới mờ hiện lại. Áp dụng chung cho bốn nhãn. Không đổi World, RNG, địa hình, vật lý hoặc vị trí click khi nhãn đã hiện.
+
+Thêm test hồi quy cụm mưa cũ ở x=150 biến mất, cụm mới ở x=880: nhãn mờ hết khi còn di chuyển xa, mọi bước ≤ 12, hiện đủ opacity khi đến gần. Cặp kỳ vọng test `cloud labels keep close competitors with hysteresis and bound movement and fades`: sau đổi sang cụm xa, opacity **0,75 → 0,25** (đang mờ đi); sau mất hết cụm, **0,5 → 0**. Giữ các assertion chọn đối tượng, trễ và khoảng cách; đây là cập nhật theo hành vi sản phẩm mới, không bỏ phép kiểm. E2E art-stage-labels bổ sung khoảng cách nhãn tới centroid cụm đang hoạt động ≤ 60; tạm dừng trong cùng callback phát hiện mưa để không lỡ trạng thái ngắn ở ×8.
+
+Chưa chụp lại bộ ảnh nghiệm thu; bảng QA bước 9 vẫn giữ các mục chưa đạt. Sửa lần này xử lý đường đi khi đổi mục tiêu, chưa chứng minh mục 5 đã đạt đầy đủ vì còn bố trí chip/panel sau phép chiếu. Các lỗi dáng núi, lòng chảo/mép nước và độ rõ màn mưa thuộc 10b; kiểm tổng thể/FPS/ngân sách cuối thuộc 10c.
+
+Kiểm thử mốc 10a: `node --test` **77/77**, không fail/skip, **107,231 giây**, chạy riêng không có trình duyệt. E2E `art-stage-labels`, `art-labels` (1280 × 800, 1920 × 1080) và `cycle-flow` (chính, gián đoạn, URL) đạt, console sạch. `git diff --check` sạch. Chưa chạy toàn bộ e2e hoặc đo FPS/ngân sách sau sửa lần này.

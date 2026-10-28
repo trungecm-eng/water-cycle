@@ -66,9 +66,12 @@ export class StageLabels {
       const best = [...options].sort((a, b) => b.score - a.score)[0];
       const cloud = stage === 'cloud' || stage === 'rain';
       const chosen = !current || (best && (cloud ? best.score >= current.score * 1.2 : best.score >= current.score + 3)) ? best : current;
-      label.visible = Boolean(chosen);
-      label.opacity = Math.max(0, Math.min(1, label.opacity + (chosen ? 1 : -1) * dt / 0.4));
-      if (!chosen) { label.id = null; label.ids = null; continue; }
+      if (!chosen) {
+        label.visible = false;
+        label.opacity = Math.max(0, label.opacity - dt / 0.4);
+        label.id = null; label.ids = null;
+        continue;
+      }
       label.id = chosen.id; label.ids = chosen.ids;
       if (!label.position) label.position = [...chosen.position];
       else {
@@ -76,6 +79,12 @@ export class StageLabels {
         const scale = Math.min(1, config.art.labelMaxStep / (Math.hypot(...delta) || 1));
         label.position = label.position.map((value, axis) => value + delta[axis] * scale);
       }
+      // Do not show an activity chip traversing empty sky after its cloud
+      // disappears or the leading cluster changes to a distant competitor.
+      // Keep the bounded movement, but fade in only near the live anchor.
+      const distance = Math.hypot(...chosen.position.map((value, axis) => value - label.position[axis]));
+      label.visible = distance <= config.art.labelAnchorDistance;
+      label.opacity = Math.max(0, Math.min(1, label.opacity + (label.visible ? 1 : -1) * dt / 0.4));
     }
     return this.snapshot();
   }

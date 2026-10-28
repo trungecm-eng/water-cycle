@@ -71,11 +71,11 @@ test('cloud labels keep close competitors with hysteresis and bound movement and
   state = labels.update(world, 0.1);
   assert.equal(state.cloud.target, 'cluster-100');
   assert.ok(Math.hypot(...state.cloud.position.map((value, axis) => value - previous[axis])) <= config.art.labelMaxStep);
-  assert.equal(state.cloud.opacity, 0.75);
+  assert.equal(state.cloud.opacity, 0.25);
   world.clusters = [];
   state = labels.update(world, 0.1);
   assert.equal(state.cloud.visible, false);
-  assert.equal(state.cloud.opacity, 0.5);
+  assert.equal(state.cloud.opacity, 0);
 });
 
 test('stage observer leaves simulation particles counters and RNG unchanged', () => {
@@ -87,4 +87,32 @@ test('stage observer leaves simulation particles counters and RNG unchanged', ()
   const control = new World();
   for (let step = 0; step < 100; step++) control.step();
   assert.equal(world.rng(), control.rng());
+});
+
+test('distant replacement rain labels fade out during travel and reappear near live rain', () => {
+  const world = fixture(), labels = new StageLabels();
+  cloud(world, 0, 90, 150, true);
+  for (let frame = 0; frame < 4; frame++) labels.update(world, 0.1);
+  assert.equal(labels.snapshot().rain.opacity, 1);
+  world.clusters = [];
+  cloud(world, 100, 100, 880, true);
+  let previous = labels.snapshot().rain.position;
+  let hidden = false, arrived = false;
+  for (let frame = 0; frame < 160; frame++) {
+    const state = labels.update(world, 0.1).rain;
+    assert.ok(Math.hypot(...state.position.map((v, axis) => v - previous[axis])) <= config.art.labelMaxStep + 1e-9);
+    const distance = Math.hypot(state.position[0] - 880, state.position[1] - 375, state.position[2] - 500);
+    if (frame >= 3 && distance > config.art.labelAnchorDistance) {
+      assert.equal(state.opacity, 0);
+      assert.equal(state.visible, false);
+      hidden = true;
+    }
+    if (state.visible) {
+      assert.ok(distance <= config.art.labelAnchorDistance);
+      if (state.opacity === 1) { arrived = true; break; }
+    }
+    previous = state.position;
+  }
+  assert.ok(hidden);
+  assert.ok(arrived);
 });
