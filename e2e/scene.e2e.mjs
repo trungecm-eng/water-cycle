@@ -7,7 +7,7 @@ try {
   for (const [query, n] of [['n=1500', 1500], ...['n=50', 'n=3000', 'n=abc', 'sun=-5', 'wind=200', 'speed=0'].map(q => [q, 1000])]) {
     const page = await browser.newPage();
     const errors = trackErrors(page);
-    await page.goto(`${baseUrl}/?${query}&paused=1`);
+    await page.goto(`${baseUrl}/?${query}&quality=low&paused=1`);
     await page.waitForFunction(() => window.__sim?.webgl2);
     const sim = await page.evaluate(() => window.__sim);
     assert.equal(sim.particles.length, n);

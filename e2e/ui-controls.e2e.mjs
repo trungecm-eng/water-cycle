@@ -4,7 +4,7 @@ const browser = await launchBrowser();
 try {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   const errors = trackErrors(page);
-  await page.goto(`${baseUrl}/?paused=1&sun=0&wind=100`);
+  await page.goto(`${baseUrl}/?quality=low&speed=8&paused=1&sun=0&wind=100`);
   await page.waitForFunction(() => window.__sim?.scene);
   const before = await page.evaluate(() => window.__sim);
   assert.equal(await page.locator('.control-icon').count(), 2);

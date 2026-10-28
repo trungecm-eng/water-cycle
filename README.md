@@ -16,7 +16,9 @@ Mở <http://localhost:8000> bằng trình duyệt máy tính hỗ trợ WebGL2.
 
 Bản đồ 1000 × 1000 có núi phía tây, ba suối, hồ chân núi có cửa thoát ra sông, đồng bằng, ao biệt lập và biển phía đông. Nước sông chảy ra biển; hồ đầy tràn qua cửa thoát, ao đầy tràn theo địa hình. Ao có thể cạn và lộ đáy bùn.
 
-Sa bàn low-poly có mặt tam giác phẳng, mặt cắt đất nâu/đá xám, màu pastel: biển xanh ngọc đậm dần ra xa bờ, cát vàng nhạt, đồng bằng xanh tươi, chân núi xanh đậm, sườn nâu, đỉnh xám không tuyết. Hồ/ao/suối/sông xanh dương trong mờ; mây trắng chuyển xám khi lớn. Sóng biển và dải sáng dòng chảy chạy theo thời gian mô phỏng.
+Sa bàn low-poly có mặt tam giác phẳng, mặt cắt bốn lớp cỏ/đất sáng/đất nâu/đá tối, màu pastel: biển xanh ngọc đậm dần ra xa bờ, cát vàng nhạt, đồng bằng xanh tươi, chân núi xanh đậm, sườn nâu, đỉnh trắng ngà. Hồ/ao/suối/sông xanh dương trong mờ; mây trắng chuyển xám khi lớn. Sóng biển và dải sáng dòng chảy chạy theo thời gian mô phỏng.
+
+Địa hình dùng **một lớp**: núi nhiều đỉnh, sống núi và gợn đồng bằng theo seed bản đồ; các kiểm tra thoát nước, nhịp và bảo toàn vẫn đạt mà không đổi hằng số vật lý. Lưới vẽ nội suy cùng địa hình, hạ lòng dẫn khi vẽ để nước không bị che. Rừng thông low-poly đặt thành cụm tất định bằng seed trang trí riêng, dày ở chân núi, thưa trên đồng bằng; ô ruộng chỉ tô màu mặt đất thoải. Hồ/ao có viền tự nhiên cắt theo lòng chảo, sông nối ra biển. Mây bông nhiều khối có màn mưa, Mặt Trời có quầng và chùm sáng ngắn xuống nước đang bốc hơi. Bảng màu có tên trong `config.colors`, ngưỡng trong `config.art`.
 
 ## Điều khiển
 
@@ -25,6 +27,8 @@ Sa bàn low-poly có mặt tam giác phẳng, mặt cắt đất nâu/đá xám,
 | Kéo chuột / mũi tên | Xoay camera quanh tâm bản đồ |
 | Lăn chuột / + / − | Thu phóng có giới hạn; camera không chui dưới đất/nước |
 | L | Bật/tắt bảy nhãn vùng |
+| N | Bật/tắt bốn nhãn giai đoạn và mũi tên gió |
+| Bấm nhãn vùng/giai đoạn | Camera lượn tới vị trí nhãn lúc bấm |
 | Mặt Trời 0–100 | Điều chỉnh bốc hơi theo diện tích; 0 tắt tia và ngừng bốc hơi |
 | Gió 0–100 | Đẩy hơi nước/mây từ biển vào núi; không đẩy mưa hay runoff |
 | Space / nút tạm dừng | Dừng hạt, sóng biển và dải sáng; camera vẫn dùng được |
@@ -35,9 +39,13 @@ Cảnh chiếm toàn cửa sổ; bảng trong mờ bên phải rộng tối đa 
 
 “Về mặc định” chỉ đưa Mặt Trời/Gió về 50/40, giữ mô phỏng. Bốn góc nhìn Toàn cảnh (`overview`), Từ biển nhìn vào núi (`sea`), Cận cảnh núi (`mountain`), Dọc sông (`river`) chuyển mượt trong một giây, kể cả khi tạm dừng. Kéo chuột, lăn chuột hoặc phím camera ngắt chuyển ngay; “Góc nhìn mặc định” về toàn cảnh.
 
-Chất lượng Cao có bóng, sóng và mây nhiều khối; Thấp giảm lưới địa hình, bỏ bóng/sóng, giảm khối mây và tỷ lệ điểm ảnh. Đổi mức giữ mô phỏng và camera. Nếu Cao chạy dưới 30 FPS trong năm giây liên tiếp, gợi ý chuyển Thấp hiện lên; có thể đóng, không tự đổi mức.
+Chất lượng Cao có lưới 160 × 160, 2.200 cây, bóng mềm, sóng và mây 5–12 khối; Thấp dùng lưới 80 × 80, 400 cây, bỏ bóng/sóng, mây 5–7 khối và giảm tỷ lệ điểm ảnh. Ngân sách mỗi khung: Cao ≤ 150 draw call / 400.000 tam giác; Thấp ≤ 80 / 150.000, đo bằng `renderer.info` khi đủ bốn giai đoạn. Đổi mức giữ mô phỏng và camera. Nếu Cao chạy dưới 30 FPS trong năm giây liên tiếp, gợi ý chuyển Thấp hiện lên; có thể đóng, không tự đổi mức.
 
 Nhóm Số liệu có thời gian, thanh “Nước đang ở đâu” (sáu đoạn cộng đúng 100%), cột Hồ và ao có vạch ban đầu/mũi tên xu hướng 10 giây, “Mưa rơi ở đâu” (năm vùng, số giọt và phần trăm), và bốn giai đoạn “Đang diễn ra”: **Bốc hơi, Ngưng tụ, Mưa, Dòng chảy**. Các nhãn giai đoạn trong cảnh có số 1–4, bám hoạt động thật và dùng cùng màu với thẻ/chú giải. Phím N hoặc nút “Nhãn giai đoạn” bật tắt riêng với nhãn bản đồ (L). “Xóa bộ đếm” chỉ xóa mốc đếm mưa, không đổi hạt hay thời gian; Đặt lại cũng xóa bộ đếm. Chú giải giải thích năm loại hạt và bảy vùng.
+
+Mũi tên “Gió đưa mây vào đất liền” cong từ biển về núi, dài và đậm hơn khi tăng Gió, ẩn khi Gió 0. Nhãn chỉ hiện khi có hoạt động; Bốc hơi và Dòng chảy dùng cửa sổ 10 giây, Ngưng tụ theo mây chưa mưa lớn nhất, Mưa theo mây đang mưa lớn nhất, có trễ và làm trơn vị trí. Bấm nhãn lượn tới, xoay/thu phóng ngắt ngay.
+
+Để thử đồ họa: mở mặc định ×1, quan sát 120 giây; đổi bốn góc nhìn, bấm nhãn, thử N/L, tạm dừng và chuyển Cao/Thấp. Đưa Gió về 0 để thấy mưa và nhãn Mưa trên biển.
 
 Để thử thí nghiệm: đặt Gió 0, xóa bộ đếm, chờ khoảng 60 giây mô phỏng và đọc tỷ lệ mưa Biển/Núi. Đặt Gió 100, xóa bộ đếm, chờ thêm 60 giây và so tỷ lệ Núi. Có thể tạm dừng để đọc số.
 
@@ -61,7 +69,7 @@ Giá trị sai dùng mặc định, không báo lỗi console. Seed mô phỏng 
 
 Hơi nước thật vô hình; đốm trắng rất mờ chỉ giúp theo dõi. Nước thật bay hơi ở mọi nhiệt độ; mô hình phát hạt nóng trên 80 theo nhịp diện tích × Mặt Trời, rồi làm nguội để ngưng tụ. Mây là giọt nước nhỏ đã ngưng tụ, không phải hơi nước. Các con số nhiệt độ không dùng dự đoán thời tiết.
 
-Sông và suối luôn hiện đầy nước dù lượng đang chảy ít hay nhiều. Mực biển coi như không đổi, nhưng vẫn đếm nước để bảo toàn. Không có nước ngầm và cây cối. Hồ/ao có mực theo số hạt, sức chứa co theo tổng hạt. Runoff đi theo các đỉnh lưới xuống thấp nên có thể thấy chuyển động theo nấc.
+Sông và suối luôn hiện đầy nước dù lượng đang chảy ít hay nhiều. Mực biển coi như không đổi, nhưng vẫn đếm nước để bảo toàn. Không có nước ngầm. Màu trắng ở đỉnh núi chỉ là màu, không có tuyết rơi hay tan. Cây chỉ để trang trí; thực tế cây cũng đưa hơi nước vào không khí qua thoát hơi nước. Hồ/ao có mực theo số hạt, sức chứa co theo tổng hạt. Runoff đi theo các đỉnh lưới xuống thấp nên có thể thấy chuyển động theo nấc.
 
 ## Hằng số và dữ liệu
 
@@ -95,6 +103,10 @@ node e2e/ui-statistics.e2e.mjs
 node e2e/ui-views.e2e.mjs
 node e2e/panel-foundation.e2e.mjs
 node e2e/ui-screenshots.e2e.mjs
+node e2e/art-flow.e2e.mjs
+node e2e/art-labels.e2e.mjs
+node e2e/art-budget.e2e.mjs
+node e2e/art-screenshots.e2e.mjs
 node e2e/measure-fps.e2e.mjs
 ```
 
@@ -115,3 +127,5 @@ Script tìm Playwright ở repo hoặc npm toàn cục; hỗ trợ `PLAYWRIGHT_M
 - `test/`, `test-support/`: kiểm thử Node và trợ giúp; `e2e/`: Chromium.
 - `specs/REQ-004/`: đặc tả, kế hoạch, bàn giao, báo cáo và ảnh.
 - `specs/REQ-005/`: đặc tả giao diện, kế hoạch, bàn giao, báo cáo và tám ảnh.
+
+Ảnh REQ-006: `specs/REQ-006/screenshots/` (chín ảnh và evidence.json). Kịch bản không kiểm ảnh ưu tiên Thấp ×8; kiểm mặc định, URL tốc độ và chuyển chất lượng vẫn giữ trường hợp riêng. `scene.renderInfo` chứa calls/triangles, `scene.sunScreen` là tọa độ chiếu chuẩn hóa để kiểm Mặt Trời; scene còn có trees, cloudBlocks, rainStreaks, stageLabels và windArrow. FPS phần mềm chỉ tham khảo; AC-15 của REQ-006 cần kiểm đẹp/mượt và ≥45 FPS trên máy người dùng.

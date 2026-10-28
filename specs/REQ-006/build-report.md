@@ -102,3 +102,63 @@ Nhãn vùng trở thành button HTML có thể bấm bằng chuột hoặc bàn 
 Thêm test logic về hướng/độ dài/độ đậm gió và bất biến World, test chuyển camera từ mọi góc sẵn tới mọi nhãn vùng, sao chép target, độ cao an toàn và ngắt giữa chừng. Thêm sớm `e2e/art-labels.e2e.mjs` của bước 9 để kiểm sản phẩm bước 8. Không sửa kỳ vọng test cũ. Ảnh thử `/tmp/req006-step8.png` đã xem, chưa thay bộ ảnh nghiệm thu; các vấn đề QA hình ảnh đã bàn giao ở các bước trước vẫn cần rà trong bước 9–10.
 
 Kiểm thử bước 8: `node --test` đạt **76/76** trong **135,175 giây** (shell 135,208 giây; có trình duyệt chạy đồng thời nên không dùng số này làm đo FPS). E2e art-labels đạt ở **1280 × 800 và 1920 × 1080**, kiểm không chồng nhãn sau 65 giây mô phỏng, N/L độc lập, gió 0, camera tới đúng vị trí nhãn lúc bấm và thao tác chuột ngắt chuyển cảnh. Các e2e ui-views, art-stage-labels, scenery và cycle-flow đều đạt; cycle-flow gồm chính, gián đoạn và URL, console sạch. `git diff --check` sạch. Bộ e2e tổng thể, ảnh nghiệm thu, FPS và ngân sách vẫn thuộc bước 9–10.
+
+## Bước 9 — Kịch bản nghiệm thu và tài liệu
+
+Bổ sung `art-flow.e2e.mjs`: mở mặc định Cao ×1, bấm nhãn, tạm dừng/tiếp tục, N/L, chuột xoay/zoom, đổi chất lượng; biến thể resize, bấm nhãn vùng trong lúc lượn; dùng Thấp ×8 riêng cho chờ mưa núi trong 120 giây và mưa biển Gió 0. `art-budget.e2e.mjs` đo `renderer.info` khi đủ bốn giai đoạn, chuyển mức trong cùng trạng thái tạm dừng, so hạt, kiểm Mặt Trời trong khung ở bốn góc mỗi mức và bóng đáy. Snapshot chỉ đọc thêm `renderInfo` và `sunScreen`, không thêm API điều khiển mô phỏng.
+
+Ngân sách đo thử tại 67,717 giây mô phỏng, 1280 × 800: Cao **65 calls / 223.156 triangles**, Thấp **64 / 83.956**, đều đạt. Đây là số đo một trạng thái; bước 10 chạy lại cùng toàn bộ kiểm thử/FPS sản phẩm.
+
+`art-screenshots.e2e.mjs` tạo chín ảnh Cao 1920 × 1080 và `evidence.json`, ghi camera, thời gian, gió, số khối/nhãn/ngân sách, phiên bản trình duyệt và lỗi console. Chờ hoạt động bằng Thấp ×8, tạm dừng và chuyển Cao trước chụp. Chờ opacity nhãn đạt 0,95 để tránh tạm dừng đúng khung đầu hiện nhãn rồi đóng băng ở opacity 0. Không sửa ảnh REQ-004/005. README bổ sung phong cách, địa hình một lớp, cây, hai ý mô hình đơn giản hóa, bấm nhãn, gió, N/L, ngân sách và lệnh kiểm thử.
+
+Các cặp điều chỉnh e2e cũ trong bước này (không bỏ phép kiểm):
+
+| Tệp | Trước → sau |
+| --- | --- |
+| core-3d | n=2000, paused → thêm quality=low, speed=8; vẫn 2000 hạt và kiểm reset |
+| panel-foundation | paused → thêm quality=low, speed=8; giữ kiểm trạng thái phiên, phím và độc lập mô phỏng |
+| scenery | Cao paused ×8 → Thấp paused ×8; giữ kiểm chuyển động/freeze sóng và dòng chảy |
+| scene | URL từng trường hợp paused → thêm quality=low; giữ tốc độ mặc định/sai là 1 để kiểm parser |
+| ui-controls | paused, sun=0, wind=100 → thêm quality=low, speed=8; vẫn kiểm các nút tốc độ riêng và reset ×1 |
+| ui-statistics | paused → thêm quality=low, speed=8; giữ kiểm tỷ lệ/bộ đếm |
+| ui-views | URL view paused → thêm quality=low, speed=8; giữ các kỳ vọng camera |
+| ui-flow | mặc định ×1 → Thấp ×8; kiểm speed 1 → 8 theo URL, luồng mặc định ×1 được giữ trong art-flow; reset vẫn ×1 |
+| ui-panel | mặc định ×1 → Thấp ×8; giới hạn delta thời gian mỗi khung min(0,25, elapsed) + 1/60 → min(0,25, elapsed) × 8 + 1/60 theo Clock; giữ kiểm không dừng/nhảy thời gian |
+
+Các script chụp ảnh cũ, measure-fps, kiểm URL mặc định/tốc độ sai và ui-quality giữ cấu hình riêng cần cho mục đích kiểm tra.
+
+### Bảng QA hình ảnh bước 9 (chưa phải nghiệm thu đạt)
+
+Các ảnh trong `screenshots/` là bằng chứng thực tế; không suy ra đạt hình ảnh từ số đếm mesh hoặc test logic. **AC-13 hiện chưa đạt**: còn các mục bắt buộc cần sửa trong bước 10 trước khi kết luận hoàn thành.
+
+| Mục | Có/không | Ảnh và nhận xét |
+| --- | --- | --- |
+| 1. Núi gồ ghề, không dạng nón | Không | 01-overview, 02-sea, 03-mountain: sáu đỉnh vẫn quá cao hẹp, rời nhau, sườn chưa tạo cảm giác dãy núi có sống/phụ đỉnh |
+| 2. Hồ/ao lòng chảo, không nổi, hồ liền sông | Không | 03-mountain, 04-river: hồ nối sông nhưng mép trước còn như mặt đĩa cao, lòng dẫn cạnh sông có vách/răng cưa; cần sửa mặt vẽ, không đổi vật lý tùy tiện |
+| 3. Không tia nắng dài tỏa khắp cảnh | Có | 01-overview, 02-sea: chỉ vài nét ngắn trên nước |
+| 4. Mây bông và màn mưa rõ | Không | 05-mountain-rain, 06-sea-rain: mây có khối, mưa biển thấy các nét xanh nhưng mưa núi quá khó thấy ở toàn cảnh, cần tăng độ rõ mà giữ ngân sách |
+| 5. Nhãn đúng chỗ, không che nhau | Không | 06-sea-rain, 09-four-stages: logic chọn cụm đúng nhưng cần rà nhãn Mưa với vị trí mây trong ảnh, độ trễ khi speed=8 và nguy cơ panel che nhãn; art-labels chỉ chứng minh không giao hộp chip, chưa chứng minh điều này |
+| 6. Đỉnh trắng | Có | 01-overview, 03-mountain |
+| 7. Rừng chân núi và đồng bằng | Có | 01-overview, 03-mountain, 07-forest-fields |
+| 8. Ô ruộng | Có | 01-overview, 07-forest-fields |
+| 9. Hai sắc xanh/gợn đồng bằng | Có | 01-overview, 04-river, 07-forest-fields |
+| 10. Biển chuyển màu và bọt bờ | Có | 01-overview, 02-sea, 04-river; chuyển màu nhẹ, bọt mảnh |
+| 11. Mặt Trời và chùm ngắn xuống nước | Có | 01-overview, 06-sea-rain; chùm rất nhạt, có test logic điểm kết thúc |
+| 12. Mặt cắt nhiều lớp | Có | 01-overview, 08-cutaway; logic kiểm cả bốn cạnh |
+| 13. Trời xanh–kem | Có | 01-overview, 02-sea |
+| 14. Mũi tên theo Gió | Có | 01-overview/05-mountain-rain có mũi tên, 06-sea-rain Gió 0 ẩn; tăng chiều dài/độ đậm kiểm bằng test thuần |
+
+Ưu tiên đầu bước 10: sửa bốn mục bắt buộc trên, bổ sung bằng chứng kiểm phần vẽ cuối cùng (đặc biệt địa hình/nước và nhãn với mây), chạy lại ảnh và bảng này. Không trả `done` dù mọi test tự động đang xanh khi các mục bắt buộc hình ảnh còn “không”. Không cần hỏi người để sửa các vấn đề đã xác định trong phạm vi.
+
+Điều chỉnh thêm khi chạy lại e2e cũ:
+
+- `ui-flow`: ở ×8, thao tác chuẩn bị camera có thể tiêu thụ nhiều thời gian mô phỏng, làm cửa sổ đo Gió 0 đầu tiên không còn như kịch bản gốc. Khởi đầu `paused=1`, chỉ tiếp tục ngay trước đo mưa, giữ nguyên cửa sổ 60 giây và ngưỡng mưa. Lượt thử đầu chạy tự do báo 0 mưa đã bị loại; không hạ kỳ vọng kiểm tra. Thông báo log “default x1” đổi thành “default x8” đúng cấu hình.
+- `ui-panel`: vòng Tab `expected.length + 5` trước đây không đủ vì nhãn vùng/giai đoạn đã là button. Nay duyệt số phần tử focusable đang hiện + 2, vẫn yêu cầu từng native control của panel xuất hiện trong Tab order, không bỏ assertion “Unreachable control”.
+
+Kết quả kiểm thử bước 9: `node --test` **76/76**, 0 fail/skip, **164,411 giây** (shell 164,450 giây; có trình duyệt chạy đồng thời, không dùng làm so FPS). E2e core-3d, panel-foundation, scene (gồm scenery), scenery, ui-controls, ui-flow (chính và gián đoạn), ui-panel (108 mục chữ đạt contrast), ui-statistics, ui-views, art-labels (hai kích thước), art-flow (mặc định ×1 và gián đoạn), art-budget, ui-quality và cycle-flow (chính, gián đoạn, URL) đạt; console sạch. Chưa chạy toàn bộ nhóm art-atmosphere/art-stage-labels/art-trees/art-strata hoặc các script ảnh cũ/FPS trong phiên này; chúng thuộc lượt tổng thể bước 10.
+
+Ngân sách lần chạy lại tại **77,85 giây**, cùng hạt tạm dừng: Cao **65 calls / 224.032 triangles**, Thấp **64 / 84.832**; Mặt Trời trong khung ở cả bốn góc mỗi mức. Package contract và `git diff --check` đạt. Chưa đo FPS toàn cảnh sản phẩm trong bước 9.
+
+Ảnh mưa riêng không đòi opacity 0,95: thử ngưỡng đó có thể không gặp trạng thái đủ lâu ở ×8 (timeout), nên chụp khi nhãn đang hiện ≥ 0,25 và có centroid cụm **đang mưa thật** trên núi/biển đúng trường hợp. Ảnh bốn giai đoạn vẫn đòi cả bốn nhãn ≥ 0,95. Kịch bản kiểm và bấm pause trong cùng callback để không lỡ khung; không thay mô phỏng hoặc dựng dữ liệu giả. Bảng QA vẫn đánh dấu lỗi độ rõ/vị trí, không dùng việc script chụp thành công để kết luận đạt.
+
+Lượt `art-screenshots` cuối hoàn tất đủ chín ảnh Cao và evidence, console sạch; đã xem lại ảnh bốn góc, rừng/ruộng, mặt cắt và hai ảnh mưa. Ảnh 09 có đủ bốn chip rõ; ảnh 05 thấy mưa núi còn thưa và nhãn Mưa ở xa cụm, ảnh 06 có nhãn Mưa mờ trên biển và màn mưa xuống nước. Bảng QA “không” ở mục 1, 2, 4, 5 vẫn giữ, cần sửa ở bước 10. Đây là hoàn thành **bộ công cụ/bằng chứng bước 9**, không phải kết luận AC-13 hoặc toàn REQ đạt.

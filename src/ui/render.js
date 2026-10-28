@@ -131,7 +131,14 @@ export function createRenderer(canvas, world, orbit, stageObserver, focus) {
   const camera = new THREE.PerspectiveCamera(config.camera.fov, 1, config.camera.near, config.camera.far);
   return {
     webgl2: true,
-    snapshot: () => Object.freeze({ ...scenery.snapshot(), ...stages.snapshot(), fields: fields.length, terrainTriangles: terrain.geometry.attributes.position.count / 3, shadows: renderer.shadowMap.enabled, pixelRatio: renderer.getPixelRatio() }),
+    snapshot() {
+      const decoration = scenery.snapshot();
+      return Object.freeze({ ...decoration, ...stages.snapshot(),
+        renderInfo: { calls: renderer.info.render.calls, triangles: renderer.info.render.triangles },
+        sunScreen: new THREE.Vector3(...decoration.sun.position).project(camera).toArray(),
+        fields: fields.length, terrainTriangles: terrain.geometry.attributes.position.count / 3,
+        shadows: renderer.shadowMap.enabled, pixelRatio: renderer.getPixelRatio() });
+    },
     setQuality(level) {
       const settings = qualityLevels[level];
       terrain.geometry.dispose();

@@ -8,7 +8,7 @@ async function measureRain(page, wind) {
   await page.waitForFunction(start => window.__sim.time >= start + 60, start, { timeout: 180000 });
   await page.locator('#pause').click();
   const tally = await page.evaluate(() => window.__sim.rainTally);
-  assert.ok(tally.total > 0);
+  assert.ok(tally.total > 0, JSON.stringify({ wind, start, state: await page.evaluate(() => ({ time: window.__sim.time, rain: window.__sim.rainLandings, counts: window.__sim.counts, paused: window.__sim.paused })) }));
   return tally;
 }
 
@@ -17,9 +17,9 @@ try {
   for (const interrupted of [false, true]) {
     const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
     const errors = trackErrors(page);
-    await page.goto(baseUrl);
+    await page.goto(`${baseUrl}/?quality=low&speed=8&paused=1`);
     await page.waitForFunction(() => window.__sim);
-    assert.equal(await page.evaluate(() => window.__sim.speed), 1);
+    assert.equal(await page.evaluate(() => window.__sim.speed), 8);
     await page.locator('#panel-toggle').click();
     await page.locator('#panel-toggle').click();
     for (const name of ['controls', 'statistics', 'legend']) {
@@ -48,6 +48,7 @@ try {
     await page.mouse.up();
     assert.equal(await page.evaluate(() => window.__sim.view), 'free');
     const initial = await page.evaluate(() => window.__sim.waterDistribution);
+    await page.locator('#pause').click();
     const calm = await measureRain(page, 0);
     assert.ok(calm.percentages.sea > 50, JSON.stringify(calm));
     await page.locator('#wind').fill('100');
@@ -71,7 +72,7 @@ try {
     assert.equal(reset.rainTally.total, 0);
     assert.equal(reset.counts.water, 1000);
     assert.deepEqual(errors, []);
-    console.log(JSON.stringify({ flow: interrupted ? 'interrupted' : 'default x1', calm, windy }));
+    console.log(JSON.stringify({ flow: interrupted ? 'interrupted' : 'default x8', calm, windy }));
     await page.close();
   }
 } finally { await browser.close(); }
