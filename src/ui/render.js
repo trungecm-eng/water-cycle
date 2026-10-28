@@ -126,11 +126,6 @@ export function createRenderer(canvas, world, orbit) {
   const rainGeometry = new THREE.BufferGeometry();
   rainGeometry.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(world.options.n * 6), 3));
   scene.add(new THREE.LineSegments(rainGeometry, new THREE.LineBasicMaterial({ color: config.colors.rain })));
-  const rayGeometry = new THREE.BufferGeometry();
-  rayGeometry.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(3 * config.sunlight.rayCount * 6), 3));
-  const rays = new THREE.LineSegments(rayGeometry,
-    new THREE.LineBasicMaterial({ color: config.colors.ray, transparent: true, opacity: config.sunlight.rayOpacity }));
-  scene.add(rays);
   const camera = new THREE.PerspectiveCamera(config.camera.fov, 1, config.camera.near, config.camera.far);
   return {
     webgl2: true,
@@ -200,14 +195,6 @@ export function createRenderer(canvas, world, orbit) {
       geometry.setDrawRange(0, count);
       geometry.attributes.position.needsUpdate = true;
       geometry.attributes.color.needsUpdate = true;
-      for (let index = 0; index < world.rays.length; index++) {
-        const ray = world.rays[index];
-        rayGeometry.attributes.position.setXYZ(index * 2, ...config.sunlight.position);
-        rayGeometry.attributes.position.setXYZ(index * 2 + 1, ray.x, ray.y, ray.z);
-      }
-      rayGeometry.setDrawRange(0, world.rays.length * 2);
-      rayGeometry.attributes.position.needsUpdate = true;
-      rays.visible = world.sun > 0;
       camera.updateMatrixWorld();
       scenery.update(camera);
       renderer.render(scene, camera);

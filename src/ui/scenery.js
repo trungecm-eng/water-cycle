@@ -1,10 +1,10 @@
-import { qualityLevels } from '../quality.js';
 import { content } from '../content.js';
 import * as THREE from '../../vendor/three.module.min.js';
 import { config } from '../config.js';
 import { heightAt } from '../sim/heightmap.js';
 import { generateStrata } from '../art/strata.js';
 import { generateTrees } from '../art/trees.js';
+import { createAtmosphere } from './atmosphere.js';
 import { mapData } from '../map-data.js';
 
 export function decorateScene(scene, canvas, world) {
@@ -99,10 +99,7 @@ export function decorateScene(scene, canvas, world) {
     trunks.setMatrixAt(index, transform.matrix);
   });
   scene.add(canopy, trunks);
-  const clouds = new THREE.Group();
-  clouds.name = 'cloud-masses';
-  scene.add(clouds);
-  const cloudGeometry = new THREE.IcosahedronGeometry(1, 1);
+  const atmosphere = createAtmosphere(scene, world);
   const labelLayer = document.createElement('div');
   labelLayer.className = 'map-labels';
   canvas.parentElement.append(labelLayer);
@@ -128,14 +125,12 @@ export function decorateScene(scene, canvas, world) {
       toggleLabels();
     }
   });
-  let lastClusters;
-  let quality = qualityLevels.high;
   let labelSnapshot = [];
   return {
     setQuality(settings) { canopy.count = trunks.count = Math.min(trees.length, settings.trees);
       canopy.castShadow = trunks.castShadow = settings.shadows;
       canopy.receiveShadow = trunks.receiveShadow = settings.shadows;
-      quality = settings; waves.visible = settings.waves; lastClusters = undefined; },
+      waves.visible = settings.waves; atmosphere.setQuality(settings); },
     update(camera) {
       sky.position.copy(camera.position);
       waves.position.z = Math.sin(world.time * settings.waveSpeed) * settings.waveTravel;
@@ -148,30 +143,7 @@ export function decorateScene(scene, canvas, world) {
         const z = (Math.floor(a / map.stride) * (1-t) + Math.floor(b / map.stride) * t) * map.spacing;
         mesh.position.set(x, heightAt(map,x,z) + settings.flowHeight, z);
       }
-      if (lastClusters !== world.clusters) {
-        lastClusters = world.clusters;
-        for (const mesh of [...clouds.children]) { mesh.material.dispose(); clouds.remove(mesh); }
-        for (const cluster of world.clusters.filter(item => item.visible)) {
-          const members = cluster.ids.map(id => world.particles[id]).filter(p => p.state === 'cloud');
-          if (!members.length) continue;
-          const shade = Math.min(1, (cluster.size - config.cloud.cloudMinSize) / (config.cloud.rainStartSize - config.cloud.cloudMinSize));
-          const material = new THREE.MeshStandardMaterial({ color: new THREE.Color(config.colors.cloud).lerp(new THREE.Color(config.colors.cloudDark), shade), flatShading: true, roughness: 1 });
-          let blocks = 0;
-          for (let i = 0; i < Math.min(settings.cloudLobes, members.length); i++) {
-            const member = members[Math.floor(i * members.length / Math.min(settings.cloudLobes, members.length))];
-            for (const [dx, dy, dz] of settings.cloudOffsets) {
-              if (blocks++ >= quality.cloudBlocks) continue;
-              const mesh = new THREE.Mesh(cloudGeometry, material.clone());
-              mesh.castShadow = quality.shadows;
-              mesh.receiveShadow = quality.shadows;
-              mesh.position.set(member.x + dx, member.y + dy, member.z + dz);
-              mesh.scale.set(settings.cloudRadius, settings.cloudRadius * settings.cloudFlatten, settings.cloudRadius);
-              clouds.add(mesh);
-            }
-          }
-          material.dispose();
-        }
-      }
+      atmosphere.update(camera);
       const rect = canvas.getBoundingClientRect();
       labelSnapshot = [];
       for (const label of labels) {
@@ -188,8 +160,8 @@ export function decorateScene(scene, canvas, world) {
       }
     },
     snapshot() {
-      return Object.freeze({ objects: Object.freeze(scene.children.map(child => child.name).filter(Boolean)), trees: canopy.count, treeMeshes: 2, strataLayers: strata[0].layers.length, seaCutaway: seaFace.geometry.attributes.position.count > 0, labels: Object.freeze([...labelSnapshot]),
-        effects: Object.freeze({ wavesVisible: waves.visible, cloudBlocks: clouds.children.length, time: world.time, waveOffset: waves.position.z, flowPositions: Object.freeze(streaks.children.map(mesh => Object.freeze(mesh.position.toArray()))) }) });
+      return Object.freeze({ objects: Object.freeze(scene.children.map(child => child.name).filter(Boolean)), ...atmosphere.snapshot(), trees: canopy.count, treeMeshes: 2, strataLayers: strata[0].layers.length, seaCutaway: seaFace.geometry.attributes.position.count > 0, labels: Object.freeze([...labelSnapshot]),
+        effects: Object.freeze({ wavesVisible: waves.visible, cloudBlocks: atmosphere.snapshot().cloudBlocks, time: world.time, waveOffset: waves.position.z, flowPositions: Object.freeze(streaks.children.map(mesh => Object.freeze(mesh.position.toArray()))) }) });
     }
   };
 }
