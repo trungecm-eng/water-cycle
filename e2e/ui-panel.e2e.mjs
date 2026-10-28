@@ -4,7 +4,7 @@ const browser = await launchBrowser();
 try {
   const page = await browser.newPage({ viewport: { width: 1024, height: 900 } });
   const errors = trackErrors(page);
-  await page.goto(baseUrl);
+  await page.goto(`${baseUrl}/?quality=low&speed=8`);
   await page.waitForFunction(() => window.__sim);
   for (const width of [1024, 1920]) {
     await page.setViewportSize({ width, height: 900 });
@@ -34,7 +34,7 @@ try {
   assert.ok(samples.at(-1).time > samples[0].time);
   for (let i = 1; i < samples.length; i++) {
     const delta = samples[i].time - samples[i - 1].time;
-    assert.ok(delta >= 0 && delta <= Math.min(.25, samples[i].elapsed) + 1 / 60 + .001);
+    assert.ok(delta >= 0 && delta <= Math.min(.25, samples[i].elapsed) * 8 + 1 / 60 + .001);
   }
   await page.locator('#pause').click();
   // Every visible native control must be reachable through the browser's Tab order.
@@ -44,7 +44,8 @@ try {
   }));
   const reached = new Set();
   await page.locator('#world').focus();
-  for (let i = 0; i < expected.length + 5; i++) {
+  const tabStops = await page.locator('button:visible, summary:visible, input:visible, [tabindex="0"]:visible').count();
+  for (let i = 0; i < tabStops + 2; i++) {
     await page.keyboard.press('Tab');
     reached.add(await page.evaluate(() => document.activeElement.dataset.tabTest));
   }

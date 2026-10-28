@@ -1,24 +1,30 @@
+import { createStageLabels } from './stage-labels.js';
 import { qualityLevels } from '../quality.js';
 import { content } from '../content.js';
 import * as THREE from '../../vendor/three.module.min.js';
 import { decorateScene } from './scenery.js';
 import { config } from '../config.js';
+import { colorAt, coastlineSamples } from '../art/terrain-colors.js';
+import { basinSurface, renderedBasinSurface, lakeConnection, waterBedHeight } from '../art/water-shapes.js';
+import { renderedRiverSurface } from '../art/channel-surface.js';
+import { generateFields, fieldAt } from '../art/fields.js';
 
-function terrainGeometry(map, step = 1) {
+function terrainGeometry(map, cells, fields) {
   const positions = [];
   const colors = [];
-  const point = index => [index % map.stride * map.spacing, map.heights[index], Math.floor(index / map.stride) * map.spacing];
-  for (let row = 0; row < map.cells; row += step) for (let column = 0; column < map.cells; column += step) {
-    const a = row * map.stride + column;
-    for (const triangle of [[a, a + map.stride * step, a + step], [a + step, a + map.stride * step, a + map.stride * step + step]]) {
-      for (const index of triangle) {
-        positions.push(...point(index));
-        const region = map.regions[index];
-        const color = region === 'mountain'
-          ? map.heights[index] > 210 ? config.colors.summit : map.heights[index] > 85 ? config.colors.slope : config.colors.foothill
-          : region === 'pond' ? config.colors.mud : config.colors[region] ?? config.colors.plain;
-        colors.push(...new THREE.Color(color).toArray());
-      }
+  const spacing = map.size / cells;
+  const samples = [];
+  for (let row = 0; row <= cells; row++) for (let column = 0; column <= cells; column++) {
+    const x = column * spacing, z = row * spacing;
+    samples.push({ point: [x, waterBedHeight(map, x, z), z],
+      color: new THREE.Color(colorAt(map, x, z, fieldAt(fields, x, z))).toArray() });
+  }
+  const stride = cells + 1;
+  for (let row = 0; row < cells; row++) for (let column = 0; column < cells; column++) {
+    const a = row * stride + column;
+    for (const index of [a, a + stride, a + 1, a + 1, a + stride, a + stride + 1]) {
+      positions.push(...samples[index].point);
+      colors.push(...samples[index].color);
     }
   }
   const geometry = new THREE.BufferGeometry();
@@ -28,26 +34,18 @@ function terrainGeometry(map, step = 1) {
   return geometry;
 }
 
-// Water follows the same nearest-grid footprints used by reservoir collision.
-function waterGeometry(map, indices, channel = false) {
-  const positions = [];
-  const half = map.spacing / 2;
-  for (const index of indices) {
-    const x = index % map.stride * map.spacing;
-    const z = Math.floor(index / map.stride) * map.spacing;
-    const left = Math.max(0, x - half), right = Math.min(map.size, x + half);
-    const near = Math.max(0, z - half), far = Math.min(map.size, z + half);
-    const y = channel ? map.heights[index] + config.rendering.waterOffset : 0;
-    positions.push(left, y, near, left, y, far, right, y, near,
-      right, y, near, left, y, far, right, y, far);
-  }
+function waterGeometry(positions, levelNormals = false) {
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-  geometry.computeVertexNormals();
+  if (levelNormals) {
+    const normals = new Float32Array(positions.length);
+    for (let i = 1; i < normals.length; i += 3) normals[i] = 1;
+    geometry.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
+  } else geometry.computeVertexNormals();
   return geometry;
 }
 
-export function createRenderer(canvas, world, orbit) {
+export function createRenderer(canvas, world, orbit, stageObserver, focus) {
   // Probe first: three.js logs an error when it has to discover this failure itself.
   let context;
   try { context = canvas.getContext('webgl2', { antialias: true, alpha: false }); } catch { /* Show the fallback below. */ }
@@ -67,25 +65,39 @@ export function createRenderer(canvas, world, orbit) {
   sunlight.position.set(...config.sunlight.position);
   sunlight.shadow.mapSize.set(config.quality.shadowMapSize, config.quality.shadowMapSize);
   Object.assign(sunlight.shadow.camera, { left: -config.quality.shadowExtent, right: config.quality.shadowExtent, top: config.quality.shadowExtent, bottom: -config.quality.shadowExtent, near: config.quality.shadowNear, far: config.quality.shadowFar });
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  sunlight.shadow.radius = config.quality.shadowRadius;
   sunlight.shadow.bias = config.quality.shadowBias;
   sunlight.target.position.set(world.map.size / 2, 0, world.map.size / 2);
   scene.add(sunlight.target);
   scene.add(sunlight);
-  const terrain = new THREE.Mesh(terrainGeometry(world.map),
+  const fields = generateFields(world.map);
+  const terrain = new THREE.Mesh(terrainGeometry(world.map, qualityLevels.high.terrainCells, fields),
     new THREE.MeshStandardMaterial({ vertexColors: true, flatShading: true, roughness: 1 }));
   terrain.name = 'terrain';
   scene.add(terrain);
+  const coast = coastlineSamples(world.map);
+  const shorelineX = z => coast[Math.min(coast.length - 1, Math.round(z / world.map.size * (coast.length - 1)))][0];
+  let terrainCells = qualityLevels.high.terrainCells;
   const surfaces = {};
   for (const id of ['sea', 'lake', 'pond', 'river', 'stream']) {
-    const indices = world.map.regions.flatMap((region, index) => region === id ? [index] : []);
-    const mesh = new THREE.Mesh(waterGeometry(world.map, indices, id === 'river' || id === 'stream'),
-      new THREE.MeshStandardMaterial({ color: config.colors[id], transparent: true,
-        opacity: config.rendering.waterOpacity, roughness: 0.25, side: THREE.DoubleSide }));
+    const positions = ['river', 'stream'].includes(id)
+      ? world.map.channels.filter(channel => channel.type === id).flatMap(channel => renderedRiverSurface(world.map, channel, terrainCells))
+      : id === 'sea' ? basinSurface(world.map, id, world.reservoirs.level(id))
+        : renderedBasinSurface(world.map, id, world.reservoirs.level(id), terrainCells);
+    // Steep headwaters expose both sides of the folded surface. Use the
+    // palette color directly so back-face lighting cannot draw dark bend stripes.
+    const channelSurface = ['river', 'stream'].includes(id);
+    const material = channelSurface
+      ? new THREE.MeshBasicMaterial({ color: config.colors[id], side: THREE.DoubleSide })
+      : new THREE.MeshStandardMaterial({ color: config.colors[id], transparent: true,
+        opacity: config.rendering.waterOpacity, roughness: 0.25, side: THREE.DoubleSide });
+    const mesh = new THREE.Mesh(waterGeometry(positions, channelSurface), material);
     if (id === 'sea') {
       const positions = mesh.geometry.attributes.position;
       const colors = [];
       for (let i = 0; i < positions.count; i++) {
-        const blend = Math.max(0, Math.min(1, (positions.getX(i) - config.scenery.waveStart) / (world.map.size - config.scenery.waveStart)));
+        const blend = Math.max(0, Math.min(1, (positions.getX(i) - shorelineX(positions.getZ(i))) / (world.map.size - shorelineX(positions.getZ(i)))));
         colors.push(...new THREE.Color(config.colors.sea).lerp(new THREE.Color(config.colors.seaDeep), blend).toArray());
       }
       mesh.geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
@@ -93,10 +105,29 @@ export function createRenderer(canvas, world, orbit) {
       mesh.material.vertexColors = true;
     }
     mesh.name = id;
+    mesh.userData.level = world.reservoirs.level(id === 'river' || id === 'stream' ? 'sea' : id);
     surfaces[id] = mesh;
     scene.add(mesh);
   }
-  const scenery = decorateScene(scene, canvas, world);
+  const connector = new THREE.Mesh(waterGeometry(lakeConnection(world.map, world.reservoirs.level('lake'))), surfaces.lake.material);
+  connector.name = 'lake-outlet';
+  scene.add(connector);
+  const shoreline = coastlineSamples(world.map);
+  const foamPositions = [];
+  for (let i = 1; i < shoreline.length; i++) {
+    const a = shoreline[i - 1], b = shoreline[i];
+    const width = config.art.foamWidth;
+    foamPositions.push(...a, ...b, b[0] + width, b[1], b[2],
+      ...a, b[0] + width, b[1], b[2], a[0] + width, a[1], a[2]);
+  }
+  const foamGeometry = new THREE.BufferGeometry();
+  foamGeometry.setAttribute('position', new THREE.Float32BufferAttribute(foamPositions, 3));
+  const foam = new THREE.Mesh(foamGeometry, new THREE.MeshBasicMaterial({ color: config.colors.foam,
+    side: THREE.DoubleSide, transparent: true, opacity: 0.75, depthWrite: false }));
+  foam.name = 'shore-foam';
+  scene.add(foam);
+  const scenery = decorateScene(scene, canvas, world, focus);
+  const stages = createStageLabels(canvas, stageObserver, world, focus);
   const geometry = new THREE.BufferGeometry();
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(world.options.n * 3), 3));
   geometry.setAttribute('color', new THREE.Float32BufferAttribute(new Float32Array(world.options.n * 3), 3));
@@ -109,19 +140,28 @@ export function createRenderer(canvas, world, orbit) {
   const rainGeometry = new THREE.BufferGeometry();
   rainGeometry.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(world.options.n * 6), 3));
   scene.add(new THREE.LineSegments(rainGeometry, new THREE.LineBasicMaterial({ color: config.colors.rain })));
-  const rayGeometry = new THREE.BufferGeometry();
-  rayGeometry.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(3 * config.sunlight.rayCount * 6), 3));
-  const rays = new THREE.LineSegments(rayGeometry,
-    new THREE.LineBasicMaterial({ color: config.colors.ray, transparent: true, opacity: config.sunlight.rayOpacity }));
-  scene.add(rays);
   const camera = new THREE.PerspectiveCamera(config.camera.fov, 1, config.camera.near, config.camera.far);
   return {
     webgl2: true,
-    snapshot: () => Object.freeze({ ...scenery.snapshot(), terrainTriangles: terrain.geometry.attributes.position.count / 3, shadows: renderer.shadowMap.enabled, pixelRatio: renderer.getPixelRatio() }),
+    snapshot() {
+      const decoration = scenery.snapshot();
+      return Object.freeze({ ...decoration, ...stages.snapshot(),
+        renderInfo: { calls: renderer.info.render.calls, triangles: renderer.info.render.triangles },
+        sunScreen: new THREE.Vector3(...decoration.sun.position).project(camera).toArray(),
+        fields: fields.length, terrainTriangles: terrain.geometry.attributes.position.count / 3,
+        shadows: renderer.shadowMap.enabled, pixelRatio: renderer.getPixelRatio() });
+    },
     setQuality(level) {
       const settings = qualityLevels[level];
+      terrainCells = settings.terrainCells;
+      for (const id of ['lake', 'pond']) surfaces[id].userData.level = NaN;
+      for (const id of ['river', 'stream']) {
+        surfaces[id].geometry.dispose();
+        surfaces[id].geometry = waterGeometry(world.map.channels.filter(channel => channel.type === id)
+          .flatMap(channel => renderedRiverSurface(world.map, channel, terrainCells)), true);
+      }
       terrain.geometry.dispose();
-      terrain.geometry = terrainGeometry(world.map, settings.terrainStep);
+      terrain.geometry = terrainGeometry(world.map, settings.terrainCells, fields);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, settings.pixelRatio));
       renderer.shadowMap.enabled = settings.shadows;
       sunlight.castShadow = settings.shadows;
@@ -130,7 +170,7 @@ export function createRenderer(canvas, world, orbit) {
       scenery.setQuality(settings);
       scene.traverse(object => { if (object.material) object.material.needsUpdate = true; });
     },
-    render() {
+    render(paused = false) {
       const width = canvas.clientWidth;
       const height = canvas.clientHeight;
       renderer.setSize(width, height, false);
@@ -142,8 +182,18 @@ export function createRenderer(canvas, world, orbit) {
       const view = orbit.snapshot();
       camera.position.set(view.position.x, view.position.y, view.position.z);
       camera.lookAt(...view.target);
-      for (const id of ['sea', 'lake', 'pond']) {
-        surfaces[id].position.y = world.reservoirs.level(id);
+      for (const id of ['lake', 'pond']) {
+        const level = world.reservoirs.level(id);
+        if (surfaces[id].userData.level !== level) {
+          surfaces[id].geometry.dispose();
+          surfaces[id].geometry = waterGeometry(renderedBasinSurface(world.map, id, level, terrainCells));
+          surfaces[id].userData.level = level;
+          if (id === 'lake') {
+            connector.geometry.dispose();
+            connector.geometry = waterGeometry(lakeConnection(world.map, level));
+            connector.visible = world.reservoirs.count(id) > 0;
+          }
+        }
         surfaces[id].visible = world.reservoirs.count(id) > 0;
       }
       sunlight.intensity = config.rendering.sunlight * (0.7 + world.sun / 100 * 0.3);
@@ -173,16 +223,9 @@ export function createRenderer(canvas, world, orbit) {
       geometry.setDrawRange(0, count);
       geometry.attributes.position.needsUpdate = true;
       geometry.attributes.color.needsUpdate = true;
-      for (let index = 0; index < world.rays.length; index++) {
-        const ray = world.rays[index];
-        rayGeometry.attributes.position.setXYZ(index * 2, ...config.sunlight.position);
-        rayGeometry.attributes.position.setXYZ(index * 2 + 1, ray.x, ray.y, ray.z);
-      }
-      rayGeometry.setDrawRange(0, world.rays.length * 2);
-      rayGeometry.attributes.position.needsUpdate = true;
-      rays.visible = world.sun > 0;
       camera.updateMatrixWorld();
       scenery.update(camera);
+      stages.update(camera, paused);
       renderer.render(scene, camera);
     }
   };

@@ -23,6 +23,15 @@ export class ViewTransition {
     this.name = name;
     this.transition = { start: now, from: this.camera.snapshot(), to: mapData.views[name] };
   }
+  focus(position, now) {
+    this.update(now);
+    this.name = 'free';
+    this.transition = { start: now, from: this.camera.snapshot(), to: {
+      target: [...position], azimuth: this.camera.azimuth,
+      elevation: Math.max(config.camera.minElevation, Math.min(config.camera.maxElevation, this.camera.elevation)),
+      distance: Math.max(config.camera.minDistance, Math.min(config.camera.maxDistance, 500))
+    } };
+  }
   update(now) {
     if (!this.transition) return;
     const { start, from, to } = this.transition;

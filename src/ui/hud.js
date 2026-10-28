@@ -1,3 +1,4 @@
+import { stageColors } from '../art/stage-labels.js';
 import { config } from '../config.js';
 
 import { content } from '../content.js';
@@ -12,8 +13,8 @@ export function createHud(root) {
     const item = root.createElement('li');
     const swatch = root.createElement('span');
     swatch.className = `swatch ${state}`;
-    swatch.style.backgroundColor = config.colors[state];
-    item.append(swatch, `${label}: ${content.descriptions[state]}`);
+    swatch.style.backgroundColor = stageColors[state] ?? config.colors[state];
+    item.append(swatch, `${content.stages[state] ?? label}: ${content.descriptions[state]}`);
     legend.append(item);
   }
   for (const [id, label] of Object.entries(content.regions)) {

@@ -4,7 +4,7 @@ const browser = await launchBrowser();
 try {
   const page = await browser.newPage({ viewport: { width: 1280, height: 1000 } });
   const errors = trackErrors(page);
-  await page.goto(`${baseUrl}/?paused=1&speed=8`);
+  await page.goto(`${baseUrl}/?quality=low&speed=8&paused=1`);
   await page.waitForFunction(() => window.__sim?.scene.labels.length === 7);
   const initial = await page.evaluate(() => window.__sim.scene);
   for (const name of ['terrain', 'sea', 'lake', 'pond', 'river', 'stream', 'strata', 'sea-waves', 'flow-highlights', 'cloud-masses']) assert.ok(initial.objects.includes(name));

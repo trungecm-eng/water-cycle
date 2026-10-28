@@ -16,9 +16,12 @@ export const mapData = deepFreeze({
   noise: { amplitude: 1.2 },
   drainage: { minimumRise: 0.001, channelRise: 0.25, channelDepth: 2, pondOverflow: [[585, 280], [680, 280], [800, 280]] },
   peaks: [
-    { x: 150, z: 500, height: 280, radiusX: 135, radiusZ: 230 },
-    { x: 115, z: 210, height: 205, radiusX: 120, radiusZ: 145 },
-    { x: 145, z: 800, height: 220, radiusX: 130, radiusZ: 165 }
+    { x: 94, z: 156, height: 275, radiusX: 65, radiusZ: 100 },
+    { x: 240, z: 260, height: 280, radiusX: 70, radiusZ: 95 },
+    { x: 94, z: 448, height: 290, radiusX: 68, radiusZ: 105 },
+    { x: 208, z: 584, height: 285, radiusX: 70, radiusZ: 100 },
+    { x: 94, z: 740, height: 280, radiusX: 68, radiusZ: 100 },
+    { x: 208, z: 876, height: 275, radiusX: 70, radiusZ: 95 }
   ],
   windShelterDistance: 80,
   ridge: [[0, 115], [210, 115], [500, 150], [800, 145], [1000, 145]],

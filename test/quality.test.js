@@ -5,7 +5,8 @@ import { World } from '../src/sim/world.js';
 
 test('quality URL uses supported values and safe defaults', () => {
   for (const [query, expected] of [['', 'high'], ['?quality=low', 'low'], ['?quality=high', 'high'], ['?quality=ultra', 'high']]) assert.equal(parseQuality(query), expected);
-  assert.equal(qualityLevels.low.terrainStep, 2);
+  assert.equal(qualityLevels.high.terrainCells, 160);
+  assert.equal(qualityLevels.low.terrainCells, 80);
   assert.equal(qualityLevels.low.waves, false);
 });
 function feed(monitor, start, seconds, fps) {

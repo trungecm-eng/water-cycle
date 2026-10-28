@@ -5,7 +5,7 @@ const browser = await launchBrowser();
 try {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   const errors = trackErrors(page);
-  await page.goto(`${baseUrl}/?n=2000&paused=1`);
+  await page.goto(`${baseUrl}/?quality=low&speed=8&n=2000&paused=1`);
   await page.waitForFunction(() => window.__sim?.webgl2);
   const layout = await page.evaluate(() => {
     const panel = document.querySelector('.simulation-panel').getBoundingClientRect();

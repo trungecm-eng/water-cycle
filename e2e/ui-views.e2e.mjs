@@ -5,7 +5,7 @@ const browser = await launchBrowser();
 try {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   const errors = trackErrors(page);
-  await page.goto(`${baseUrl}/?paused=1&view=river`);
+  await page.goto(`${baseUrl}/?quality=low&speed=8&paused=1&view=river`);
   await page.waitForFunction(() => window.__sim?.view === 'river');
   for (const name of Object.keys(mapData.views)) {
     await page.locator(`[data-view="${name}"]`).click();
@@ -31,7 +31,7 @@ try {
   await page.locator('#default-view').press('ArrowLeft');
   assert.equal(await page.evaluate(() => window.__sim.view), 'free');
   for (const [query, expected] of [['sea', 'sea'], ['moon', 'overview']]) {
-    await page.goto(`${baseUrl}/?view=${query}&paused=1`);
+    await page.goto(`${baseUrl}/?quality=low&speed=8&view=${query}&paused=1`);
     await page.waitForFunction(name => window.__sim?.view === name, expected);
   }
   assert.deepEqual(errors, []);

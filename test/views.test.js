@@ -56,3 +56,31 @@ test('view URL accepts presets and falls back silently for invalid values', () =
   for (const name of Object.keys(mapData.views)) assert.equal(parseView(`?view=${name}`), name);
   for (const search of ['', '?view=moon', '?view=toString', '?view=']) assert.equal(parseView(search), 'overview');
 });
+
+test('label focus captures its target and remains safe throughout interrupted glides', () => {
+  const world = new World();
+  for (const name of Object.keys(mapData.views)) {
+    const camera = new Camera(world.map, world.reservoirs);
+    const views = new ViewTransition(camera, name);
+    for (const label of mapData.labels) {
+      const position = [...label.position];
+      views.focus(position, 0);
+      position[0] = -999;
+      for (let i = 0; i <= 100; i++) {
+        views.update(i / 100);
+        const p = camera.snapshot().position;
+        if (p.x >= 0 && p.x <= world.map.size && p.z >= 0 && p.z <= world.map.size)
+          assert.ok(p.y >= heightAt(world.map, p.x, p.z) + config.camera.clearance - 1e-9);
+      }
+      assert.deepEqual(camera.target, label.position);
+      assert.equal(camera.distance, 500);
+      assert.equal(views.name, 'free');
+      views.focus([500, 100, 500], 2);
+      views.update(2.3);
+      views.interrupt();
+      const stopped = camera.snapshot();
+      views.update(10);
+      assert.deepEqual(camera.snapshot(), stopped);
+    }
+  }
+});

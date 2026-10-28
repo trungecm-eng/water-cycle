@@ -4,7 +4,7 @@ const browser = await launchBrowser();
 try {
   const page = await browser.newPage();
   const errors = trackErrors(page);
-  await page.goto(`${baseUrl}/?paused=1`);
+  await page.goto(`${baseUrl}/?quality=low&speed=8&paused=1`);
   await page.waitForFunction(() => window.__sim?.panel);
   for (const width of [1024, 1920]) {
     await page.setViewportSize({ width, height: 900 });
