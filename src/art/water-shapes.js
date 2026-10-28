@@ -236,10 +236,12 @@ export function waterBedHeight(map, x, z, data = mapData) {
       // do not cut a flat trench across the neighboring upstream slope.
       // Keep clearance within nine units for the coarser rendering grid.
       const bankRise = channel.type === 'stream' ? Math.max(0, distance - 9) * 1.5 : 0;
-      // Extend the river slope upstream of each segment instead of carving
-      // its lower endpoint height into the preceding bank. Streams need a
-      // separate coarse-grid treatment before applying the same correction.
-      const upstreamRise = channel.type === 'river' ? Math.max(0, -projection) * (a[1] - b[1]) : 0;
+      // Extend each segment slope upstream instead of carving its lower
+      // endpoint into the preceding bank. Fade this correction near stream
+      // mouths, where the coarse grid needs the shared confluence recess.
+      const mouthDistance = Math.hypot(x - points.at(-1)[0], z - points.at(-1)[2]);
+      const mouthBlend = channel.type === 'stream' ? Math.min(1, mouthDistance / bankOuterRadius) : 1;
+      const upstreamRise = Math.max(0, -projection) * (a[1] - b[1]) * mouthBlend;
       height = Math.min(height, recessedBank(originalHeight, a[1]*(1-t)+b[1]*t-depth+bankRise+upstreamRise, distance));
     }
   }

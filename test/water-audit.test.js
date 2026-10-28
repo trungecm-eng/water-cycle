@@ -192,3 +192,22 @@ test('stream triangle interiors remain above terrain at both rendering qualities
     assert.ok(streams[2].interior.rendered.minimumGap > 1);
   }
 });
+
+
+test('stream banks extend upstream slopes and blend into coarse-grid confluences', () => {
+  const map = generateDrainage();
+  for (const cells of [80, 160]) {
+    const streams = auditChannelBanks(map, cells).channels.filter(channel => channel.type === 'stream');
+    // Previously 20.17 / 21.21 and 37.14 / 36.23 on the first two streams.
+    assert.ok(streams[0].rendered.maximumGap < (cells === 80 ? 14 : 18));
+    assert.ok(streams[1].rendered.maximumGap < (cells === 80 ? 28 : 33));
+    for (const stream of streams) {
+      assert.equal(stream.rendered.coveredVertices, 0);
+      assert.equal(stream.interior.rendered.coveredVertices, 0);
+      // Full extrapolation without the mouth blend buried a low-grid vertex
+      // at [319.73468, 12.35, 607.34863] by 0.084 units.
+      assert.ok(stream.rendered.minimumGap > 0.05);
+      assert.ok(stream.interior.rendered.minimumGap > 0.05);
+    }
+  }
+});

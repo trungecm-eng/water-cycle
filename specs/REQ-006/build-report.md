@@ -420,3 +420,14 @@ Audit tái lập: min nội thất suối thứ ba Thấp **1,171967089**, trư�
 Toàn bộ `node --test` **104/104**, 0 fail/skip/cancelled, exit 0, **109,752 giây**, chạy riêng trước trình duyệt. Mặt vẽ còn **6 đỉnh**, độ lệch chuẩn dốc **1,615399415**, phần dư đồng bằng **2,642467559** / 2.950 mẫu. E2e **art-strata, art-trees** đạt, console sạch; cây **2.200/400**, hạt không đổi khi chuyển mức. Server Python đã dừng.
 
 Đã chụp/xem `screenshots/23-stream-interior-clearance.png`, Cao 1920 × 1080, dọc sông, paused từ **0 giây**, hồ **20**, ao **11,6**, console sạch. Núi vẫn nhọn, mép suối còn gấp và lộ khoảng hở; giữ QA bắt buộc 1/2 chưa đạt và bộ chín ảnh/evidence cũ. Chưa QA bốn góc/mực thấp–đầy, chưa chạy đầy đủ e2e/FPS/ngân sách cuối. **10b/10c/10 còn mở.**
+
+
+## Mốc 10b-22 — Ngoại suy bờ suối với chuyển tiếp tại cửa
+
+Áp dụng ngoại suy độ dốc thượng lưu cho cả suối, tránh lấy độ cao đoạn hạ lưu khắc ngang sườn thượng lưu. Giảm dần hiệu chỉnh trong bán kính 34 đơn vị quanh cửa suối để giữ phần lõm chung ở hợp lưu trên lưới Thấp. Ngoại suy đầy đủ đến cửa làm che một đỉnh nước tại [319,73468; 12,35; 607,34863] khoảng 0,084 đơn vị; chuyển tiếp này giữ min trên hai lưới lớn hơn 0,05. Không đổi đường tâm, độ rộng nước, độ sâu cơ sở, địa hình mô phỏng hoặc World/RNG.
+
+Audit cực đại ba suối Thấp **13,538889 / 27,928957 / 32,385044**, Cao **17,589106 / 32,204466 / 29,753139**. Trước sửa: Thấp **20,172110 / 37,142057 / 32,729309**, Cao **21,208746 / 36,231071 / 32,788749**. Min nội thất suối thứ hai Thấp **0,128805**, suối thứ ba Thấp **1,171967**; không mẫu đỉnh/nội thất nào của suối bị che. Giữ mọi assertion cũ và thêm giới hạn hồi quy mới. Các khoảng hở còn hàng chục đơn vị, chưa đủ xác nhận AC-7 hoặc đóng QA tổng thể.
+
+Kiểm thử cuối: toàn bộ `node --test` **105/105**, không fail/skip/cancelled, exit 0, **110,552 giây**, chạy riêng trước trình duyệt. Mặt vẽ giữ **6 đỉnh**, độ lệch chuẩn dốc **1,614770856**, phần dư đồng bằng **2,642467559** trên 2.950 mẫu. E2e `art-strata` và `art-trees` đạt, console sạch, cây **2.200/400**, hạt bất biến khi chuyển mức.
+
+Ảnh `screenshots/24-upstream-stream-banks.png`: Cao, 1920 × 1080, dọc sông, tạm dừng từ thời gian 0, hồ 20, ao 11,6. Khung ảnh đo 64 lần vẽ, 221.000 tam giác; đây chỉ là khung tạm dừng, không thay kiểm ngân sách lúc đủ giai đoạn. Đã xem ảnh: mép suối vẫn có chỗ gấp/hở, núi vẫn nhọn; giữ QA bắt buộc 1/2 chưa đạt và không thay bộ chín ảnh nghiệm thu. Bước 10b/10c/10 còn mở. Server đã dừng.
