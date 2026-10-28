@@ -178,3 +178,17 @@ test('channel interior audit includes seven samples per rendered triangle', () =
     assert.ok(channel.interior.rendered.maximumGap >= channel.rendered.maximumGap - 1e-10);
   }
 });
+
+test('stream triangle interiors remain above terrain at both rendering qualities', () => {
+  const map = generateDrainage();
+  for (const cells of [80, 160]) {
+    const streams = auditChannelBanks(map, cells).channels.filter(channel => channel.type === 'stream');
+    for (const stream of streams) {
+      assert.equal(stream.interior.rendered.coveredVertices, 0);
+      assert.ok(stream.interior.rendered.minimumGap > 0.05);
+    }
+    // The third stream previously crossed the low mesh by 0.284 units
+    // between clear vertices near x=215.495, z=284.505.
+    assert.ok(streams[2].interior.rendered.minimumGap > 1);
+  }
+});

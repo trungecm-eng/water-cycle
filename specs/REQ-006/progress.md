@@ -301,3 +301,17 @@ Toàn bộ `node --test` **96/96**, 0 fail/skip/cancelled, **108,238 giây**, ex
 
 - Tiếp theo: sửa giao tuyến bờ/đường tâm suối và dáng núi tổng thể, bảo toàn sáu đỉnh và mọi test mô phỏng. Khi sửa, kiểm cả `interior` vừa thêm, ưu tiên vị trí bị che trên suối thứ ba; các assertion đỉnh cũ chưa đủ đảm bảo mặt nước không bị đất xuyên. Sau khi hình ảnh đạt, QA bốn góc/mực thấp–đầy, chụp lại chín ảnh/bảng QA rồi chạy đầy đủ 10c (mọi e2e REQ-004/005/006, FPS, budget, README/package).
 - Không có notes.md/eval REQ-006. Lệnh: `node --test`, `node --test test/water-audit.test.js`, `node scripts/audit-water-banks.mjs > specs/REQ-006/water-bank-audit.json`. Không chạy server ở phiên này. Commit bằng danh tính từng lệnh, không sửa git config/tệp cấm. Log `/tmp/req006-node-tests.log` không bền vững; số liệu cần giữ đã ghi ở đây và JSON audit.
+
+
+## Phiên build 2026-10-28 — Mốc 10b-21: bỏ mẫu đất xuyên nội thất suối
+
+Tăng riêng phần khắc bù cục bộ theo độ hạ đường tâm từ 5% lên 7%. Không đổi độ sâu cơ sở, đường tâm, độ rộng, World/RNG hoặc địa hình mô phỏng. Giữ mọi assertion cũ; thêm test kiểm tất cả bảy mẫu mỗi tam giác suối không bị che trên cả lưới 80/160. Đây vẫn là kiểm lấy mẫu hữu hạn, không phải chứng minh toàn mặt không xuyên đất.
+
+Audit tái lập: min nội thất suối thứ ba Thấp **1,171967089**, trước sửa **-0,284112400**; Cao **3,050068129**. Cực đại đỉnh ba suối Thấp **20,172110 / 37,142057 / 32,729309**, Cao **21,208746 / 36,231071 / 32,788749**. Phần khắc thêm làm các cực đại tăng nhẹ; giữ toàn bộ giới hạn hồi quy. Sông không đổi, min nội thất Thấp **-0,006965385** vẫn trong dung sai 0,05. Không coi các khoảng hở hàng chục đơn vị là đạt giao tuyến bờ AC-7.
+
+Toàn bộ `node --test` **104/104**, 0 fail/skip/cancelled, exit 0, **109,752 giây**, chạy riêng trước trình duyệt. Mặt vẽ còn **6 đỉnh**, độ lệch chuẩn dốc **1,615399415**, phần dư đồng bằng **2,642467559** / 2.950 mẫu. E2e **art-strata, art-trees** đạt, console sạch; cây **2.200/400**, hạt không đổi khi chuyển mức. Server Python đã dừng.
+
+Đã chụp/xem `screenshots/23-stream-interior-clearance.png`, Cao 1920 × 1080, dọc sông, paused từ **0 giây**, hồ **20**, ao **11,6**, console sạch. Núi vẫn nhọn, mép suối còn gấp và lộ khoảng hở; giữ QA bắt buộc 1/2 chưa đạt và bộ chín ảnh/evidence cũ. Chưa QA bốn góc/mực thấp–đầy, chưa chạy đầy đủ e2e/FPS/ngân sách cuối. **10b/10c/10 còn mở.**
+
+- Đóng mốc sửa lỗi 10b-21, trả `continue` từ commit sạch. Tiếp theo sửa tổng thể dáng núi và giao tuyến bờ suối/cửa hồ, bảo toàn sáu đỉnh và mọi bất biến mô phỏng. Kiểm cả đỉnh và `interior` khi sửa; không chỉ dựa vào đỉnh. Sau khi hình ảnh đạt, QA bốn góc/mực thấp–đầy, chụp lại chín ảnh/bảng QA, rồi chạy đủ 10c (mọi e2e REQ-004/005/006, FPS, budget, README/package).
+- Không có notes.md hoặc eval REQ-006. Lệnh: `node --test`, `node scripts/audit-water-banks.mjs > specs/REQ-006/water-bank-audit.json`, `node e2e/art-strata.e2e.mjs`, `node e2e/art-trees.e2e.mjs`. Server `python3 -m http.server 8000` quản lý bằng Python try/finally. URL dừng ban đầu `paused=1`. Commit dùng danh tính từng lệnh; không sửa git config hoặc tệp cấm. Script/log `/tmp` không bền vững; ảnh và số liệu cần giữ đã nằm trong repo.

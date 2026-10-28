@@ -409,3 +409,14 @@ Kiểm thử cuối mốc 10b-17: `node --test` đạt **97/97**, 0 fail/skip/ca
 - Phát hiện mới ở **suối thứ ba, lưới 80**: một mẫu bị đất che **0,284112400** đơn vị, tọa độ **[215,495101929; 129,655792236; 284,504898071]**. Trong khi đó mọi đỉnh vẫn có khoảng hở dương. Sông Thấp có min **-0,006965385**, nằm trong dung sai 0,05; sông Cao có max **3,716840216**, lớn hơn cực đại chỉ đo đỉnh **3,492402**. Báo cáo JSON lưu số liệu đầy đủ cho hai mức.
 - Thử chỉ khắc theo đoạn gần nhất trong từng kênh làm che 15 đỉnh suối ở Thấp, đã bỏ toàn bộ. `water-shapes.js` giữ nguyên HEAD; không đổi sản phẩm, World/RNG hoặc assertion cũ. Không chụp ảnh/chạy e2e vì hình ảnh không đổi; không dùng kết quả cũ thay kiểm cuối 10c.
 - Toàn bộ `node --test` **103/103**, 0 fail/skip/cancelled, exit 0, **109,507 giây**. Nhóm audit riêng **13/13**. Đóng mốc chẩn đoán 10b-20; **10b/10c/10 còn mở, trả continue**. QA bắt buộc 1/2 vẫn chưa đạt, giữ bộ ảnh nghiệm thu hiện có.
+
+
+## Mốc 10b-21 — bỏ mẫu đất xuyên nội thất suối
+
+Tăng riêng phần khắc bù cục bộ theo độ hạ đường tâm từ 5% lên 7%. Không đổi độ sâu cơ sở, đường tâm, độ rộng, World/RNG hoặc địa hình mô phỏng. Giữ mọi assertion cũ; thêm test kiểm tất cả bảy mẫu mỗi tam giác suối không bị che trên cả lưới 80/160. Đây vẫn là kiểm lấy mẫu hữu hạn, không phải chứng minh toàn mặt không xuyên đất.
+
+Audit tái lập: min nội thất suối thứ ba Thấp **1,171967089**, trước sửa **-0,284112400**; Cao **3,050068129**. Cực đại đỉnh ba suối Thấp **20,172110 / 37,142057 / 32,729309**, Cao **21,208746 / 36,231071 / 32,788749**. Phần khắc thêm làm các cực đại tăng nhẹ; giữ toàn bộ giới hạn hồi quy. Sông không đổi, min nội thất Thấp **-0,006965385** vẫn trong dung sai 0,05. Không coi các khoảng hở hàng chục đơn vị là đạt giao tuyến bờ AC-7.
+
+Toàn bộ `node --test` **104/104**, 0 fail/skip/cancelled, exit 0, **109,752 giây**, chạy riêng trước trình duyệt. Mặt vẽ còn **6 đỉnh**, độ lệch chuẩn dốc **1,615399415**, phần dư đồng bằng **2,642467559** / 2.950 mẫu. E2e **art-strata, art-trees** đạt, console sạch; cây **2.200/400**, hạt không đổi khi chuyển mức. Server Python đã dừng.
+
+Đã chụp/xem `screenshots/23-stream-interior-clearance.png`, Cao 1920 × 1080, dọc sông, paused từ **0 giây**, hồ **20**, ao **11,6**, console sạch. Núi vẫn nhọn, mép suối còn gấp và lộ khoảng hở; giữ QA bắt buộc 1/2 chưa đạt và bộ chín ảnh/evidence cũ. Chưa QA bốn góc/mực thấp–đầy, chưa chạy đầy đủ e2e/FPS/ngân sách cuối. **10b/10c/10 còn mở.**

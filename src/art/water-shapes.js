@@ -228,10 +228,10 @@ export function waterBedHeight(map, x, z, data = mapData) {
       const t=Math.max(0,Math.min(1,projection));
       const distance=Math.hypot(x-a[0]-dx*t,z-a[2]-dz*t);
       // Lowering the route to a coarse terrain triangle can create a steeper
-      // bank. Add five percent of that lowering to the bed clearance locally;
+      // bank. Add seven percent of that lowering to the bed clearance locally;
       // a uniform deeper bed would widen gaps along the entire river network.
       const routeLowering = Math.max(0, heightAt(map, a[0], a[2]) + 0.35 - a[1]);
-      const depth = channel.type === 'river' ? 1 : 3.7 + 0.05 * routeLowering;
+      const depth = channel.type === 'river' ? 1 : 3.7 + 0.07 * routeLowering;
       // Raise the outer stream bank gradually so low downstream segments
       // do not cut a flat trench across the neighboring upstream slope.
       // Keep clearance within nine units for the coarser rendering grid.

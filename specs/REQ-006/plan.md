@@ -35,5 +35,6 @@ Mỗi bước gồm code và test của bước đó; `node --test` xanh và cá
   - [x] 10b-18. Kiểm chứng thay đổi đầu nguồn thu nhọn được lưu tự động ở lần chạy gián đoạn; chạy toàn bộ Node, e2e mặt cắt/cây, đo lại khoảng hở và xem ảnh dọc sông. Đây là sửa cục bộ, chưa đóng QA tổng thể.
   - [x] 10b-19. Giới hạn đường tâm suối theo mặt tam giác của cả hai lưới, thêm khoảng hở đáy cục bộ theo độ hạ đường tâm; kiểm hồi quy nguồn suối, độ dốc xuống và khoảng hở 80/160, toàn bộ Node, e2e cây/mặt cắt và ảnh. Chưa đóng QA dáng núi/giao tuyến bờ.
   - [x] 10b-20. Mở rộng audit sang trung điểm cạnh và tâm tam giác để phát hiện đất xuyên mặt nước giữa các đỉnh; kiểm test tổng hợp, tất định và toàn bộ Node. Ghi vị trí lỗi mới, chưa đóng QA tổng thể.
+  - [x] 10b-21. Tăng khắc bù cục bộ theo độ hạ đường tâm từ 5% lên 7% để bỏ mẫu đất xuyên giữa tam giác suối ở Thấp; kiểm cả đỉnh/nội thất trên hai lưới, toàn bộ Node, e2e cây/mặt cắt và ảnh. Chưa đóng QA tổng thể.
   - [ ] 10b. Sửa dáng núi, lòng chảo/mép nước và độ rõ màn mưa theo bảng QA bước 9; đo lại địa hình vẽ, chụp ảnh và cập nhật bảng QA.
   - [ ] 10c. Chạy đầy đủ Node/e2e, FPS hai mức, ngân sách cuối, rà README/package và ghi bàn giao cuối.
