@@ -74,7 +74,14 @@ export function generateHeightmap(data = mapData) {
         const edgeBlend = Math.max(0, Math.min(1, (data.mountainEdge - x) / 80));
         const spurBlend = edgeBlend * summitBlend * summitBlend * (3 - 2 * summitBlend)
           * corridorBlend * corridorBlend * (3 - 2 * corridorBlend);
-        const distance = Math.hypot(dx, dz) * (1 + (0.18 + 0.22 * spurBlend) * Math.sin(3 * angle + peak.z / 90)
+        // Outside the protected crown, a skewed diamond footprint creates
+        // planar ridges with unequal shoulders instead of a circular cone.
+        const radialDistance = Math.hypot(dx, dz);
+        const ridgeDistance = (Math.abs(dx + 0.32 * dz) + 0.7 * Math.abs(dz)) / 1.7;
+        const easternFlank = Math.max(0, Math.min(1, dx / 0.6));
+        const footprintDistance = radialDistance + 0.8 * spurBlend
+          * easternFlank * easternFlank * (3 - 2 * easternFlank) * (ridgeDistance - radialDistance);
+        const distance = footprintDistance * (1 + (0.18 + 0.22 * spurBlend) * Math.sin(3 * angle + peak.z / 90)
           + (0.1 + 0.12 * spurBlend) * Math.sin(5 * angle + peak.x / 60));
         const shoulder = Math.max(0, 1 - distance);
         // A broad lower flank carries the narrow summit. Using only the

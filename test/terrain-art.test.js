@@ -156,3 +156,15 @@ test('western mountain folds remain continuous along the range without flattenin
   assert.ok(along < 4.5, `broken longitudinal folds: ${along}`);
   assert.ok(across > 6, `flattened rock ribs: ${across}`);
 });
+
+test('northern mountain extends an eastern shoulder beyond its protected crown', t => {
+  const map = generateHeightmap();
+  let area = 0;
+  // Measure the middle slope east of the crown, excluding the high summit.
+  // The old radial footprint covered only 3,328 square units above 120 here.
+  for (let x = 130; x <= 230; x += 2) for (let z = 70; z <= 240; z += 2) {
+    if (heightAt(map, x, z) > 120) area += 4;
+  }
+  t.diagnostic(JSON.stringify({ easternShoulderArea: area }));
+  assert.ok(area >= 4000, `narrow eastern shoulder: ${area} square units`);
+});
