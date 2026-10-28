@@ -1,0 +1,76 @@
+[
+  {
+    "flow": "default x1",
+    "calm": {
+      "counts": {
+        "mountain": 0,
+        "plain": 44,
+        "sea": 415,
+        "lake": 0,
+        "pond": 0
+      },
+      "percentages": {
+        "mountain": 0,
+        "plain": 10,
+        "sea": 90,
+        "lake": 0,
+        "pond": 0
+      },
+      "total": 459
+    },
+    "windy": {
+      "counts": {
+        "mountain": 645,
+        "plain": 89,
+        "sea": 27,
+        "lake": 0,
+        "pond": 0
+      },
+      "percentages": {
+        "mountain": 85,
+        "plain": 12,
+        "sea": 3,
+        "lake": 0,
+        "pond": 0
+      },
+      "total": 761
+    }
+  },
+  {
+    "flow": "interrupted",
+    "calm": {
+      "counts": {
+        "mountain": 0,
+        "plain": 36,
+        "sea": 393,
+        "lake": 0,
+        "pond": 0
+      },
+      "percentages": {
+        "mountain": 0,
+        "plain": 8,
+        "sea": 92,
+        "lake": 0,
+        "pond": 0
+      },
+      "total": 429
+    },
+    "windy": {
+      "counts": {
+        "mountain": 536,
+        "plain": 104,
+        "sea": 22,
+        "lake": 1,
+        "pond": 0
+      },
+      "percentages": {
+        "mountain": 81,
+        "plain": 16,
+        "sea": 3,
+        "lake": 0,
+        "pond": 0
+      },
+      "total": 663
+    }
+  }
+]

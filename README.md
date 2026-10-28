@@ -31,7 +31,15 @@ Sa bàn low-poly có mặt tam giác phẳng, mặt cắt đất nâu/đá xám,
 | 1–4 / nút tốc độ | ×0,5 / ×1 / ×2 / ×4 |
 | R / Đặt lại | Khởi tạo lại phân bố nước; giữ seed, số hạt, thanh trượt và camera; về ×1 đang chạy |
 
-Khi focus ở thanh trượt, phím dùng hành vi trình duyệt. HUD hiển thị thời gian, các trạng thái, mực hồ và số lượt về vùng chứa. Mở “Chú giải và mô hình” để đọc đủ năm trạng thái. Thu nhỏ cửa sổ vẫn có thể cuộn cột điều khiển.
+Cảnh chiếm toàn cửa sổ; bảng trong mờ bên phải rộng tối đa 30%, cuộn bên trong khi thiếu chiều cao. Nút thu gọn hoặc phím B giấu/mở bảng. Ba nhóm Điều khiển, Số liệu và Chú giải gập/mở được, nhớ trạng thái trong phiên. Tab chuyển focus, Enter kích hoạt nút/nhóm; Space tạm dừng/tiếp tục kể cả khi focus ở nút. Khi focus ở thanh trượt, phím dùng hành vi trình duyệt.
+
+“Về mặc định” chỉ đưa Mặt Trời/Gió về 50/40, giữ mô phỏng. Bốn góc nhìn Toàn cảnh (`overview`), Từ biển nhìn vào núi (`sea`), Cận cảnh núi (`mountain`), Dọc sông (`river`) chuyển mượt trong một giây, kể cả khi tạm dừng. Kéo chuột, lăn chuột hoặc phím camera ngắt chuyển ngay; “Góc nhìn mặc định” về toàn cảnh.
+
+Chất lượng Cao có bóng, sóng và mây nhiều khối; Thấp giảm lưới địa hình, bỏ bóng/sóng, giảm khối mây và tỷ lệ điểm ảnh. Đổi mức giữ mô phỏng và camera. Nếu Cao chạy dưới 30 FPS trong năm giây liên tiếp, gợi ý chuyển Thấp hiện lên; có thể đóng, không tự đổi mức.
+
+Nhóm Số liệu có thời gian, thanh “Nước đang ở đâu” (sáu đoạn cộng đúng 100%), cột Hồ và ao có vạch ban đầu/mũi tên xu hướng 10 giây, “Mưa rơi ở đâu” (năm vùng, số giọt và phần trăm), và bốn giai đoạn “Đang diễn ra”. “Xóa bộ đếm” chỉ xóa mốc đếm mưa, không đổi hạt hay thời gian; Đặt lại cũng xóa bộ đếm. Chú giải giải thích năm loại hạt và bảy vùng.
+
+Để thử thí nghiệm: đặt Gió 0, xóa bộ đếm, chờ khoảng 60 giây mô phỏng và đọc tỷ lệ mưa Biển/Núi. Đặt Gió 100, xóa bộ đếm, chờ thêm 60 giây và so tỷ lệ Núi. Có thể tạm dừng để đọc số.
 
 ## Tham số URL
 
@@ -44,6 +52,8 @@ Ví dụ: <http://localhost:8000/?n=1500&sun=80&wind=40&seed=7&speed=8&paused=1>
 | `seed` | Số nguyên | 1 |
 | `speed` | 0.5–8 | 1 |
 | `paused` | `1` tạm dừng | Đang chạy |
+| `view` | `overview`, `sea`, `mountain`, `river` | `overview` |
+| `quality` | `high`, `low` | `high` |
 
 Giá trị sai dùng mặc định, không báo lỗi console. Seed mô phỏng không thay bản đồ. Cùng seed và thao tác cho cùng trạng thái tại cùng số bước.
 
@@ -77,19 +87,31 @@ node e2e/scenery.e2e.mjs
 node e2e/cycle-flow.e2e.mjs
 node e2e/scene.e2e.mjs
 node e2e/screenshots.e2e.mjs
+node e2e/ui-flow.e2e.mjs
+node e2e/ui-panel.e2e.mjs
+node e2e/ui-quality.e2e.mjs
+node e2e/ui-controls.e2e.mjs
+node e2e/ui-statistics.e2e.mjs
+node e2e/ui-views.e2e.mjs
+node e2e/panel-foundation.e2e.mjs
+node e2e/ui-screenshots.e2e.mjs
 node e2e/measure-fps.e2e.mjs
 ```
 
-Script tìm Playwright ở repo hoặc npm toàn cục; hỗ trợ `PLAYWRIGHT_MODULE` trỏ tới index.mjs và `BASE_URL`. Chromium dùng WebGL2 phần mềm, không cần cờ. Luồng ×1 và biến thể ×8 có resize/tạm dừng/xoay camera; lỗi console làm test thất bại. Bốn ảnh lưu ở `specs/REQ-004/screenshots/`. Đo FPS 1000 hạt, ×1, cửa sổ 1280 × 1000 trong 10 giây khi đủ các trạng thái; số đo phần mềm chỉ tham khảo, không có ngưỡng đạt. AC-18 cần người dùng xem cảnh và đo ≥45 FPS trên máy của mình.
+Script tìm Playwright ở repo hoặc npm toàn cục; hỗ trợ `PLAYWRIGHT_MODULE` trỏ tới index.mjs và `BASE_URL`. Chromium dùng WebGL2 phần mềm, không cần cờ. Luồng ×1 và biến thể ×8 có resize/tạm dừng/xoay camera; lỗi console làm test thất bại. Bốn ảnh lưu ở `specs/REQ-004/screenshots/`. Tám ảnh giao diện mới lưu ở `specs/REQ-005/screenshots/`. Đo FPS cả Cao và Thấp, bảng mở, 1000 hạt, ×1, cửa sổ 1280 × 1000 trong 10 giây khi đủ các trạng thái; số đo phần mềm chỉ tham khảo, không có ngưỡng đạt. AC-12 của REQ-005 cần người dùng xem cảnh và đo ≥45 FPS trên máy của mình.
 
-`window.__sim` là snapshot chỉ đọc: hạt, cụm, thời gian, số đếm, vùng chứa/mực/cạn, camera, WebGL2, sự kiện dòng chảy, mưa theo vùng, tên đối tượng/nhãn/hiệu ứng cảnh. Không có API sửa mô phỏng.
+`window.__sim` là snapshot chỉ đọc: hạt, cụm, thời gian, số đếm, vùng chứa/mực/cạn, camera, WebGL2, sự kiện dòng chảy, mưa theo vùng, tên đối tượng/nhãn/hiệu ứng cảnh. Thêm `rainTally`, `waterDistribution`, `view` (hoặc `free`), `quality` và `panel`. Không có API sửa mô phỏng.
 
 ## Cấu trúc thư mục
 
 - `index.html`, `style.css`: bố cục tiếng Việt.
+- `src/content.js`: mọi chữ hiển thị tiếng Việt; `src/quality.js`: mức vẽ và gợi ý FPS.
+- `src/stats/`: phân bố, mưa, xu hướng mực và giai đoạn, logic thuần.
+- `src/ui/theme.css`: biến màu, font, khoảng cách; `src/ui/statistics.js`: thẻ số liệu.
 - `src/main.js`: nối đồng hồ, mô phỏng, renderer, HUD và điều khiển.
 - `src/sim/`: logic thuần bản đồ, thoát nước, vùng chứa, nhiệt/không khí/mưa/chảy, camera, URL, RNG, clock và World.
 - `src/ui/`: three.js, sa bàn, nhãn, camera chuột/phím, HUD và controls; chỉ lớp này import three.js.
 - `vendor/`: three.js ES module, phiên bản và giấy phép MIT.
 - `test/`, `test-support/`: kiểm thử Node và trợ giúp; `e2e/`: Chromium.
 - `specs/REQ-004/`: đặc tả, kế hoạch, bàn giao, báo cáo và ảnh.
+- `specs/REQ-005/`: đặc tả giao diện, kế hoạch, bàn giao, báo cáo và tám ảnh.

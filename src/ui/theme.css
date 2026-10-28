@@ -1,0 +1,25 @@
+:root {
+  --font: system-ui, sans-serif;
+  --text: #16364c;
+  --sky: #cdeefa;
+  --panel: #fffffff2;
+  --surface: #edf5fa;
+  --hover: #dcecf5;
+  --border: #91b3c7;
+  --accent: #175d85;
+  --white: #fff;
+  --warning: #a13b00;
+  --focus: #b34e00;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --radius-small: 6px;
+  --radius: 16px;
+  --font-small: 12px;
+  --font-body: 14px;
+  --font-section: 16px;
+  --font-label: 14px;
+  --font-heading: 21px;
+  --shadow: 0 6px 24px #16364c22;
+}

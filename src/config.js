@@ -9,8 +9,13 @@ export const config = deepFreeze({
   world: { width: 1000, height: 600, depth: 1000, seaLevel: 0, gridCells: 96 },
   camera: { target: [500, 40, 500], azimuth: 2.35, elevation: 38, distance: 1500,
     minElevation: 10, maxElevation: 85, minDistance: 220, maxDistance: 2400,
-    clearance: 20, rotateSpeed: 0.006, keyRotate: 0.08, zoomSpeed: 0.001, keyZoom: 0.1,
+    transitionDuration: 1, clearance: 20, rotateSpeed: 0.006, keyRotate: 0.08, zoomSpeed: 0.001, keyZoom: 0.1,
     fov: 45, referenceAspect: 5 / 3, near: 1, far: 6000 },
+  stats: { trendWindow: 10, trendEnter: 3, trendExit: 1 },
+  quality: { slowFps: 30, slowDuration: 5, levels: {
+    high: { terrainStep: 1, waves: true, shadows: true, cloudBlocks: 9, pixelRatio: 2 },
+    low: { terrainStep: 2, waves: false, shadows: false, cloudBlocks: 4, pixelRatio: 1 }
+  }, shadowMapSize: 1024, shadowExtent: 900, shadowNear: 1, shadowFar: 2500, shadowBias: -0.001 },
   rendering: { maxPixelRatio: 2, ambientLight: 1.6, sunlight: 2.2, waterOpacity: 0.72,
     particleSize: 4, waterOffset: 0.15 },
   scenery: { base: -95, soilBottom: -55, seaDepth: 45, seaFaceOpacity: 0.55,

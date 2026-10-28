@@ -33,13 +33,19 @@ export const mapData = deepFreeze({
     lake: { x: 360, z: 620, radiusX: 48, radiusZ: 43, bottom: 12, levelPerParticle: 0.04, initial: 200, capacity: 320, outlet: [400, 610] },
     pond: { x: 560, z: 280, radiusX: 25, radiusZ: 21, bottom: 8, levelPerParticle: 0.06, initial: 60, capacity: 120, outlet: [585, 280] }
   },
+  views: {
+    overview: { target: [500, 40, 500], azimuth: 2.35, elevation: 38, distance: 1500 },
+    sea: { target: [420, 90, 500], azimuth: Math.PI / 2, elevation: 22, distance: 1200 },
+    mountain: { target: [240, 110, 550], azimuth: 2.1, elevation: 42, distance: 650 },
+    river: { target: [560, 35, 550], azimuth: Math.PI / 2, elevation: 28, distance: 720 }
+  },
   labels: [
-    { id: 'mountain', text: 'Núi', position: [150, 320, 500] },
-    { id: 'plain', text: 'Đồng bằng', position: [540, 40, 750] },
-    { id: 'stream', text: 'Suối', position: [240, 125, 710] },
-    { id: 'river', text: 'Sông', position: [600, 35, 505] },
-    { id: 'lake', text: 'Hồ', position: [360, 45, 620] },
-    { id: 'pond', text: 'Ao', position: [560, 30, 280] },
-    { id: 'sea', text: 'Biển', position: [880, 25, 650] }
+    { id: 'mountain', position: [150, 320, 500] },
+    { id: 'plain', position: [540, 40, 750] },
+    { id: 'stream', position: [240, 125, 710] },
+    { id: 'river', position: [600, 35, 505] },
+    { id: 'lake', position: [360, 45, 620] },
+    { id: 'pond', position: [560, 30, 280] },
+    { id: 'sea', position: [880, 25, 650] }
   ]
 });

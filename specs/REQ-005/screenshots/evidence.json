@@ -1,0 +1,44 @@
+[
+  {
+    "wind": 0,
+    "time": 61.4,
+    "rainTally": {
+      "counts": {
+        "mountain": 0,
+        "plain": 0,
+        "sea": 281,
+        "lake": 0,
+        "pond": 0
+      },
+      "percentages": {
+        "mountain": 0,
+        "plain": 0,
+        "sea": 100,
+        "lake": 0,
+        "pond": 0
+      },
+      "total": 281
+    }
+  },
+  {
+    "wind": 100,
+    "time": 61.1,
+    "rainTally": {
+      "counts": {
+        "mountain": 232,
+        "plain": 0,
+        "sea": 0,
+        "lake": 0,
+        "pond": 0
+      },
+      "percentages": {
+        "mountain": 100,
+        "plain": 0,
+        "sea": 0,
+        "lake": 0,
+        "pond": 0
+      },
+      "total": 232
+    }
+  }
+]
