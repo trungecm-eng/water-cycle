@@ -64,3 +64,14 @@ test('stream outer banks limit downstream excavation while keeping coarse-grid w
     assert.ok(streams[0].analytic.maximumGap < 26);
   }
 });
+
+
+test('steeper outer stream banks reduce upstream gaps without hiding water', () => {
+  const map = generateDrainage();
+  for (const cells of [80, 160]) {
+    const streams = auditChannelBanks(map, cells).channels.filter(channel => channel.type === 'stream');
+    for (const stream of streams) assert.equal(stream.rendered.coveredVertices, 0);
+    assert.ok(streams[0].rendered.maximumGap < 24);
+    assert.ok(streams[1].rendered.maximumGap < (cells === 80 ? 53 : 37));
+  }
+});

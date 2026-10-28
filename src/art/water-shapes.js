@@ -207,7 +207,7 @@ export function waterBedHeight(map, x, z, data = mapData) {
       // Raise the outer stream bank gradually so low downstream segments
       // do not cut a flat trench across the neighboring upstream slope.
       // Keep clearance within nine units for the coarser rendering grid.
-      const bankRise = channel.type === 'stream' ? Math.max(0, distance - 9) * 0.5 : 0;
+      const bankRise = channel.type === 'stream' ? Math.max(0, distance - 9) * 1.5 : 0;
       height = Math.min(height, recessedBank(originalHeight, a[1]*(1-t)+b[1]*t-depth+bankRise, distance));
     }
   }

@@ -339,3 +339,14 @@ E2e cuối **art-strata, art-trees, art-budget** đạt, console sạch, hạt b
 - Đã chụp và xem `screenshots/17-stream-banks.png`, Cao 1920 × 1080, dọc sông, paused ban đầu. Núi vẫn nhọn, suối còn gấp khúc và mép nước chưa tự nhiên; không thay chín ảnh/evidence hoặc bảng QA 1/2 chưa đạt. Chưa QA bốn góc/mực thấp–đầy, chưa đo FPS/ngân sách cuối hoặc mọi e2e.
 - Chỉ đóng mốc **10b-13**; **10b/10c/10 còn mở, trả continue**. Tiếp theo cần sửa tổng thể hình khối núi và giao tuyến bờ kênh/cửa hồ, đặc biệt hai suối còn khoảng hở lớn. Giữ sáu đỉnh, mọi test mô phỏng và kiểm nước không bị che; không tăng bờ tùy ý vì lưới Thấp sẽ che suối. Sau đó QA ảnh theo yêu cầu rồi chạy đầy đủ 10c.
 - Lệnh: `node --test`, `node scripts/audit-water-banks.mjs > specs/REQ-006/water-bank-audit.json`, `node e2e/art-strata.e2e.mjs`, `node e2e/art-trees.e2e.mjs`. Server `python3 -m http.server 8000` quản lý bằng Python try/finally. Commit dùng danh tính tạm qua `git -c user.name='Dev Agent' -c user.email='dev-agent@example.com' commit ...`. Không sửa tệp cấm. Log/script thử /tmp không bền vững; số đo và ảnh đã lưu repo.
+
+
+## Mốc 10b-14 — nâng dốc bờ ngoài suối
+
+Tăng hệ số nâng đáy mục tiêu ngoài khoảng cách 9 từ 0,5 lên 1,5. Giữ độ sâu/độ rộng nước, đường tâm, lưới, World/RNG và địa hình mô phỏng. Không đổi assertion cũ; thêm test khoảng hở hai suối đầu dưới 24 và dưới 53/37 (Thấp/Cao), mọi suối không bị che. Các thử nghiệm thu hẹp vùng khắc và nâng khối núi làm hỏng kiểm nước/chỉ số AC-2 đã bỏ hoàn toàn.
+
+Báo cáo audit tái lập bằng `node scripts/audit-water-banks.mjs > specs/REQ-006/water-bank-audit.json`: khoảng hở cực đại suối đầu Thấp/Cao **20,546828 / 23,017695** (trước **23,935829 / 25,111318**); suối thứ hai **52,613190 / 36,514694** (trước **53,715413 / 41,668566**). Suối thứ ba vẫn **69,222263 / 55,746342**. Đây là số đo chẩn đoán, không phải nghiệm thu giao tuyến bờ nước.
+
+Toàn bộ `node --test` cuối **94/94**, 0 fail/skip/cancelled, **108,127 giây**, chạy riêng trước trình duyệt. Giữ sáu đỉnh; dốc mặt vẽ **1,622160492**, phần dư đồng bằng **2,642467559** / 2.950 mẫu. E2e **art-strata**, **art-trees** đạt, console sạch, cây **2.200/400**, hạt bất biến khi đổi mức. Server đã dừng.
+
+Đã chụp/xem `screenshots/18-steeper-stream-banks.png`, Cao 1920 × 1080, dọc sông, paused ban đầu, hồ 20/ao 11,6. Núi vẫn nhọn, suối vẫn gấp/răng cưa; không thay chín ảnh/evidence hoặc bảng QA bắt buộc 1/2 chưa đạt. Chưa QA bốn góc/mực thấp–đầy, chưa chạy mọi e2e/FPS/ngân sách cuối. **10b/10c/10 còn mở; trả continue.** Cần sửa tổng thể giao tuyến kênh (đặc biệt suối thứ ba) và dáng núi; không tiếp tục tăng hệ số tùy ý vì khoảng hở nhỏ nhất trên lưới Thấp hiện chỉ khoảng 0,35–0,38 ở hai suối sau.

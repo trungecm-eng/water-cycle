@@ -20,7 +20,7 @@
             "floatingVertices": 1098,
             "coveredVertices": 0,
             "minimumGap": 0.42714516485066745,
-            "maximumGap": 3.522482476173903
+            "maximumGap": 3.499440626334403
           }
         },
         {
@@ -31,14 +31,14 @@
             "floatingVertices": 522,
             "coveredVertices": 0,
             "minimumGap": 3.9999894979127397,
-            "maximumGap": 25.88118705099245
+            "maximumGap": 23.260050748516363
           },
           "rendered": {
             "vertices": 522,
             "floatingVertices": 522,
             "coveredVertices": 0,
-            "minimumGap": 3.49695813077269,
-            "maximumGap": 23.935828530192325
+            "minimumGap": 3.1830147465132157,
+            "maximumGap": 20.546828491426965
           }
         },
         {
@@ -49,14 +49,14 @@
             "floatingVertices": 402,
             "coveredVertices": 0,
             "minimumGap": 3.9999885292659574,
-            "maximumGap": 42.78804801242583
+            "maximumGap": 37.47367762757057
           },
           "rendered": {
             "vertices": 402,
             "floatingVertices": 402,
             "coveredVertices": 0,
-            "minimumGap": 2.009477107902061,
-            "maximumGap": 53.71541338007904
+            "minimumGap": 0.3504124797415056,
+            "maximumGap": 52.61318969152873
           }
         },
         {
@@ -67,13 +67,13 @@
             "floatingVertices": 1074,
             "coveredVertices": 0,
             "minimumGap": 3.99998652620201,
-            "maximumGap": 47.90380283922053
+            "maximumGap": 47.65864067881813
           },
           "rendered": {
             "vertices": 1074,
             "floatingVertices": 1074,
             "coveredVertices": 0,
-            "minimumGap": 1.387959014400849,
+            "minimumGap": 0.3797530678846215,
             "maximumGap": 69.2222632043808
           }
         }
@@ -98,7 +98,7 @@
             "floatingVertices": 1098,
             "coveredVertices": 0,
             "minimumGap": 0.9947918367385862,
-            "maximumGap": 3.901353078298267
+            "maximumGap": 3.784673545211543
           }
         },
         {
@@ -109,14 +109,14 @@
             "floatingVertices": 522,
             "coveredVertices": 0,
             "minimumGap": 3.9999894979127397,
-            "maximumGap": 25.88118705099245
+            "maximumGap": 23.260050748516363
           },
           "rendered": {
             "vertices": 522,
             "floatingVertices": 522,
             "coveredVertices": 0,
-            "minimumGap": 3.699946208172479,
-            "maximumGap": 25.111317843124226
+            "minimumGap": 3.5955309913912785,
+            "maximumGap": 23.017694981694177
           }
         },
         {
@@ -127,14 +127,14 @@
             "floatingVertices": 402,
             "coveredVertices": 0,
             "minimumGap": 3.9999885292659574,
-            "maximumGap": 42.78804801242583
+            "maximumGap": 37.47367762757057
           },
           "rendered": {
             "vertices": 402,
             "floatingVertices": 402,
             "coveredVertices": 0,
-            "minimumGap": 3.4652626794204124,
-            "maximumGap": 41.668565649017665
+            "minimumGap": 3.40957549404353,
+            "maximumGap": 36.51469437535849
           }
         },
         {
@@ -145,13 +145,13 @@
             "floatingVertices": 1074,
             "coveredVertices": 0,
             "minimumGap": 3.99998652620201,
-            "maximumGap": 47.90380283922053
+            "maximumGap": 47.65864067881813
           },
           "rendered": {
             "vertices": 1074,
             "floatingVertices": 1074,
             "coveredVertices": 0,
-            "minimumGap": 3.6545757268462333,
+            "minimumGap": 3.5489773547090593,
             "maximumGap": 55.746341660618725
           }
         }
