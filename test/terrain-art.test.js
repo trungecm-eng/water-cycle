@@ -125,3 +125,14 @@ test('northern mountain flanks retain asymmetric rock spurs beyond the summit', 
   t.diagnostic(JSON.stringify({ flankHeightStd: variation }));
   assert.ok(variation >= 24, `rotationally even flank: ${variation}`);
 });
+
+
+test('interior saddles join the massifs above the lower mountain shoulders', () => {
+  const map = generateHeightmap();
+  // These saddles previously fell to 104–135 units, leaving deep repeated
+  // notches between otherwise broad peaks. Keep a joined upper ridge while
+  // the prominence and drainage tests protect the summits and catchments.
+  for (const z of [320, 340, 360, 380, 640, 660]) {
+    assert.ok(heightAt(map, 94, z) > 145, `low inter-massif saddle at z=${z}`);
+  }
+});

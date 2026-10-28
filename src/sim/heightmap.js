@@ -46,6 +46,18 @@ export function generateHeightmap(data = mapData) {
         corridorDistance = Math.min(corridorDistance, Math.hypot(x-ax-sx*t, z-az-sz*t));
       }
       const corridorBlend = Math.max(0, Math.min(1, (corridorDistance - 60) / 30));
+      // Join the lower flanks with a folded ridge, while retaining the local
+      // summit relief and the stream catchments. The previous max of isolated
+      // peak envelopes left deep, evenly spaced notches between the massifs.
+      const summitDistance = Math.min(...data.peaks.map(peak => Math.hypot(x - peak.x, z - peak.z)));
+      const saddleBlend = Math.max(0, Math.min(1, (summitDistance - 40) / 40));
+      const catchmentBlend = Math.max(0, Math.min(1, (corridorDistance - 90) / 30));
+      const endBlend = Math.max(0, Math.min(1, (z - 250) / 50));
+      const ridgeBlend = saddleBlend * saddleBlend * (3 - 2 * saddleBlend)
+        * catchmentBlend * catchmentBlend * (3 - 2 * catchmentBlend)
+        * endBlend * endBlend * (3 - 2 * endBlend);
+      height = Math.max(height, data.plain.base + mountainEnvelope
+        * ((56 + 40 * ridgeBlend) * mountainMass + 24 * ridge));
       for (const peak of data.peaks) {
         const dx = (x - peak.x) / peak.radiusX;
         const dz = (z - peak.z) / peak.radiusZ;
