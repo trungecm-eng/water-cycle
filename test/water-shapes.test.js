@@ -174,3 +174,39 @@ test('reservoir rims stay within half a unit of full water without spilling', ()
     }
   }
 });
+
+test('rendered reservoir water intersects the uploaded terrain at both qualities and all levels', async () => {
+  const { renderedBasinSurface } = await import('../src/art/water-shapes.js');
+  const { renderedTriangleHeight } = await import('../src/art/water-audit.js');
+  const original = Array.from(map.heights);
+  for (const cells of [80, 160]) {
+    const stride = cells + 1, spacing = map.size / cells;
+    const heights = Float32Array.from({ length: stride * stride }, (_, i) =>
+      waterBedHeight(map, i % stride * spacing, Math.floor(i / stride) * spacing));
+    for (const [id, levels] of [['lake', [12.5, 20, 24.8]], ['pond', [8.5, 11.6, 15.2]]]) {
+      const region = mapData.reservoirs[id];
+      assert.ok(renderedBasinSurface(map, id, region.bottom + region.levelPerParticle, cells).length > 0,
+        `${id}/${cells}: a single remaining particle must still have a water surface`);
+      for (const level of levels) {
+        const surface = renderedBasinSurface(map, id, level, cells);
+        assert.ok(surface.length > 0);
+        assert.deepEqual(surface, renderedBasinSurface(map, id, level, cells));
+        let intersections = 0;
+        for (let i = 0; i < surface.length; i += 3) {
+          assert.equal(surface[i + 1], level);
+          const ground = renderedTriangleHeight(heights, cells, map.size, surface[i], surface[i + 2]);
+          assert.ok(ground <= level + 0.00001, `${id}/${cells}: buried water`);
+          if (Math.abs(ground - level) < 0.00001) intersections++;
+          else {
+            // Interior vertices coincide with the land grid. Every newly
+            // introduced shoreline vertex must touch the actual land mesh.
+            assert.ok(Math.abs(surface[i] / spacing - Math.round(surface[i] / spacing)) < 1e-9);
+            assert.ok(Math.abs(surface[i + 2] / spacing - Math.round(surface[i + 2] / spacing)) < 1e-9);
+          }
+        }
+        assert.ok(intersections > 20, `${id}/${cells}: missing shoreline intersections`);
+      }
+    }
+  }
+  assert.deepEqual(Array.from(map.heights), original);
+});

@@ -5,7 +5,7 @@ import * as THREE from '../../vendor/three.module.min.js';
 import { decorateScene } from './scenery.js';
 import { config } from '../config.js';
 import { colorAt, coastlineSamples } from '../art/terrain-colors.js';
-import { basinSurface, channelRibbon, lakeConnection, waterBedHeight } from '../art/water-shapes.js';
+import { basinSurface, renderedBasinSurface, channelRibbon, lakeConnection, waterBedHeight } from '../art/water-shapes.js';
 import { generateFields, fieldAt } from '../art/fields.js';
 
 function terrainGeometry(map, cells, fields) {
@@ -73,11 +73,13 @@ export function createRenderer(canvas, world, orbit, stageObserver, focus) {
   scene.add(terrain);
   const coast = coastlineSamples(world.map);
   const shorelineX = z => coast[Math.min(coast.length - 1, Math.round(z / world.map.size * (coast.length - 1)))][0];
+  let terrainCells = qualityLevels.high.terrainCells;
   const surfaces = {};
   for (const id of ['sea', 'lake', 'pond', 'river', 'stream']) {
     const positions = ['river', 'stream'].includes(id)
       ? world.map.channels.filter(channel => channel.type === id).flatMap(channel => channelRibbon(world.map, channel))
-      : basinSurface(world.map, id, world.reservoirs.level(id));
+      : id === 'sea' ? basinSurface(world.map, id, world.reservoirs.level(id))
+        : renderedBasinSurface(world.map, id, world.reservoirs.level(id), terrainCells);
     const mesh = new THREE.Mesh(waterGeometry(positions),
       new THREE.MeshStandardMaterial({ color: config.colors[id], transparent: true,
         opacity: config.rendering.waterOpacity, roughness: 0.25, side: THREE.DoubleSide }));
@@ -141,6 +143,8 @@ export function createRenderer(canvas, world, orbit, stageObserver, focus) {
     },
     setQuality(level) {
       const settings = qualityLevels[level];
+      terrainCells = settings.terrainCells;
+      for (const id of ['lake', 'pond']) surfaces[id].userData.level = NaN;
       terrain.geometry.dispose();
       terrain.geometry = terrainGeometry(world.map, settings.terrainCells, fields);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, settings.pixelRatio));
@@ -167,7 +171,7 @@ export function createRenderer(canvas, world, orbit, stageObserver, focus) {
         const level = world.reservoirs.level(id);
         if (surfaces[id].userData.level !== level) {
           surfaces[id].geometry.dispose();
-          surfaces[id].geometry = waterGeometry(basinSurface(world.map, id, level));
+          surfaces[id].geometry = waterGeometry(renderedBasinSurface(world.map, id, level, terrainCells));
           surfaces[id].userData.level = level;
           if (id === 'lake') {
             connector.geometry.dispose();

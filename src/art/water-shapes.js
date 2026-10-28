@@ -41,6 +41,49 @@ export function basinSurface(map, id, level, data = mapData) {
   return positions;
 }
 
+// Clip against the same grid, triangle split and Float32 land vertices that
+// render.js uploads. Analytic bowl intersections can hover above the coarser
+// land mesh, especially where the outlet has carved through the reservoir rim.
+const basinMeshCache = new WeakMap();
+export function renderedBasinSurface(map, id, level, cells, data = mapData) {
+  let cache = basinMeshCache.get(map);
+  if (!cache) basinMeshCache.set(map, cache = new Map());
+  const key = `${id}:${cells}`;
+  let entry = cache.get(key);
+  if (!entry || entry.data !== data) {
+    const region = data.reservoirs[id], spacing = map.size / cells;
+    const startX = Math.max(0, Math.floor((region.x - region.radiusX * 1.25 - map.spacing) / spacing));
+    const endX = Math.min(cells, Math.ceil((region.x + region.radiusX * 1.25 + map.spacing) / spacing));
+    const startZ = Math.max(0, Math.floor((region.z - region.radiusZ * 1.25 - map.spacing) / spacing));
+    const endZ = Math.min(cells, Math.ceil((region.z + region.radiusZ * 1.25 + map.spacing) / spacing));
+    const vertex = (column, row) => {
+      const x = column * spacing, z = row * spacing;
+      return [Math.fround(x), Math.fround(waterBedHeight(map, x, z, data)), Math.fround(z)];
+    };
+    const triangles = [];
+    for (let row = startZ; row < endZ; row++) for (let column = startX; column < endX; column++) {
+      const a = vertex(column, row), b = vertex(column, row + 1);
+      const c = vertex(column + 1, row), d = vertex(column + 1, row + 1);
+      triangles.push([a, b, c], [c, b, d]);
+    }
+    cache.set(key, entry = { data, triangles });
+  }
+  const positions = [];
+  for (const triangle of entry.triangles) {
+    const polygon = [];
+    for (let i = 0; i < 3; i++) {
+      const a = triangle[i], b = triangle[(i + 1) % 3];
+      if (a[1] <= level) polygon.push([a[0], level, a[2]]);
+      if ((a[1] <= level) !== (b[1] <= level)) {
+        const t = (level - a[1]) / (b[1] - a[1]);
+        polygon.push([a[0] + t * (b[0] - a[0]), level, a[2] + t * (b[2] - a[2])]);
+      }
+    }
+    for (let i = 1; i + 1 < polygon.length; i++) positions.push(...polygon[0], ...polygon[i], ...polygon[i + 1]);
+  }
+  return positions;
+}
+
 // One fixed bowl serves both the land mesh and the moving water plane. Its
 // shoreline therefore changes with the reservoir level rather than with a
 // separate, level-dependent ellipse. Blend back to the map outside the rim.
@@ -54,7 +97,8 @@ function reservoirBowl(region, x, z, seed) {
   // reservoir reads as a recess rather than a raised embankment.
   // Continue at rim height outside the bowl; extrapolating the parabola
   // before blending creates a raised mound around otherwise low terrain.
-  return { radius, height: region.bottom + (fullLevel + 0.5 - region.bottom) * Math.min(radius, 1) ** 2 };
+  // A small flat floor keeps the shallow pond represented on the low grid.
+  return { radius, height: region.bottom + (fullLevel + 0.5 - region.bottom) * (Math.max(0, Math.min(radius, 1) - 0.2) / 0.8) ** 2 };
 }
 
 export function reservoirBedHeight(map, id, x, z, data = mapData) {
