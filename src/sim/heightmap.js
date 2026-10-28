@@ -27,10 +27,22 @@ export function generateHeightmap(data = mapData) {
       // Broad rolling plains and sharp, asymmetric ridges share the drainage mesh.
       height += 10 * (valueNoise(x / 85, z / 85, data.seed ^ 0x41ad) - 0.5);
       const ridge = ridgedNoise(x / 24, z / 24, data.seed ^ 0x7321);
+      // A continuous, folded mountain mass joins the individual summits.
+      // The envelope fades before the plain and leaves the sharp summit relief intact.
+      let mountainMass = 0;
+      for (const peak of data.peaks) {
+        mountainMass += Math.exp(-0.5 * (((x - peak.x) / 85) ** 2
+          + ((z - peak.z) / 150) ** 2));
+      }
+      const mountainEnvelope = Math.max(0, Math.min(1, (data.mountainEdge - x) / 80));
+      height = Math.max(height, data.plain.base + mountainEnvelope
+        * (56 * mountainMass + 24 * ridge));
       for (const peak of data.peaks) {
         const dx = (x - peak.x) / peak.radiusX;
         const dz = (z - peak.z) / peak.radiusZ;
-        const distance = Math.hypot(dx, dz);
+        const angle = Math.atan2(dz, dx);
+        const distance = Math.hypot(dx, dz) * (1 + 0.18 * Math.sin(3 * angle + peak.z / 90)
+          + 0.1 * Math.sin(5 * angle + peak.x / 60));
         const shoulder = Math.max(0, 1 - distance);
         height = Math.max(height, data.plain.base + peak.height * shoulder ** 1.5
           + 80 * ridge * Math.sin(Math.PI * Math.min(1, shoulder)));

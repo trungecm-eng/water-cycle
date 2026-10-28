@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { generateHeightmap, heightAt } from '../src/sim/heightmap.js';
 import { generateDrainage } from '../src/sim/drainage.js';
 import { waterBedHeight } from '../src/art/water-shapes.js';
 import { valueNoise, ridgedNoise } from '../src/art/noise.js';
@@ -88,4 +89,12 @@ for (const surface of ['simulation', 'rendered']) test(`${surface} plain relief 
   const residual = deviation(points.map(([x, z, h]) => h - matrix[0][3] - matrix[1][3] * x - matrix[2][3] * z));
   t.diagnostic(JSON.stringify({ plainResidualStd: residual, samples: points.length }));
   assert.ok(residual >= 1 && residual <= 6, `plain residual: ${residual}`);
+});
+
+test('mountain shoulders form a continuous elevated range between summits', () => {
+  const map = generateHeightmap();
+  // This transect crosses the old flat gaps between the isolated peak envelopes.
+  for (let z = 300; z <= 800; z += 10) {
+    assert.ok(heightAt(map, 150, z) > 85, `disconnected shoulder at z=${z}`);
+  }
 });
