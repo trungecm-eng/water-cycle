@@ -25,5 +25,6 @@ Mỗi bước gồm code và test của bước đó; `node --test` xanh và cá
   - [x] 10b-8. Hạ phần bờ cao hơn mực đầy từ 3 xuống 0,5 đơn vị để giảm thành đất quanh hồ/ao; kiểm toàn vòng bờ, toàn bộ Node và QA bốn góc ban đầu. Hình dáng/cửa thoát tổng thể vẫn thuộc 10b.
   - [x] 10b-9. Mở rộng sườn giữa bằng bao chân núi rộng kết hợp chóp hẹp, giữ sáu đỉnh nổi bật; kiểm diện tích đường đồng mức, toàn bộ mô phỏng và ảnh bốn góc. QA dáng núi/nước tổng thể vẫn thuộc 10b.
   - [x] 10b-10. Thêm công cụ chẩn đoán khoảng cách mép dải nước tới mặt đất tính toán và lưới vẽ 80/160, kèm test và báo cáo tái lập. Chỉ hoàn tất phép đo; sửa bờ/núi và QA hình ảnh vẫn thuộc 10b.
+  - [x] 10b-11. Kiểm chứng phần cắt mặt hồ/ao theo đúng tam giác Float32 của lưới đất từ các lần chạy bị gián đoạn; kiểm mực gần cạn–đầy, diện tích tăng và tam giác không phủ đất khô. Chưa đóng QA bờ suối/núi tổng thể.
   - [ ] 10b. Sửa dáng núi, lòng chảo/mép nước và độ rõ màn mưa theo bảng QA bước 9; đo lại địa hình vẽ, chụp ảnh và cập nhật bảng QA.
   - [ ] 10c. Chạy đầy đủ Node/e2e, FPS hai mức, ngân sách cuối, rà README/package và ghi bàn giao cuối.

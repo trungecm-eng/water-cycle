@@ -183,8 +183,12 @@ test('rendered reservoir water intersects the uploaded terrain at both qualities
     const stride = cells + 1, spacing = map.size / cells;
     const heights = Float32Array.from({ length: stride * stride }, (_, i) =>
       waterBedHeight(map, i % stride * spacing, Math.floor(i / stride) * spacing));
-    for (const [id, levels] of [['lake', [12.5, 20, 24.8]], ['pond', [8.5, 11.6, 15.2]]]) {
+    for (const id of ['lake', 'pond']) {
       const region = mapData.reservoirs[id];
+      const levels = [...new Set([region.bottom + region.levelPerParticle,
+        ...(id === 'lake' ? [12.5, 20, 24.8] : [8.5, 11.6, 15.2]),
+        region.bottom + region.capacity * region.levelPerParticle])].sort((a, b) => a - b);
+      let previousArea = 0;
       assert.ok(renderedBasinSurface(map, id, region.bottom + region.levelPerParticle, cells).length > 0,
         `${id}/${cells}: a single remaining particle must still have a water surface`);
       for (const level of levels) {
@@ -204,7 +208,19 @@ test('rendered reservoir water intersects the uploaded terrain at both qualities
             assert.ok(Math.abs(surface[i + 2] / spacing - Math.round(surface[i + 2] / spacing)) < 1e-9);
           }
         }
-        assert.ok(intersections > 20, `${id}/${cells}: missing shoreline intersections`);
+        assert.ok(intersections > (level < region.bottom + 0.5 ? 0 : 20),
+          `${id}/${cells}: missing shoreline intersections`);
+        let area = 0;
+        for (let i = 0; i < surface.length; i += 9) {
+          const x = (surface[i] + surface[i + 3] + surface[i + 6]) / 3;
+          const z = (surface[i + 2] + surface[i + 5] + surface[i + 8]) / 3;
+          assert.ok(renderedTriangleHeight(heights, cells, map.size, x, z) <= level + 0.00001,
+            `${id}/${cells}: triangle crosses dry terrain`);
+          area += Math.abs((surface[i + 3] - surface[i]) * (surface[i + 8] - surface[i + 2])
+            - (surface[i + 6] - surface[i]) * (surface[i + 5] - surface[i + 2])) / 2;
+        }
+        assert.ok(area > previousArea, `${id}/${cells}: water area must grow with the level`);
+        previousArea = area;
       }
     }
   }

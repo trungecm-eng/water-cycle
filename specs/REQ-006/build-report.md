@@ -307,3 +307,14 @@ Cả 1.098 lượt đỉnh biên sông đều cao hơn mặt vẽ quá 0,05. M�
 Đã thử mở dải nước tới giao tuyến mặt đất ở mỗi mức. Kiểm số học đạt nhưng ảnh dọc sông cho thấy suối thành dải răng cưa lớn và nước phủ vị trí cây. **Đã bỏ toàn bộ thử nghiệm sản phẩm và ảnh thử**, trả `water-shapes.js`, `render.js`, test nước cũ về đúng HEAD đầu phiên. Không dùng e2e/ngân sách của thử nghiệm này làm bằng chứng cho phiên bản cuối. Không thay chín ảnh/evidence hoặc bảng QA bắt buộc 1/2 chưa đạt.
 
 Kiểm tra phiên bản cuối: `node --test` **89/89**, 0 fail/skip/cancelled, **111,723 giây**, exit 0, chạy riêng không trình duyệt. Ba test mới kiểm nội suy hai tam giác khác nội suy song tuyến, phân biệt nước cao hơn/thấp hơn/chạm đất với dữ liệu biết trước, tính tái lập hai độ phân giải và không sửa bản đồ. Không đổi assertion cũ. Chỉ số mặt vẽ vẫn 6 đỉnh, độ lệch chuẩn dốc **1,667175017**, phần dư đồng bằng **2,642425414** / 2.950 mẫu. E2e cuối sau khi bỏ thử nghiệm: **art-strata, art-trees** đạt, console sạch, cây 2.200/400 và hạt không đổi khi chuyển chất lượng. Server đã dừng. Chưa chạy toàn bộ e2e hoặc FPS/ngân sách cuối; những việc này vẫn thuộc 10c.
+
+
+## Mốc 10b-11 — Kiểm chứng mặt hồ/ao theo lưới vẽ
+
+Hai commit được hệ thống lưu sau các lần chạy gián đoạn (`6945355`, `3f7b20a`) có thay đổi sản phẩm chưa được ghi trong bàn giao 10b-10: đường tâm kênh làm trơn được giới hạn bởi độ cao địa hình tại vị trí mới và truyền giới hạn xuống hạ lưu; mặt hồ/ao dùng `renderedBasinSurface` để cắt theo đúng tam giác đất Float32 tại 80/160 ô. Renderer sử dụng mặt này cả khi dựng cảnh và khi mực nước đổi. Không dùng mô phỏng giả, không đổi World/RNG.
+
+Phiên này bổ sung kiểm chứng cho mặt hồ/ao: giữ các mực kiểm cũ, thêm đúng mực một hạt và mực đầy từ dữ liệu; kiểm diện tích tăng chặt theo mực nước, tâm mỗi tam giác không nằm trên đất khô, tính tất định và không sửa bản đồ. Ngưỡng số giao điểm >20 vẫn giữ cho các mực kiểm cũ; mực một hạt chỉ yêu cầu có giao tuyến vì diện tích rất nhỏ. Nhóm nước đạt 10/10.
+
+Đã xem ảnh `15-mesh-shorelines.png` có sẵn trong HEAD: hồ/ao tiếp đất tốt hơn nhưng suối còn dải gấp/răng cưa và đỉnh núi còn nhọn. Ảnh này chỉ là ảnh chẩn đoán; không thay bộ chín ảnh nghiệm thu và không đánh dấu bảng QA 1/2 đạt. Chưa kiểm ảnh bốn góc ở mực thấp–đầy, chưa chạy toàn bộ e2e/FPS/ngân sách cuối. **10b/10c/10 tiếp tục mở.**
+
+Kiểm tra cuối mốc 10b-11: toàn bộ `node --test` **91/91**, không fail/skip/cancelled, **109,185 giây**, exit 0, chạy riêng không trình duyệt. E2e **art-strata** và **art-trees** đạt, console sạch; cây 2.200/400 và hạt bất biến khi đổi chất lượng. Server đã dừng. Lượt Node đầu bị kết thúc exit 143, không dùng làm bằng chứng; lượt cuối chạy tách phiên tiến trình và hoàn tất đầy đủ.
