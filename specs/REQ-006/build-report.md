@@ -381,3 +381,13 @@ Phát hiện quan trọng: suối thứ ba có khoảng hở lớn nhất tại 
 Thử ngoại suy độ dốc suối chỉ ngoài khoảng cách 16 không đổi cực đại; áp dụng từ khoảng cách 6 làm che một đỉnh nước ở Thấp. Đã bỏ toàn bộ thử nghiệm sản phẩm. Giữ QA 1/2 chưa đạt; không chụp ảnh mới vì hình ảnh không đổi. Các bước 10b, 10c và 10 chưa hoàn tất.
 
 Kiểm thử cuối mốc 10b-17: `node --test` đạt **97/97**, 0 fail/skip/cancelled, **111,091 giây**, exit 0. Không chạy e2e/ảnh/FPS vì không đổi mã dựng cảnh hoặc mô phỏng; không dùng kết quả cũ thay lượt kiểm cuối 10c.
+
+
+## Mốc 10b-18 — Kiểm chứng đầu nguồn thu nhọn
+
+- Lần chạy trước bị lỗi dịch vụ mô hình, nhưng commit tự động `9037e04` đã giữ thay đổi sản phẩm và hai test: đầu nguồn suối bắt đầu tại một điểm, mở dần trong 40 đơn vị theo chiều dài đường tâm. Phiên này kiểm chứng phần việc đó trước; không đổi thêm code hoặc hạ assertion. Không có notes.md/eval REQ-006; nhánh đúng `req/REQ-006`.
+- Chạy lại audit và so byte với `water-bank-audit.json`: khớp hoàn toàn. Khoảng hở cực đại suối thứ ba Thấp/Cao **66,766681 / 51,833836**, trước thu nhọn **69,222263 / 55,631194**. Suối thứ hai **49,142002 / 36,230414**; suối đầu **20,261271 / 22,717849**. Không đỉnh nước suối nào bị che; min Thấp hai suối sau vẫn **0,060212 / 0,108243**. Đây chỉ là cải thiện cục bộ, không coi AC-7 đạt.
+- Toàn bộ `node --test`: **99/99**, 0 fail/skip/cancelled, **111,681 giây**, exit 0, chạy riêng trước trình duyệt. E2e `art-strata` và `art-trees` đạt, console sạch; cây 2.200/400 và hạt bất biến khi chuyển mức.
+- Chụp và xem `screenshots/21-tapered-headwaters.png`: Cao, 1920 × 1080, dọc sông, paused ban đầu, console sạch. Đầu nguồn gọn hơn nhưng núi vẫn nhọn, bờ suối còn răng cưa và có đoạn nước hở cao hơn đất. Giữ nguyên bảng QA bắt buộc 1/2 chưa đạt; không thay chín ảnh/evidence nghiệm thu. Chưa kiểm bốn góc/mực thấp–đầy, mọi e2e hoặc FPS/ngân sách cuối.
+- Đóng mốc kiểm chứng **10b-18**; **10b/10c/10 còn mở; trả continue**. Tiếp theo cần sửa tổng thể dáng núi và giao tuyến bờ, không tiếp tục coi giảm vài đơn vị khoảng hở là nghiệm thu. Bảo toàn sáu đỉnh và các test mô phỏng; sau khi hình ảnh đạt mới chụp lại bộ chín ảnh, cập nhật QA, rồi chạy đầy đủ 10c.
+- Lệnh: `node --test`, `node scripts/audit-water-banks.mjs`, `node e2e/art-strata.e2e.mjs`, `node e2e/art-trees.e2e.mjs`; server `python3 -m http.server 8000`, đã dừng sau kiểm thử. Script chụp tạm /tmp không bền vững; ảnh giữ trong repo. Commit dùng danh tính từng lệnh `git -c user.name='Dev Agent' -c user.email='dev-agent@example.com' commit ...`, không sửa git config/tệp cấm.
