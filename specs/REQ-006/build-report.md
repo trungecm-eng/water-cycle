@@ -175,3 +175,19 @@ Thêm test hồi quy cụm mưa cũ ở x=150 biến mất, cụm mới ở x=88
 Chưa chụp lại bộ ảnh nghiệm thu; bảng QA bước 9 vẫn giữ các mục chưa đạt. Sửa lần này xử lý đường đi khi đổi mục tiêu, chưa chứng minh mục 5 đã đạt đầy đủ vì còn bố trí chip/panel sau phép chiếu. Các lỗi dáng núi, lòng chảo/mép nước và độ rõ màn mưa thuộc 10b; kiểm tổng thể/FPS/ngân sách cuối thuộc 10c.
 
 Kiểm thử mốc 10a: `node --test` **77/77**, không fail/skip, **107,231 giây**, chạy riêng không có trình duyệt. E2E `art-stage-labels`, `art-labels` (1280 × 800, 1920 × 1080) và `cycle-flow` (chính, gián đoạn, URL) đạt, console sạch. `git diff --check` sạch. Chưa chạy toàn bộ e2e hoặc đo FPS/ngân sách sau sửa lần này.
+
+
+## Mốc 10b-1 — Độ rõ màn mưa
+
+Tách phần màn mưa thành commit riêng trong 10b; chưa đánh dấu 10b hoặc bước 10 tổng thể hoàn tất. Tăng cột màn mưa 24 → 32, bề rộng nét 1,2 → 2,2, opacity 0,52 → 0,72, độ dài nét 7 → 11. Thông số màn mưa nằm riêng trong `config.art`; hạt mưa mô phỏng vẫn dùng `scenery.rainLength=7`. Không đổi World, RNG, địa hình, vật lý hoặc số draw call của mesh màn mưa. Vẫn dùng một InstancedMesh và khoảng cách nét 19 đơn vị.
+
+Thay đổi kiểm thử:
+- `test/atmosphere.test.js`: giới hạn nét màn mưa chuyển từ `config.scenery.rainLength` sang `config.art.rainCurtainLength`, vẫn kiểm mọi nét ngắn, trên mặt đất/nước, chỉ có dưới cụm đang mưa và không đổi World/RNG.
+- `e2e/art-atmosphere.e2e.mjs`: phát hiện mưa và bấm pause trong cùng callback, tránh ảnh chụp sau khi mưa đã hết ở ×8. Ảnh tạm Cao `/tmp/req006-rain-curtain.png` đã xem: thấy rõ cột nét xanh dưới mây tại góc toàn cảnh 1280 × 800. Không thay bộ chín ảnh nghiệm thu và chưa kết luận QA mưa núi/biển đạt.
+- `e2e/art-budget.e2e.mjs`: trước chờ bốn nhãn cùng visible; sau chờ đủ hạt vapor/cloud/rain/runoff và có cụm đang mưa, rồi pause ngay trong callback. Đây là kiểm hoạt động thật cho AC-12; nhãn có thể tạm ẩn khi chuyển mục tiêu theo 10a. Không đổi giới hạn 150/400.000 và 80/150.000, kiểm bất biến hạt hoặc Mặt Trời bốn góc. Lượt điều kiện cũ timeout 120 giây, lượt thử lại bị dừng; không dùng hai lượt này làm bằng chứng đạt.
+
+Kiểm thử: Node **77/77**, không fail/skip, **108,538 giây**, chạy riêng với trình duyệt. E2e atmosphere sau sửa và art-budget đạt, console sạch. Ngân sách cùng trạng thái **81,7167 giây**: Cao **67 calls / 225.584 triangles**, Thấp **66 / 86.384**. Không phải phép đo FPS cuối; không thay số đo bóng ở bước 4.
+
+Bảng QA bước 9 vẫn giữ trạng thái chưa đạt; ảnh tạm chỉ chứng minh màn mưa dễ thấy hơn trong một trạng thái. Tiếp theo sửa dáng núi, lòng chảo/mép nước và lòng dẫn răng cưa, đo AC-2 trên bề mặt vẽ, chụp lại chín ảnh và đánh giá cả mưa núi/biển, nhãn/panel. Sau đó 10c kiểm tổng thể và FPS.
+
+- Kiểm hồi quy `e2e/scenery.e2e.mjs` đạt, console sạch; `git diff --check` sạch. Server đã dừng cuối phiên.

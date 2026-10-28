@@ -9,7 +9,7 @@ export function createAtmosphere(scene, world) {
     new THREE.MeshStandardMaterial({ flatShading: true, roughness: 1 }), capacity * 12);
   clouds.name = 'cloud-masses';
   const rain = new THREE.InstancedMesh(new THREE.PlaneGeometry(1, 1),
-    new THREE.MeshBasicMaterial({ color: config.colors.rain, side: THREE.DoubleSide, transparent: true, opacity: 0.52, depthWrite: false }),
+    new THREE.MeshBasicMaterial({ color: config.colors.rain, side: THREE.DoubleSide, transparent: true, opacity: config.art.rainCurtainOpacity, depthWrite: false }),
     capacity * config.art.rainColumns * Math.ceil(config.world.height / 19));
   rain.name = 'rain-curtains';
   clouds.frustumCulled = rain.frustumCulled = false;
@@ -52,7 +52,7 @@ export function createAtmosphere(scene, world) {
           if (rainCount >= rain.instanceMatrix.count) break;
           transform.position.set(streak.x, (streak.top + streak.bottom) / 2, streak.z);
           transform.rotation.set(0, Math.atan2(camera.position.x - streak.x, camera.position.z - streak.z), 0);
-          transform.scale.set(1.2, streak.top - streak.bottom, 1);
+          transform.scale.set(config.art.rainStreakWidth, streak.top - streak.bottom, 1);
           transform.updateMatrix();
           rain.setMatrixAt(rainCount++, transform.matrix);
         }

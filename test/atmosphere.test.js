@@ -32,7 +32,7 @@ test('rain curtains span cloud base to the surface only for raining clusters', (
   for (const streak of cloud.rain) {
     assert.ok(streak.bottom >= 0);
     assert.ok(streak.top > streak.bottom);
-    assert.ok(streak.top - streak.bottom <= config.scenery.rainLength + 1e-10);
+    assert.ok(streak.top - streak.bottom <= config.art.rainCurtainLength + 1e-10);
   }
   world.clusters[0].raining = false;
   assert.equal(cloudVisuals(world)[0].rain.length, 0);

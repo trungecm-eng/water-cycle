@@ -37,7 +37,7 @@ export function cloudVisuals(world, quality = 'high') {
       const spacing = 19;
       const phase = (world.time * 100 + column * 7) % spacing;
       for (let y = top - phase; y > ground; y -= spacing) {
-        const bottom = Math.max(ground, y - config.scenery.rainLength);
+        const bottom = Math.max(ground, y - config.art.rainCurtainLength);
         rain.push({ x, z, top: y, bottom });
       }
     }

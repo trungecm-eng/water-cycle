@@ -5,8 +5,14 @@ try {
   const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
   const errors = trackErrors(page);
   await page.goto(`${baseUrl}/?quality=low&speed=8`);
-  await page.waitForFunction(() => Object.values(window.__sim?.scene.stageLabels ?? {}).length === 4 && Object.values(window.__sim.scene.stageLabels).every(s => s.visible), null, { timeout: 120000 });
-  await page.locator('#pause').click();
+  await page.waitForFunction(() => {
+    const state = window.__sim;
+    if (!state || !state.scene.rainingClusters) return false;
+    const phases = new Set(state.particles.map(particle => particle.state));
+    if (!['vapor', 'cloud', 'rain', 'runoff'].every(phase => phases.has(phase))) return false;
+    if (!state.paused) document.querySelector('#pause').click();
+    return true;
+  }, null, { timeout: 120000 });
   const particles = await page.evaluate(() => window.__sim.particles);
   for (const [quality, calls, triangles] of [['high',150,400000], ['low',80,150000]]) {
     await page.locator(`[data-quality="${quality}"]`).click();

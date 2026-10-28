@@ -18,7 +18,7 @@ export const config = deepFreeze({
   }, shadowMapSize: 1024, shadowExtent: 900, shadowNear: 1, shadowFar: 2500, shadowBias: -0.001, shadowRadius: 3 },
   rendering: { maxPixelRatio: 2, ambientLight: 1.6, sunlight: 2.2, waterOpacity: 0.72,
     particleSize: 4, waterOffset: 0.15 },
-  art: { labelMaxStep: 12, labelAnchorDistance: 60, cloudSaturation: 180, rainColumns: 24, maxSunbeams: 30, sunbeamLength: 105, treeSlope: 1.1, treeSpacing: 8, snowHeight: 230, slopeThreshold: 1.1, foothillHeight: 65, colorNoiseScale: 65,
+  art: { labelMaxStep: 12, labelAnchorDistance: 60, cloudSaturation: 180, rainColumns: 32, rainStreakWidth: 2.2, rainCurtainOpacity: 0.72, rainCurtainLength: 11, maxSunbeams: 30, sunbeamLength: 105, treeSlope: 1.1, treeSpacing: 8, snowHeight: 230, slopeThreshold: 1.1, foothillHeight: 65, colorNoiseScale: 65,
     fieldSlope: 0.25, fieldCount: 36, fieldAttempts: 600, bankClearance: 12,
     foamSegments: 220, foamWidth: 4 },
   scenery: { base: -95, seaFaceOpacity: 0.55,
