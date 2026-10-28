@@ -29,7 +29,7 @@ export function riverBankContains(map, x, z) {
   let triangles = footprintCache.get(map);
   if (!triangles) {
     triangles = [];
-    for (const channel of map.channels.filter(channel => channel.type === 'river')) {
+    for (const channel of map.channels.filter(channel => ['river', 'stream'].includes(channel.type))) {
       const ribbon = channelRibbon(map, channel);
       for (let i = 0; i < ribbon.length; i += 18) {
         const corners = expandedCorners(ribbon, i);
@@ -68,8 +68,8 @@ function terrainGrid(map, cells) {
 
 // The river's original ribbon leaves a dry strip in its wider carved bed.
 // Extend across that strip, then intersect with the actual uploaded land mesh.
-// Keep headwater streams on their existing geometry until their steep banks
-// have been reviewed separately. This function never changes the drainage map.
+// The same clipping applies to headwater streams, including their tapered sources.
+// This function never changes the drainage map.
 export function renderedRiverSurface(map, channel, cells) {
   const ribbon = channelRibbon(map, channel);
   const grid = terrainGrid(map, cells), stride = cells + 1, spacing = map.size / cells;

@@ -5,7 +5,7 @@ import * as THREE from '../../vendor/three.module.min.js';
 import { decorateScene } from './scenery.js';
 import { config } from '../config.js';
 import { colorAt, coastlineSamples } from '../art/terrain-colors.js';
-import { basinSurface, renderedBasinSurface, channelRibbon, lakeConnection, waterBedHeight } from '../art/water-shapes.js';
+import { basinSurface, renderedBasinSurface, lakeConnection, waterBedHeight } from '../art/water-shapes.js';
 import { renderedRiverSurface } from '../art/channel-surface.js';
 import { generateFields, fieldAt } from '../art/fields.js';
 
@@ -82,12 +82,12 @@ export function createRenderer(canvas, world, orbit, stageObserver, focus) {
   const surfaces = {};
   for (const id of ['sea', 'lake', 'pond', 'river', 'stream']) {
     const positions = ['river', 'stream'].includes(id)
-      ? world.map.channels.filter(channel => channel.type === id).flatMap(channel => id === 'river' ? renderedRiverSurface(world.map, channel, terrainCells) : channelRibbon(world.map, channel))
+      ? world.map.channels.filter(channel => channel.type === id).flatMap(channel => renderedRiverSurface(world.map, channel, terrainCells))
       : id === 'sea' ? basinSurface(world.map, id, world.reservoirs.level(id))
         : renderedBasinSurface(world.map, id, world.reservoirs.level(id), terrainCells);
-    const mesh = new THREE.Mesh(waterGeometry(positions, id === 'river'),
-      new THREE.MeshStandardMaterial({ color: config.colors[id], transparent: id !== 'river',
-        opacity: id === 'river' ? 1 : config.rendering.waterOpacity, roughness: 0.25, side: THREE.DoubleSide }));
+    const mesh = new THREE.Mesh(waterGeometry(positions, ['river', 'stream'].includes(id)),
+      new THREE.MeshStandardMaterial({ color: config.colors[id], transparent: !['river', 'stream'].includes(id),
+        opacity: ['river', 'stream'].includes(id) ? 1 : config.rendering.waterOpacity, roughness: 0.25, side: THREE.DoubleSide }));
     if (id === 'sea') {
       const positions = mesh.geometry.attributes.position;
       const colors = [];
@@ -150,9 +150,11 @@ export function createRenderer(canvas, world, orbit, stageObserver, focus) {
       const settings = qualityLevels[level];
       terrainCells = settings.terrainCells;
       for (const id of ['lake', 'pond']) surfaces[id].userData.level = NaN;
-      surfaces.river.geometry.dispose();
-      surfaces.river.geometry = waterGeometry(world.map.channels.filter(channel => channel.type === 'river')
-        .flatMap(channel => renderedRiverSurface(world.map, channel, terrainCells)), true);
+      for (const id of ['river', 'stream']) {
+        surfaces[id].geometry.dispose();
+        surfaces[id].geometry = waterGeometry(world.map.channels.filter(channel => channel.type === id)
+          .flatMap(channel => renderedRiverSurface(world.map, channel, terrainCells)), true);
+      }
       terrain.geometry.dispose();
       terrain.geometry = terrainGeometry(world.map, settings.terrainCells, fields);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, settings.pixelRatio));

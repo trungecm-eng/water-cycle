@@ -225,7 +225,7 @@ test('distant stream banks reduce high-grid excavation while preserving interior
   }
 });
 
-test('actual surface audit measures uploaded river triangles and preserves legacy stream results', () => {
+test('actual surface audit measures uploaded river triangles and stream triangles', () => {
   const map = generateDrainage();
   const before = Array.from(map.heights);
   for (const cells of [80, 160]) {
@@ -239,8 +239,11 @@ test('actual surface audit measures uploaded river triangles and preserves legac
     assert.equal(river.interior.rendered.coveredVertices, 0);
     assert.ok(Math.abs(river.rendered.minimumGap) < 0.001);
     assert.equal(river.interior.rendered.vertices, river.rendered.vertices / 3 * 7);
-    assert.deepEqual(actual.channels.filter(channel => channel.type === 'stream'),
-      legacy.channels.filter(channel => channel.type === 'stream'));
+    for (const stream of actual.channels.filter(channel => channel.type === 'stream')) {
+      assert.equal(stream.rendered.coveredVertices, 0);
+      assert.equal(stream.interior.rendered.coveredVertices, 0);
+      assert.ok(Math.abs(stream.rendered.minimumGap) < 0.001);
+    }
     assert.deepEqual(actual, auditChannelBanks(map, cells, { actualSurface: true }));
   }
   assert.deepEqual(Array.from(map.heights), before);

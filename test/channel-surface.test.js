@@ -6,17 +6,16 @@ import { channelRibbon, waterBedHeight } from '../src/art/water-shapes.js';
 import { renderedTriangleHeight, sampleSurfaceTriangles } from '../src/art/water-audit.js';
 
 const map = generateDrainage();
-const river = map.channels.find(channel => channel.type === 'river');
 
-test('river water fills its banks against actual land triangles at both qualities', () => {
+test('channel water fills its banks against actual land triangles at both qualities', () => {
   const before = Array.from(map.heights);
-  for (const cells of [80, 160]) {
+  for (const channel of map.channels.filter(channel => ['river', 'stream'].includes(channel.type))) for (const cells of [80, 160]) {
     const spacing = map.size / cells, stride = cells + 1;
     const heights = Float32Array.from({ length: stride ** 2 }, (_, index) =>
       waterBedHeight(map, index % stride * spacing, Math.floor(index / stride) * spacing));
     const ground = (x, z) => renderedTriangleHeight(heights, cells, map.size, x, z);
-    const surface = renderedRiverSurface(map, river, cells);
-    assert.deepEqual(surface, renderedRiverSurface(map, river, cells));
+    const surface = renderedRiverSurface(map, channel, cells);
+    assert.deepEqual(surface, renderedRiverSurface(map, channel, cells));
     let touching = 0;
     for (let i = 0; i < surface.length; i += 3) {
       if (Math.abs(surface[i + 1] - ground(surface[i], surface[i + 2])) < 1e-5) touching++;
@@ -34,13 +33,13 @@ test('river water fills its banks against actual land triangles at both qualitie
         - (positions[i + 6] - positions[i]) * (positions[i + 5] - positions[i + 2])) / 2;
       return total;
     };
-    assert.ok(area(surface) > area(channelRibbon(map, river)), 'water must fill beyond the original narrow ribbon');
-    assert.ok(surface.length / 9 < 30000, 'river geometry must stay within its rendering budget');
+    assert.ok(area(surface) > area(channelRibbon(map, channel)), 'water must fill beyond the original narrow ribbon');
+    assert.ok(surface.length / 9 < 30000, 'channel geometry must stay within its rendering budget');
   }
   assert.deepEqual(Array.from(map.heights), before);
 });
 
-test('trees and fields leave the expanded river footprint clear at both qualities', async () => {
+test('trees and fields leave the expanded channel footprint clear at both qualities', async () => {
   const { generateTrees } = await import('../src/art/trees.js');
   const { generateFields } = await import('../src/art/fields.js');
   const { riverBankContains } = await import('../src/art/channel-surface.js');

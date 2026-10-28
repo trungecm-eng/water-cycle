@@ -508,3 +508,13 @@ Kiểm thử Node cuối trên code đã gom phép đo hành lang và có test m
 | 160 | 52.923 | 123.487 | -0,000020935 | 3,772948742 | 0 |
 
 Giá trị âm nhỏ xuất hiện sau khi chuyển tọa độ sang Float32. Số mẫu cao hơn đất gồm cả phần giữa dòng và các giao tuyến nước–nước; không thể dùng số đó làm số mép bờ hở. Audit vẫn lấy mẫu hữu hạn, chưa chứng minh toàn mặt hoặc kết luận AC-7/13. Chưa bổ sung phép trích cạnh biên chỉ tiếp giáp đất. Không thay bằng chứng ảnh hoặc đóng QA núi/suối còn mở.
+
+
+## Mốc 10b-30 — Mặt suối theo tam giác đất
+
+- Áp dụng phần mở bề rộng và cắt mặt nước hiện có cho cả ba suối; giữ đầu nguồn thu nhọn, đường tâm/độ cao nước, địa hình mô phỏng và World/RNG. Dựng lại cả sông và suối theo lưới 80/160 khi chuyển chất lượng. Suối dùng cùng vật liệu đặc và pháp tuyến hướng lên như sông; cây/ruộng tránh vùng bờ mở rộng chung, độc lập chất lượng.
+- Mở rộng test mặt sông sang từng suối, giữ kiểm tất định/không sửa map, diện tích mở rộng, giao tuyến chạm đất và mẫu đỉnh/cạnh/tâm không xuyên đất. Test audit mặt thực thay cặp assertion suối giống dải cũ bằng kiểm không mẫu bị che và có giao tuyến; các test audit dải cũ giữ nguyên. CLI mô tả đúng geometry mới. Hai nhóm vẫn giữ tổng số test, không hạ assertion của mô phỏng hoặc dải cũ.
+- Node đạt **114/114**, 0 fail/skip/cancelled, exit 0, **133,635 giây**; có trình duyệt chụp ảnh đồng thời một phần thời gian. Nhóm tập trung nước/cây/màu/audit trước đó đạt **26/26**, 10,091 giây.
+- Audit mặt thực: không mẫu suối bị đất che quá 0,05 ở cả hai mức. Min Float32 Thấp ba suối: **-0,000032165 / -0,000097770 / -0,000030321**; Cao **-0,000042672 / -0,000043745 / -0,000022478**. Max Thấp **15,911428 / 39,460056 / 41,836559**; Cao **20,410324 / 36,982538 / 36,163199**. Max tăng so dải cũ vì lấy mẫu mặt rộng hơn; không coi đây là sửa hết khoảng hở bờ. Chưa trích riêng cạnh biên tiếp giáp đất.
+- Đã xem `screenshots/31-fitted-streams-high.png` và `31-fitted-streams-low.png`: 1920×1080, dọc sông, paused từ 0 giây. Khung dừng Cao **62 lần vẽ / 247.561 tam giác**, Thấp **61 / 93.487**; console sạch. Mặt suối rộng hơn và có giao tuyến đất, nhưng vẫn có các vệt ở khúc uốn và các đoạn dốc trông như dải đổ xuống. Thử polygon offset không giải quyết các vệt, đã bỏ. Không đổi chín ảnh/evidence nghiệm thu; **QA bắt buộc 1/2 vẫn chưa đạt**, bước 10b/10c/10 còn mở.
+- E2e `art-budget`, `art-trees`, `art-strata`, `cycle-flow` đều đạt, console sạch; cycle-flow gồm luồng chính, gián đoạn và URL. Ngân sách khi đủ bốn trạng thái tại 76,116667 giây: Cao **65 lần vẽ / 250.433 tam giác**, Thấp **64 / 96.397**. Mặt Trời trong khung bốn góc hai mức; cây 2.200/400 và hạt bất biến khi đổi mức. Chưa chạy mọi e2e REQ-005/006 hoặc đo FPS cuối. Server Python đã dừng khi bàn giao.

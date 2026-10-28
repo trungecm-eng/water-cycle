@@ -74,7 +74,7 @@ export function auditChannelBanks(map, cells, { actualSurface = false } = {}) {
     geometry: actualSurface ? 'rendered-surface' : 'legacy-ribbon',
     tolerance: 0.05,
     channels: map.channels.filter(channel => ['river', 'stream'].includes(channel.type)).map(channel => {
-      const positions = Float32Array.from(actualSurface && channel.type === 'river'
+      const positions = Float32Array.from(actualSurface
         ? renderedRiverSurface(map, channel, cells) : channelRibbon(map, channel));
       const samples = sampleSurfaceTriangles(positions);
       return {
