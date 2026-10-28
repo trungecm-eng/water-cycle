@@ -39,3 +39,16 @@ test('channel audit is reproducible at both resolutions and leaves the simulatio
   }
   assert.deepEqual(Array.from(map.heights), original);
 });
+
+
+test('shallow river carving limits exposed edge clearance without burying water', () => {
+  const map = generateDrainage();
+  for (const cells of [80, 160]) {
+    const river = auditChannelBanks(map, cells).channels.find(channel => channel.type === 'river');
+    assert.equal(river.rendered.coveredVertices, 0);
+    assert.ok(river.rendered.minimumGap > 0);
+    // Includes the outlet and nearby stream junction, where the gap is largest.
+    // The former four-unit river carving exceeded this bound at both qualities.
+    assert.ok(river.rendered.maximumGap < 4.1);
+  }
+});

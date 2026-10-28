@@ -12,15 +12,15 @@
             "vertices": 1098,
             "floatingVertices": 1098,
             "coveredVertices": 0,
-            "minimumGap": 4.000000057858603,
-            "maximumGap": 4.559441163802262
+            "minimumGap": 1.0000000578586037,
+            "maximumGap": 4.103621441954054
           },
           "rendered": {
             "vertices": 1098,
             "floatingVertices": 1098,
             "coveredVertices": 0,
-            "minimumGap": 3.2574416215007718,
-            "maximumGap": 4.499125253349485
+            "minimumGap": 0.42714516485066745,
+            "maximumGap": 3.7689142184495
           }
         },
         {
@@ -66,7 +66,7 @@
             "vertices": 1074,
             "floatingVertices": 1074,
             "coveredVertices": 0,
-            "minimumGap": 4.000000908310341,
+            "minimumGap": 3.99998652620201,
             "maximumGap": 48.93692544636485
           },
           "rendered": {
@@ -90,15 +90,15 @@
             "vertices": 1098,
             "floatingVertices": 1098,
             "coveredVertices": 0,
-            "minimumGap": 4.000000057858603,
-            "maximumGap": 4.559441163802262
+            "minimumGap": 1.0000000578586037,
+            "maximumGap": 4.103621441954054
           },
           "rendered": {
             "vertices": 1098,
             "floatingVertices": 1098,
             "coveredVertices": 0,
-            "minimumGap": 3.994791598320007,
-            "maximumGap": 4.52558077619644
+            "minimumGap": 0.9947918367385862,
+            "maximumGap": 4.035715901548974
           }
         },
         {
@@ -144,14 +144,14 @@
             "vertices": 1074,
             "floatingVertices": 1074,
             "coveredVertices": 0,
-            "minimumGap": 4.000000908310341,
+            "minimumGap": 3.99998652620201,
             "maximumGap": 48.93692544636485
           },
           "rendered": {
             "vertices": 1074,
             "floatingVertices": 1074,
             "coveredVertices": 0,
-            "minimumGap": 3.9920526754856382,
+            "minimumGap": 3.7060582941677422,
             "maximumGap": 55.746341660618725
           }
         }

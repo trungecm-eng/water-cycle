@@ -318,3 +318,14 @@ Phiên này bổ sung kiểm chứng cho mặt hồ/ao: giữ các mực kiểm 
 Đã xem ảnh `15-mesh-shorelines.png` có sẵn trong HEAD: hồ/ao tiếp đất tốt hơn nhưng suối còn dải gấp/răng cưa và đỉnh núi còn nhọn. Ảnh này chỉ là ảnh chẩn đoán; không thay bộ chín ảnh nghiệm thu và không đánh dấu bảng QA 1/2 đạt. Chưa kiểm ảnh bốn góc ở mực thấp–đầy, chưa chạy toàn bộ e2e/FPS/ngân sách cuối. **10b/10c/10 tiếp tục mở.**
 
 Kiểm tra cuối mốc 10b-11: toàn bộ `node --test` **91/91**, không fail/skip/cancelled, **109,185 giây**, exit 0, chạy riêng không trình duyệt. E2e **art-strata** và **art-trees** đạt, console sạch; cây 2.200/400 và hạt bất biến khi đổi chất lượng. Server đã dừng. Lượt Node đầu bị kết thúc exit 143, không dùng làm bằng chứng; lượt cuối chạy tách phiên tiến trình và hoàn tất đầy đủ.
+
+
+## Mốc 10b-12 — Lòng sông nông hơn
+
+Giảm độ sâu khắc riêng sông từ 4 xuống 1 đơn vị; suối giữ 4. Không đổi World/RNG, địa hình mô phỏng, đường tâm, độ rộng hoặc mực nước. Test mới đo mép sông trên lưới Float32 80/160: không bị đất che và khoảng hở lớn nhất <4,1; bản khắc sâu cũ vượt ngưỡng ở cả hai mức. Đây là giới hạn hồi quy của sửa cục bộ, **không phải ngưỡng nghiệm thu giao tuyến bờ**.
+
+Đã tái lập `water-bank-audit.json` sau cả thay đổi đường tâm phiên trước và sửa này: khoảng hở mép sông Thấp **0,427145–3,768914**, Cao **0,994792–4,035716**. Các suối vẫn có khoảng hở cực đại tới **69,222263** ở Thấp / **55,746342** ở Cao. Chưa giải quyết được giao tuyến bờ suối/cửa thoát tổng thể. Ảnh chẩn đoán `16-shallow-river.png` (Cao, 1920 × 1080, dọc sông, paused ban đầu) đã xem: núi còn nhọn, suối còn gấp/răng cưa. Giữ bảng QA bắt buộc 1/2 chưa đạt, không thay bộ chín ảnh/evidence nghiệm thu.
+
+Nhóm nước/địa hình/cây **19/19**; toàn bộ Node **91/91**, 0 fail/skip/cancelled, **110,670 giây** trên mã sản phẩm cuối. Test audit mới được thêm sau khi lượt toàn bộ bắt đầu; nhóm audit cuối chạy riêng **4/4**, không tuyên bố lượt toàn bộ 92/92. Phép đo Node có trùng ảnh thử lúc đầu, chưa dùng làm thời gian cuối 10c. Mặt vẽ vẫn 6 đỉnh, độ lệch chuẩn dốc **1,625597639**, phần dư đồng bằng **2,642467559**. Không đổi assertion cũ.
+
+E2e cuối **art-strata, art-trees, art-budget** đạt, console sạch, hạt bất biến khi đổi mức. Cây 2.200/400; budget cùng thời điểm 76,1167 giây: Cao **67 calls / 224.280 triangles**, Thấp **66 / 84.122**; Mặt Trời trong khung bốn góc mỗi mức. Server đã dừng. Chưa chạy toàn bộ e2e/FPS cuối hoặc QA bốn góc ở mực thấp–đầy. **10b/10c/10 vẫn mở.**
