@@ -290,3 +290,20 @@ E2e hồi quy cuối mốc 10b-6: **art-stage-labels** và **art-labels** (1280 
 - Chẩn đoán cần xử lý tiếp ở nước: `channelRibbon` vẽ nửa rộng 4…6 cho sông, trong khi `recessedBank` khắc một đáy phẳng đến bán kính 9 rồi mới hòa ra 34. Trên bản đồ mới, toàn bộ đỉnh biên dải sông cao hơn `waterBedHeight` tại cùng x/z **4…4,559441460** đơn vị. Vì vậy chỉ kiểm “đáy thấp hơn nước” chưa đủ chứng minh mép nước tiếp đất. Cần kiểm giao tuyến mép nước với **lưới đất thực tế ở cả 80/160**, xử lý đồng thời bờ kênh và cửa hồ; tránh lặp lại việc chỉ hạ mép lòng chảo. Đây là phép đo chẩn đoán, **chưa thay thuật toán nước hoặc assertion nước**.
 
 - E2e cuối **art-trees, art-budget, cycle-flow** (chính, gián đoạn, URL) đều đạt, console sạch, wrapper exit 0. Cây **2.200/400**, hạt không đổi khi chuyển chất lượng. Budget cùng trạng thái **75,7167 giây**: Cao **67 calls / 223.472 triangles**, Thấp **66 / 84.272**; Mặt Trời trong khung bốn góc ở cả hai mức. Đây không phải FPS cuối. Server đã dừng. Lượt e2e đầu lỗi kết nối do server PTY đã dừng; lượt cuối dùng wrapper quản lý server trong try/finally, chạy đầy đủ ba script đạt.
+
+## Mốc 10b-10 — Chẩn đoán khe hở mép nước trên lưới vẽ
+
+Hoàn tất công cụ đo, **chưa sửa hình ảnh và chưa đóng 10b/10c/10**. `src/art/water-audit.js` lấy mẫu Float32 cùng lưới 80/160 và nội suy đúng hai tam giác mỗi ô như `terrainGeometry`. Đo khoảng cách thẳng đứng từ từng đỉnh dải nước tới mặt đất tính toán và mặt đất thực sự được vẽ. Số dương nghĩa là nước cao hơn đất; báo cáo đếm cả đỉnh trùng của tam giác và đỉnh tại cửa nối vùng nước, nên không tự coi mọi số dương là lỗi nghiệm thu. Ngưỡng phân loại là 0,05 đơn vị. Công cụ chỉ đọc bản đồ; không dùng World/RNG hoặc đổi mã dựng cảnh.
+
+Tái lập bằng `node scripts/audit-water-banks.mjs > specs/REQ-006/water-bank-audit.json`. Báo cáo hiện tại:
+
+| Lưới | Khoảng cách mép sông tới mặt vẽ | Khoảng cách lớn nhất ở từng suối |
+| --- | --- | --- |
+| 80 | 3,257442–4,499125 | 27,937914 / 51,741519 / 80,694126 |
+| 160 | 3,994792–4,525581 | 28,277714 / 47,758443 / 61,536848 |
+
+Cả 1.098 lượt đỉnh biên sông đều cao hơn mặt vẽ quá 0,05. Mặt đất tính toán tại mép sông thấp hơn nước khoảng 4,000000–4,559441. Khoảng cách ở suối lớn hơn nhiều: cần rà cả đường tâm làm trơn qua các sườn núi, không chỉ thay độ rộng lòng dẫn. Đây là chẩn đoán, chưa xác nhận nguyên nhân của từng đỉnh suối.
+
+Đã thử mở dải nước tới giao tuyến mặt đất ở mỗi mức. Kiểm số học đạt nhưng ảnh dọc sông cho thấy suối thành dải răng cưa lớn và nước phủ vị trí cây. **Đã bỏ toàn bộ thử nghiệm sản phẩm và ảnh thử**, trả `water-shapes.js`, `render.js`, test nước cũ về đúng HEAD đầu phiên. Không dùng e2e/ngân sách của thử nghiệm này làm bằng chứng cho phiên bản cuối. Không thay chín ảnh/evidence hoặc bảng QA bắt buộc 1/2 chưa đạt.
+
+Kiểm tra phiên bản cuối: `node --test` **89/89**, 0 fail/skip/cancelled, **111,723 giây**, exit 0, chạy riêng không trình duyệt. Ba test mới kiểm nội suy hai tam giác khác nội suy song tuyến, phân biệt nước cao hơn/thấp hơn/chạm đất với dữ liệu biết trước, tính tái lập hai độ phân giải và không sửa bản đồ. Không đổi assertion cũ. Chỉ số mặt vẽ vẫn 6 đỉnh, độ lệch chuẩn dốc **1,667175017**, phần dư đồng bằng **2,642425414** / 2.950 mẫu. E2e cuối sau khi bỏ thử nghiệm: **art-strata, art-trees** đạt, console sạch, cây 2.200/400 và hạt không đổi khi chuyển chất lượng. Server đã dừng. Chưa chạy toàn bộ e2e hoặc FPS/ngân sách cuối; những việc này vẫn thuộc 10c.

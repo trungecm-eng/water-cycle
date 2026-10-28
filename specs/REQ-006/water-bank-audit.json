@@ -1,0 +1,161 @@
+{
+  "description": "Đo khoảng cách thẳng đứng từ đỉnh biên dải nước tới mặt đất; số dương là nước cao hơn đất. Đây là chẩn đoán, không phải kết luận nghiệm thu. Số đỉnh bao gồm các đỉnh trùng và cửa nối vùng nước.",
+  "levels": [
+    {
+      "cells": 80,
+      "tolerance": 0.05,
+      "channels": [
+        {
+          "type": "river",
+          "source": 5665,
+          "analytic": {
+            "vertices": 1098,
+            "floatingVertices": 1098,
+            "coveredVertices": 0,
+            "minimumGap": 4.000000057858603,
+            "maximumGap": 4.559441163802262
+          },
+          "rendered": {
+            "vertices": 1098,
+            "floatingVertices": 1098,
+            "coveredVertices": 0,
+            "minimumGap": 3.2574416215007718,
+            "maximumGap": 4.499125253349485
+          }
+        },
+        {
+          "type": "stream",
+          "source": 7098,
+          "analytic": {
+            "vertices": 522,
+            "floatingVertices": 522,
+            "coveredVertices": 0,
+            "minimumGap": 3.9999894979127397,
+            "maximumGap": 28.709071333217295
+          },
+          "rendered": {
+            "vertices": 522,
+            "floatingVertices": 522,
+            "coveredVertices": 0,
+            "minimumGap": 3.6954247642867255,
+            "maximumGap": 27.937913976479336
+          }
+        },
+        {
+          "type": "stream",
+          "source": 4771,
+          "analytic": {
+            "vertices": 402,
+            "floatingVertices": 402,
+            "coveredVertices": 0,
+            "minimumGap": 3.9999885292659574,
+            "maximumGap": 45.560856991922094
+          },
+          "rendered": {
+            "vertices": 402,
+            "floatingVertices": 402,
+            "coveredVertices": 0,
+            "minimumGap": 2.8390096228383506,
+            "maximumGap": 51.74151894986633
+          }
+        },
+        {
+          "type": "stream",
+          "source": 2247,
+          "analytic": {
+            "vertices": 1074,
+            "floatingVertices": 1074,
+            "coveredVertices": 0,
+            "minimumGap": 4.000499163012414,
+            "maximumGap": 50.1118490149986
+          },
+          "rendered": {
+            "vertices": 1074,
+            "floatingVertices": 1074,
+            "coveredVertices": 0,
+            "minimumGap": 3.721293200552463,
+            "maximumGap": 80.69412614803755
+          }
+        }
+      ]
+    },
+    {
+      "cells": 160,
+      "tolerance": 0.05,
+      "channels": [
+        {
+          "type": "river",
+          "source": 5665,
+          "analytic": {
+            "vertices": 1098,
+            "floatingVertices": 1098,
+            "coveredVertices": 0,
+            "minimumGap": 4.000000057858603,
+            "maximumGap": 4.559441163802262
+          },
+          "rendered": {
+            "vertices": 1098,
+            "floatingVertices": 1098,
+            "coveredVertices": 0,
+            "minimumGap": 3.994791598320007,
+            "maximumGap": 4.52558077619644
+          }
+        },
+        {
+          "type": "stream",
+          "source": 7098,
+          "analytic": {
+            "vertices": 522,
+            "floatingVertices": 522,
+            "coveredVertices": 0,
+            "minimumGap": 3.9999894979127397,
+            "maximumGap": 28.709071333217295
+          },
+          "rendered": {
+            "vertices": 522,
+            "floatingVertices": 522,
+            "coveredVertices": 0,
+            "minimumGap": 3.7521538165630783,
+            "maximumGap": 28.277713587209604
+          }
+        },
+        {
+          "type": "stream",
+          "source": 4771,
+          "analytic": {
+            "vertices": 402,
+            "floatingVertices": 402,
+            "coveredVertices": 0,
+            "minimumGap": 3.9999885292659574,
+            "maximumGap": 45.560856991922094
+          },
+          "rendered": {
+            "vertices": 402,
+            "floatingVertices": 402,
+            "coveredVertices": 0,
+            "minimumGap": 3.493062937669457,
+            "maximumGap": 47.75844323467459
+          }
+        },
+        {
+          "type": "stream",
+          "source": 2247,
+          "analytic": {
+            "vertices": 1074,
+            "floatingVertices": 1074,
+            "coveredVertices": 0,
+            "minimumGap": 4.000499163012414,
+            "maximumGap": 50.1118490149986
+          },
+          "rendered": {
+            "vertices": 1074,
+            "floatingVertices": 1074,
+            "coveredVertices": 0,
+            "minimumGap": 3.994975149761885,
+            "maximumGap": 61.53684803277264
+          }
+        }
+      ]
+    }
+  ]
+}
