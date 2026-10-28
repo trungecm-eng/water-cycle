@@ -105,6 +105,10 @@ node e2e/panel-foundation.e2e.mjs
 node e2e/ui-screenshots.e2e.mjs
 node e2e/art-flow.e2e.mjs
 node e2e/art-labels.e2e.mjs
+node e2e/art-stage-labels.e2e.mjs
+node e2e/art-atmosphere.e2e.mjs
+node e2e/art-trees.e2e.mjs
+node e2e/art-strata.e2e.mjs
 node e2e/art-budget.e2e.mjs
 node e2e/art-screenshots.e2e.mjs
 node e2e/measure-fps.e2e.mjs

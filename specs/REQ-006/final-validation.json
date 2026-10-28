@@ -1,0 +1,225 @@
+{
+  "date": "2026-10-28",
+  "graphicsBaseline": "fb7c3fe",
+  "graphicsDecision": "Người dùng chấp nhận hiện trạng theo notes.md ngày 2026-10-28 12:43; đóng 10b, không tối ưu thêm.",
+  "node": {
+    "command": "node --test",
+    "tests": 116,
+    "pass": 116,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "durationMs": 115984.696891
+  },
+  "e2e": [
+    {
+      "script": "e2e/art-atmosphere.e2e.mjs",
+      "exitCode": 0,
+      "seconds": 19.188
+    },
+    {
+      "script": "e2e/art-budget.e2e.mjs",
+      "exitCode": 0,
+      "seconds": 50.076
+    },
+    {
+      "script": "e2e/art-flow.e2e.mjs",
+      "exitCode": 0,
+      "seconds": 98.658
+    },
+    {
+      "script": "e2e/art-labels.e2e.mjs",
+      "exitCode": 0,
+      "seconds": 66.49
+    },
+    {
+      "script": "e2e/art-screenshots.e2e.mjs",
+      "exitCode": 0,
+      "seconds": 201.856
+    },
+    {
+      "script": "e2e/art-stage-labels.e2e.mjs",
+      "exitCode": 0,
+      "seconds": 12.369
+    },
+    {
+      "script": "e2e/art-strata.e2e.mjs",
+      "exitCode": 0,
+      "seconds": 8.996
+    },
+    {
+      "script": "e2e/art-trees.e2e.mjs",
+      "exitCode": 0,
+      "seconds": 9.097
+    },
+    {
+      "script": "e2e/core-3d.e2e.mjs",
+      "exitCode": 0,
+      "seconds": 13.915
+    },
+    {
+      "script": "e2e/cycle-flow.e2e.mjs",
+      "exitCode": 0,
+      "seconds": 80.507
+    },
+    {
+      "script": "e2e/panel-foundation.e2e.mjs",
+      "exitCode": 0,
+      "seconds": 20.101
+    },
+    {
+      "script": "e2e/scene.e2e.mjs",
+      "exitCode": 0,
+      "seconds": 32.54
+    },
+    {
+      "script": "e2e/scenery.e2e.mjs",
+      "exitCode": 0,
+      "seconds": 12.572
+    },
+    {
+      "script": "e2e/screenshots.e2e.mjs",
+      "exitCode": 0,
+      "seconds": 45.232
+    },
+    {
+      "script": "e2e/ui-controls.e2e.mjs",
+      "exitCode": 0,
+      "seconds": 12.531
+    },
+    {
+      "script": "e2e/ui-flow.e2e.mjs",
+      "exitCode": 0,
+      "seconds": 104.031
+    },
+    {
+      "script": "e2e/ui-panel.e2e.mjs",
+      "exitCode": 0,
+      "seconds": 29.352
+    },
+    {
+      "script": "e2e/ui-quality.e2e.mjs",
+      "exitCode": 0,
+      "seconds": 16.567
+    },
+    {
+      "script": "e2e/ui-screenshots.e2e.mjs",
+      "exitCode": 0,
+      "seconds": 200.368
+    },
+    {
+      "script": "e2e/ui-statistics.e2e.mjs",
+      "exitCode": 0,
+      "seconds": 8.109
+    },
+    {
+      "script": "e2e/ui-views.e2e.mjs",
+      "exitCode": 0,
+      "seconds": 22.432
+    },
+    {
+      "script": "e2e/measure-fps.e2e.mjs",
+      "exitCode": 0,
+      "seconds": 117.47
+    }
+  ],
+  "budget": [
+    {
+      "quality": "high",
+      "time": 76.78333333333333,
+      "calls": 65,
+      "triangles": 250257
+    },
+    {
+      "quality": "low",
+      "time": 76.78333333333333,
+      "calls": 64,
+      "triangles": 96221
+    }
+  ],
+  "fps": [
+    {
+      "quality": "high",
+      "panel": {
+        "collapsed": false,
+        "groups": {
+          "controls": true,
+          "statistics": true,
+          "legend": true
+        }
+      },
+      "browser": "140.0.7339.16",
+      "viewport": "1280x1000",
+      "particles": 1000,
+      "start": {
+        "time": 43.516666666666666,
+        "counts": {
+          "water": 551,
+          "vapor": 65,
+          "cloud": 358,
+          "rain": 23,
+          "runoff": 3
+        },
+        "speed": 1
+      },
+      "frames": 39,
+      "seconds": 10.382900000000001,
+      "fps": 3.756176020187038,
+      "errors": []
+    },
+    {
+      "quality": "low",
+      "panel": {
+        "collapsed": false,
+        "groups": {
+          "controls": true,
+          "statistics": true,
+          "legend": true
+        }
+      },
+      "browser": "140.0.7339.16",
+      "viewport": "1280x1000",
+      "particles": 1000,
+      "start": {
+        "time": 43.516666666666666,
+        "counts": {
+          "water": 551,
+          "vapor": 65,
+          "cloud": 358,
+          "rain": 23,
+          "runoff": 3
+        },
+        "speed": 1
+      },
+      "frames": 74,
+      "seconds": 10.033,
+      "fps": 7.375660320940895,
+      "errors": []
+    }
+  ],
+  "legacyScreenshots": "Hai script ảnh REQ-004/005 chạy từ bản sao tạm, chỉ thay đường dẫn output sang /tmp/req006-e2e/REQ-004 và REQ-005 và đường import browser.mjs tuyệt đối; giữ toàn bộ thao tác, URL, timeout và assertion. Không ghi đè ảnh lịch sử.",
+  "logs": {
+    "e2e/art-atmosphere.e2e.mjs": "Art atmosphere: instanced clouds, rain curtains, sun and evaporation beams passed.\n",
+    "e2e/art-budget.e2e.mjs": "{\"quality\":\"high\",\"time\":76.78333333333333,\"calls\":65,\"triangles\":250257}\n{\"quality\":\"low\",\"time\":76.78333333333333,\"calls\":64,\"triangles\":96221}\n",
+    "e2e/art-flow.e2e.mjs": "art-flow passed: default x1, interrupted, mountain rain and calm sea rain\n",
+    "e2e/art-labels.e2e.mjs": "art-labels passed\n",
+    "e2e/art-screenshots.e2e.mjs": "art-screenshots: cycle targets found, waiting at x1\nart-screenshots: captured 01-overview\nart-screenshots: captured 02-sea\nart-screenshots: captured 03-mountain\nart-screenshots: captured 04-river\nart-screenshots: captured 09-four-stages\nart-screenshots: captured 07-forest-fields\nart-screenshots: captured 08-cutaway\nart-screenshots: captured 05-mountain-rain\nart-screenshots: captured 06-sea-rain\nart-screenshots: nine images captured\n",
+    "e2e/art-stage-labels.e2e.mjs": "Art stage labels: names, activity, independent toggles and sun-zero hiding passed.\n",
+    "e2e/art-strata.e2e.mjs": "Art strata: four layers, sea cutaway, permanent base shadow and quality switching passed.\n",
+    "e2e/art-trees.e2e.mjs": "Art trees: two instanced meshes, 2200/400 trees and unchanged particles passed.\n",
+    "e2e/core-3d.e2e.mjs": "3D core: WebGL2, 2000 particles, paused orbit/zoom, resize, reset, sunlight, evaporation pause, and fallback passed.\n",
+    "e2e/cycle-flow.e2e.mjs": "{\"flow\":\"default accelerated\",\"evidence\":{\"states\":{\"water\":true,\"vapor\":true,\"cloud\":true,\"rain\":true,\"runoff\":true},\"milestones\":{\"evaporation\":2,\"cloud\":28.65,\"rain\":41.85,\"return\":46.25},\"heated\":true,\"cloud\":true}}\n{\"flow\":\"interrupted\",\"evidence\":{\"states\":{\"water\":true,\"vapor\":true,\"cloud\":true,\"rain\":true,\"runoff\":true},\"milestones\":{\"evaporation\":2,\"cloud\":28.8,\"rain\":42.25,\"return\":45.983333333333334},\"heated\":true,\"cloud\":true}}\nURL cases passed\n",
+    "e2e/panel-foundation.e2e.mjs": "Panel foundation: dimensions, disclosure, session state, keyboard and simulation independence passed.\n",
+    "e2e/scene.e2e.mjs": "Scenery: named objects, seven separated labels, L toggle, moving and paused effects passed.\nScene WebGL2, URL defaults and WebGL fallback passed.\n",
+    "e2e/scenery.e2e.mjs": "Scenery: named objects, seven separated labels, L toggle, moving and paused effects passed.\n",
+    "e2e/screenshots.e2e.mjs": "Four screenshots saved to /tmp/req006-e2e/REQ-004\n",
+    "e2e/ui-controls.e2e.mjs": "Slider defaults preserve simulation; speed, labels and keyboard controls passed.\n",
+    "e2e/ui-flow.e2e.mjs": "{\"flow\":\"default x8\",\"calm\":{\"counts\":{\"mountain\":0,\"plain\":1,\"sea\":484,\"lake\":0,\"pond\":0},\"percentages\":{\"mountain\":0,\"plain\":0,\"sea\":100,\"lake\":0,\"pond\":0},\"total\":485},\"windy\":{\"counts\":{\"mountain\":731,\"plain\":14,\"sea\":0,\"lake\":0,\"pond\":0},\"percentages\":{\"mountain\":98,\"plain\":2,\"sea\":0,\"lake\":0,\"pond\":0},\"total\":745}}\n{\"flow\":\"interrupted\",\"calm\":{\"counts\":{\"mountain\":0,\"plain\":7,\"sea\":502,\"lake\":0,\"pond\":0},\"percentages\":{\"mountain\":0,\"plain\":1,\"sea\":99,\"lake\":0,\"pond\":0},\"total\":509},\"windy\":{\"counts\":{\"mountain\":767,\"plain\":3,\"sea\":0,\"lake\":1,\"pond\":0},\"percentages\":{\"mountain\":100,\"plain\":0,\"sea\":0,\"lake\":0,\"pond\":0},\"total\":771}}\n",
+    "e2e/ui-panel.e2e.mjs": "{\"test\":\"ui-panel\",\"contrast\":{\"count\":108,\"failures\":[]}}\n",
+    "e2e/ui-quality.e2e.mjs": "ui-quality passed\n",
+    "e2e/ui-screenshots.e2e.mjs": "{\"screenshots\":8,\"evidence\":[{\"wind\":0,\"time\":62.68333333333333,\"rainTally\":{\"counts\":{\"mountain\":0,\"plain\":0,\"sea\":286,\"lake\":0,\"pond\":0},\"percentages\":{\"mountain\":0,\"plain\":0,\"sea\":100,\"lake\":0,\"pond\":0},\"total\":286}},{\"wind\":100,\"time\":62.05,\"rainTally\":{\"counts\":{\"mountain\":146,\"plain\":0,\"sea\":0,\"lake\":0,\"pond\":0},\"percentages\":{\"mountain\":100,\"plain\":0,\"sea\":0,\"lake\":0,\"pond\":0},\"total\":146}}]}\n",
+    "e2e/ui-statistics.e2e.mjs": "Statistics cards, independent clear, running distribution, reset and legends passed.\n",
+    "e2e/ui-views.e2e.mjs": "ui-views passed\n",
+    "e2e/measure-fps.e2e.mjs": "[\n  {\n    \"quality\": \"high\",\n    \"panel\": {\n      \"collapsed\": false,\n      \"groups\": {\n        \"controls\": true,\n        \"statistics\": true,\n        \"legend\": true\n      }\n    },\n    \"browser\": \"140.0.7339.16\",\n    \"viewport\": \"1280x1000\",\n    \"particles\": 1000,\n    \"start\": {\n      \"time\": 43.516666666666666,\n      \"counts\": {\n        \"water\": 551,\n        \"vapor\": 65,\n        \"cloud\": 358,\n        \"rain\": 23,\n        \"runoff\": 3\n      },\n      \"speed\": 1\n    },\n    \"frames\": 39,\n    \"seconds\": 10.382900000000001,\n    \"fps\": 3.756176020187038,\n    \"errors\": []\n  },\n  {\n    \"quality\": \"low\",\n    \"panel\": {\n      \"collapsed\": false,\n      \"groups\": {\n        \"controls\": true,\n        \"statistics\": true,\n        \"legend\": true\n      }\n    },\n    \"browser\": \"140.0.7339.16\",\n    \"viewport\": \"1280x1000\",\n    \"particles\": 1000,\n    \"start\": {\n      \"time\": 43.516666666666666,\n      \"counts\": {\n        \"water\": 551,\n        \"vapor\": 65,\n        \"cloud\": 358,\n        \"rain\": 23,\n        \"runoff\": 3\n      },\n      \"speed\": 1\n    },\n    \"frames\": 74,\n    \"seconds\": 10.033,\n    \"fps\": 7.375660320940895,\n    \"errors\": []\n  }\n]\n"
+  }
+}

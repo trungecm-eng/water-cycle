@@ -11,7 +11,7 @@ Mỗi bước gồm code và test của bước đó; `node --test` xanh và cá
 - [x] 7. Tên giai đoạn và nhãn giai đoạn: đổi `content.stages` thành Bốc hơi, Ngưng tụ, Mưa, Dòng chảy; màu giai đoạn chung cho thẻ "Đang diễn ra", chú giải và nhãn; cập nhật `e2e/cycle-flow.e2e.mjs`. `src/art/stage-labels.js` (cửa sổ 10 giây, chọn đối tượng, trễ, làm trơn, mờ dần); nhãn HTML chip số tròn chiếu từ 3D; phím N và nút; `__sim.scene` thêm trạng thái nhãn. Test chọn đối tượng, trễ, làm trơn, gió 0 mưa trên biển. (AC-11)
 - [x] 8. Bấm nhãn và mũi tên gió: bấm nhãn giai đoạn hoặc nhãn vùng → lượn bằng `views.js` tới tư thế gần, dừng khi người dùng thao tác; `src/art/wind-arrow.js` (mũi tên cong biển → đất liền, dài và đậm theo Gió, ẩn khi 0) với chữ "Gió đưa mây vào đất liền"; chỉnh vị trí nhãn để không chồng ở 1280 × 800 và 1920 × 1080. Test logic mũi tên và tư thế lượn không xuyên địa hình. (AC-11, AC-11b)
 - [x] 9. Kịch bản trình duyệt và tài liệu: `e2e/art-flow.e2e.mjs` (luồng AC-1 + biến thể gián đoạn, console sạch), `e2e/art-labels.e2e.mjs` (bấm nhãn, không chồng, N/L), `e2e/art-budget.e2e.mjs` (`renderer.info` hai mức, `__sim.scene`, Mặt Trời trong khung ở bốn góc nhìn), `e2e/art-screenshots.e2e.mjs` (≥ 9 ảnh vào `specs/REQ-006/screenshots/`); đổi các e2e cũ không kiểm hình ảnh sang `quality=low&speed=8` khi được. Cập nhật `README.md` đủ mục AC-14; báo cáo build liệt kê từng cặp test đã đổi. (AC-1, AC-7, AC-9, AC-10, AC-11, AC-12, AC-13, AC-14)
-- [ ] 10. Chạy toàn bộ: `node --test` có đo thời gian, mọi e2e REQ-004/005/006, ảnh, FPS hai mức, ngân sách vẽ, rà `package.json` và README, cập nhật `progress.md`. (tất cả AC)
+- [x] 10. Chạy toàn bộ: `node --test` có đo thời gian, mọi e2e REQ-004/005/006, ảnh, FPS hai mức, ngân sách vẽ, rà `package.json` và README, cập nhật `progress.md`. (tất cả AC)
 
   Các mốc sửa lỗi QA trong bước 10 (commit riêng để phiên sau tiếp tục từ trạng thái sạch; bước 10 chỉ đánh dấu khi tất cả kiểm tra cuối đạt):
   - [x] 10a. Sửa nhãn di chuyển xa cụm đang hoạt động khi đổi mục tiêu: mờ đi trong khi di chuyển, hiện lại gần mục tiêu; test hồi quy và e2e nhãn/camera.
@@ -49,4 +49,4 @@ Mỗi bước gồm code và test của bước đó; `node --test` xanh và cá
   - [x] 10b-32. Kéo nếp gồ ghề thành gân đá dọc sườn ngoài, giữ vùng đỉnh/hành lang suối; kiểm độ liên tục sườn, địa hình/nước/mô phỏng và ảnh. QA hình khối/giao tuyến bờ tổng thể vẫn thuộc 10b.
   - [x] 10b-33. Mở vai núi phía đông bằng bao sống xiên bất đối xứng, bảo vệ đỉnh/suối và gân đá phía tây; kiểm diện tích sườn, toàn bộ Node, hồi quy trình duyệt và ảnh. QA hình khối/bờ nước tổng thể vẫn thuộc 10b.
   - [x] 10b. Người dùng chấp nhận hiện trạng (notes.md ngày 2026-10-28 12:43); dừng chỉnh dáng núi, mép nước và màn mưa. Các nhận xét QA trước đây được giữ làm lịch sử.
-  - [ ] 10c. Chạy đầy đủ Node/e2e, FPS hai mức, ngân sách cuối, rà README/package và ghi bàn giao cuối.
+  - [x] 10c. Chạy đầy đủ Node/e2e, FPS hai mức, ngân sách cuối, rà README/package và ghi bàn giao cuối.

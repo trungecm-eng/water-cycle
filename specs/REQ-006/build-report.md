@@ -127,9 +127,11 @@ Các cặp điều chỉnh e2e cũ trong bước này (không bỏ phép kiểm)
 
 Các script chụp ảnh cũ, measure-fps, kiểm URL mặc định/tốc độ sai và ui-quality giữ cấu hình riêng cần cho mục đích kiểm tra.
 
-### Bảng QA hình ảnh — cập nhật mốc 10b-6 (chưa nghiệm thu đạt)
+### Bảng QA hình ảnh — lịch sử mốc 10b-6
 
-Đã chụp và xem lại đủ chín ảnh Cao 1920 × 1080 ở mốc 10b-6, sau sửa 10a–10b-5; `evidence.json` là bằng chứng của bộ ảnh mới. **AC-13 vẫn chưa đạt** vì mục 1 và 2 còn “không”. Các ghi chép bước 9/phiên cũ phía dưới là lịch sử, không phải kết luận cho bộ ảnh mới.
+Theo notes.md ngày 2026-10-28 12:43, **người dùng chấp nhận hiện trạng** và yêu cầu dừng chỉnh đồ họa; 10b được đóng theo quyết định này. Bảng dưới đây giữ nguyên nhận xét lịch sử, không phải điều kiện chặn build nữa. Bộ chín ảnh và evidence.json được chụp lại ở bước 10c.
+
+Đã chụp và xem lại đủ chín ảnh Cao 1920 × 1080 ở mốc 10b-6, sau sửa 10a–10b-5; `evidence.json` khi đó là bằng chứng của bộ ảnh mốc 10b-6. **Đánh giá AC-13 tại mốc 10b-6 chưa đạt** vì mục 1 và 2 còn “không”. Các ghi chép bước 9/phiên cũ phía dưới là lịch sử, không phải kết luận cho bộ ảnh mới.
 
 | Mục | Có/không | Ảnh và nhận xét |
 | --- | --- | --- |
@@ -148,7 +150,7 @@ Các script chụp ảnh cũ, measure-fps, kiểm URL mặc định/tốc độ 
 | 13. Trời xanh–kem | Có | 01-overview, 02-sea |
 | 14. Mũi tên theo Gió | Có | 01-overview/05-mountain-rain có mũi tên, 06-sea-rain Gió 0 ẩn; tăng chiều dài/độ đậm kiểm bằng test thuần |
 
-Ưu tiên còn lại bước 10 sau mốc 10b-6: sửa hai mục bắt buộc 1–2, QA lòng chảo/cửa thoát ở nhiều mực, rồi chạy lại bộ ảnh và bảng này. Không trả `done` dù mọi test tự động đang xanh khi các mục bắt buộc hình ảnh còn “không”. Không cần hỏi người để sửa các vấn đề đã xác định trong phạm vi.
+Ghi chép lịch sử trước quyết định chấp nhận hiện trạng (đã được notes.md thay thế): ưu tiên còn lại bước 10 sau mốc 10b-6: sửa hai mục bắt buộc 1–2, QA lòng chảo/cửa thoát ở nhiều mực, rồi chạy lại bộ ảnh và bảng này. Không trả `done` dù mọi test tự động đang xanh khi các mục bắt buộc hình ảnh còn “không”. Không cần hỏi người để sửa các vấn đề đã xác định trong phạm vi.
 
 Điều chỉnh thêm khi chạy lại e2e cũ:
 
@@ -547,3 +549,22 @@ Giá trị âm nhỏ xuất hiện sau khi chuyển tọa độ sang Float32. S�
 - Đã xem `screenshots/34-eastern-shoulders-overview.png` và `34-eastern-shoulders-river.png`: Cao 1920×1080, paused từ 0 giây, console sạch. Vai sườn rộng hơn nhưng các chóp chính/vách vẫn dốc, suối vẫn trông như dải đổ xuống; **QA bắt buộc 1/2 chưa đạt**. Không thay bộ chín ảnh/evidence nghiệm thu, không đóng 10b/10c/10.
 - Thử đổi cả sườn tây làm mất ngưỡng độ rõ gân đá; thử mở bao vào hành lang suối làm hỏng khoảng hở nước. Cả hai đã bỏ, không hạ assertion cũ. README/package đã rà, không cần đổi cho sửa cục bộ này.
 - Kiểm cuối: `node --test` **116/116**, 0 fail/skip/cancelled, exit 0, **149,179 giây** (có trình duyệt chạy đồng thời); nhóm địa hình **11/11**. E2e `art-trees`, `art-strata`, `art-budget`, `cycle-flow` đạt; cycle-flow gồm chính/gián đoạn/URL, console sạch. Cây 2.200/400, hạt bất biến khi chuyển mức. Ngân sách chạy riêng trên mã cuối, đủ giai đoạn tại **70,25 giây**: Cao **65 lần vẽ / 251.005 tam giác**, Thấp **64 / 96.969**; Mặt Trời trong khung bốn góc ở hai mức. Lệnh ghép chụp ảnh/cây/mặt cắt/ngân sách bị dừng mã 143 trong ngân sách; đã chạy lại riêng ngân sách và cycle-flow đạt exit 0. Không dùng lượt bị dừng làm kết quả hoàn chỉnh. Chưa chạy mọi e2e hoặc FPS cuối, 10c vẫn mở.
+
+
+## Kiểm tra cuối 10c/10 — 2026-10-28
+
+Theo `notes.md` (12:43), **người dùng chấp nhận hiện trạng** đồ họa và yêu cầu dừng chỉnh dáng núi, mép nước, màn mưa. Đã đóng 10b theo quyết định này, không biến các nhận xét QA hình ảnh cũ thành kết luận đạt. Thử nghiệm chóp núi trong commit tự lưu `2ebd3f6` được bỏ; mã địa hình khôi phục đúng mốc `fb7c3fe`. Không đổi World, hằng số vật lý, test hay assertion trong phiên kết thúc này.
+
+- `node --test`: **116/116**, fail/cancelled/skipped = 0, **115,985 giây**, chạy riêng trước trình duyệt, không cần mạng.
+- Chạy tuần tự **toàn bộ 22 script `e2e/*.e2e.mjs`**, kể cả đo FPS và các script ảnh: tất cả exit 0. Danh sách từng lệnh, thời gian, log, FPS và ngân sách lưu trong `final-validation.json`. Không sửa test. Console sạch theo assertion của các script.
+- Hai script ảnh REQ-004/005 chạy từ bản sao tạm chỉ đổi đường import browser.mjs và thư mục output sang `/tmp/req006-e2e/REQ-004`, `/tmp/req006-e2e/REQ-005`; giữ nguyên URL, thao tác, timeout và assertion. Không ghi đè ảnh lịch sử. Các script khác chạy nguyên bản trong repo.
+- Chụp lại đủ chín ảnh REQ-006 trong `screenshots/01`–`09` và `screenshots/evidence.json` trên mã cuối. Ảnh bốn giai đoạn có đủ chip; ảnh Gió 0 có nhãn Mưa cạnh cụm mưa trên biển, mũi tên ẩn. Dáng núi/bờ nước giữ hiện trạng đã được người dùng chấp nhận; không mở lại tối ưu 10b hoặc kiểm thêm mực nước thấp–đầy.
+
+| Chất lượng | Lần vẽ | Tam giác | FPS phần mềm |
+| --- | ---: | ---: | ---: |
+| Cao | 65 / 150 | 250.257 / 400.000 | 3,756 |
+| Thấp | 64 / 80 | 96.221 / 150.000 | 7,376 |
+
+Ngân sách đo tại 76,783333 giây mô phỏng khi đủ bốn trạng thái; chuyển mức giữ nguyên hạt, Mặt Trời trong khung bốn góc ở cả hai mức. FPS đo riêng bằng `measure-fps`, Chromium 140.0.7339.16/WebGL phần mềm, 1280 × 1000, bảng mở, 1.000 hạt, ×1, bắt đầu khi đủ các trạng thái ở 43,516667 giây; mỗi mẫu khoảng 10 giây. Thấp nhanh khoảng 1,96 lần Cao. Không dùng số đo sandbox làm bằng chứng đạt 45 FPS; AC-15 về cảm nhận và tốc độ trên máy người dùng thuộc giai đoạn nghiệm thu.
+
+Đã rà README đủ phong cách/bảng màu, một lớp địa hình và phần khắc lòng dẫn khi vẽ, cây, nhãn/mũi tên/phím tắt, ngân sách, cách thử và hai ý đơn giản hóa. Bổ sung bốn lệnh e2e đồ họa còn thiếu vào README. `package.json` được kiểm đúng duy nhất `type: module` và `scripts.test: node --test`; không thêm dependency hoặc bước build. Hoàn tất 10c và 10, chuyển sang nghiệm thu theo ghi chú của người dùng.

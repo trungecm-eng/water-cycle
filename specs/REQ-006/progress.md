@@ -445,3 +445,13 @@ Toàn bộ `node --test` **104/104**, 0 fail/skip/cancelled, exit 0, **109,752 g
 - Đọc notes.md mới nhất (12:43): người dùng chấp nhận hiện trạng, dừng chỉnh dáng núi/mép nước/màn mưa. Đánh dấu 10b xong theo quyết định này, giữ các nhận xét QA cũ làm lịch sử, không đổi chúng thành kết luận ảnh đạt.
 - Bỏ thử nghiệm chóp núi trong commit tự lưu 2ebd3f6, khôi phục heightmap đúng mốc fb7c3fe mà người dùng đã xem. Không đổi quy luật World, test hoặc hằng số vật lý.
 - Chạy toàn bộ Node trên mã khôi phục thành công; kết quả chi tiết và các e2e/FPS sẽ ghi ở mốc 10c. Tiếp theo chỉ làm 10c và 10, không tối ưu đồ họa thêm.
+
+
+## Phiên build 2026-10-28 — Hoàn tất 10c/10, bàn giao nghiệm thu
+
+- **Build đã hoàn tất theo notes.md ngày 2026-10-28 12:43**: người dùng chấp nhận hiện trạng, không tối ưu núi/mép nước/màn mưa thêm. 10b đóng theo quyết định của người dùng; mọi ô kế hoạch đã đánh dấu. Nhận xét QA cũ được giữ làm lịch sử, không còn chặn build. Bỏ thử nghiệm chóp núi tự lưu ở 2ebd3f6 và khôi phục mã đồ họa fb7c3fe trong commit 3fe0a4f.
+- `node --test` trên mã cuối: **116/116**, 0 fail/cancelled/skipped, exit 0, **115,985 giây**, chạy riêng trước trình duyệt. Toàn bộ **22 script e2e** (21 chức năng/ảnh + measure-fps) chạy tuần tự đều exit 0. Không hạ assertion hay sửa test. Kết quả từng lệnh/thời gian/log trong `final-validation.json`, báo cáo tổng hợp trong `build-report.md`.
+- Ngân sách tại 76,783333 giây, đủ bốn trạng thái: Cao **65 lần vẽ / 250.257 tam giác**, Thấp **64 / 96.221**, dưới giới hạn. Hạt bất biến khi chuyển mức; Mặt Trời trong khung bốn góc ở hai mức. FPS Chromium 140.0.7339.16/WebGL phần mềm: **3,756 Cao / 7,376 Thấp**, 1.000 hạt, ×1, 1280×1000, bảng mở, mỗi mẫu khoảng 10 giây. Đây chỉ là tham khảo; ≥45 FPS và cảm nhận AC-15 chờ nghiệm thu trên máy người dùng.
+- Chụp lại đủ chín ảnh REQ-006 và evidence.json; đã xem ảnh đủ bốn chip và ảnh Gió 0, nhãn Mưa cạnh cụm mưa trên biển, mũi tên ẩn. Hai script ảnh REQ-004/005 chạy bản sao tạm chỉ đổi thư mục output và import browser.mjs; mọi URL/thao tác/timeout/assertion giữ nguyên, ảnh lịch sử trong repo không đổi. Không mở lại QA tối ưu 10b hay kiểm thêm thấp–đầy theo ghi chú mới.
+- README đã rà đủ nội dung AC-14 và bổ sung bốn lệnh e2e còn thiếu. Package kiểm chính xác chỉ type/scripts.test; không dependency mới. Không thay World/hằng số vật lý hoặc tệp bị cấm. Dùng `python3 -m http.server 8000`, Playwright toàn cục được browser.mjs tự tìm. Commit dùng danh tính từng lệnh, không sửa git config. Log tạm không bền vững; bằng chứng cần giữ đã gộp vào final-validation.json.
+- **Tiếp theo: chuyển sang giai đoạn nghiệm thu**, không còn bước build chưa hoàn tất. Kiểm cảm nhận đồ họa và tốc độ trên máy người dùng theo AC-15. Không tự tiếp tục các tối ưu 10b đã dừng.
