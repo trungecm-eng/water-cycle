@@ -203,11 +203,12 @@ export function waterBedHeight(map, x, z, data = mapData) {
       const dx=b[0]-a[0], dz=b[2]-a[2];
       const t=Math.max(0,Math.min(1,((x-a[0])*dx+(z-a[2])*dz)/(dx*dx+dz*dz || 1)));
       const distance=Math.hypot(x-a[0]-dx*t,z-a[2]-dz*t);
-      // A shallow river bed reduces the exposed gap along the ribbon without
-      // losing water beneath the low-quality land grid. Steep streams still
-      // need the deeper clearance until their bank geometry is rebuilt.
       const depth = channel.type === 'river' ? 1 : 4;
-      height = Math.min(height, recessedBank(originalHeight, a[1]*(1-t)+b[1]*t-depth, distance));
+      // Raise the outer stream bank gradually so low downstream segments
+      // do not cut a flat trench across the neighboring upstream slope.
+      // Keep clearance within nine units for the coarser rendering grid.
+      const bankRise = channel.type === 'stream' ? Math.max(0, distance - 9) * 0.5 : 0;
+      height = Math.min(height, recessedBank(originalHeight, a[1]*(1-t)+b[1]*t-depth+bankRise, distance));
     }
   }
   return height;

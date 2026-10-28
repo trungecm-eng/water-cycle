@@ -52,3 +52,15 @@ test('shallow river carving limits exposed edge clearance without burying water'
     assert.ok(river.rendered.maximumGap < 4.1);
   }
 });
+
+
+test('stream outer banks limit downstream excavation while keeping coarse-grid water visible', () => {
+  const map = generateDrainage();
+  for (const cells of [80, 160]) {
+    const streams = auditChannelBanks(map, cells).channels.filter(channel => channel.type === 'stream');
+    for (const stream of streams) assert.equal(stream.rendered.coveredVertices, 0);
+    // This stream previously had gaps above 26.7 at low and 27.2 at high.
+    assert.ok(streams[0].rendered.maximumGap < 26);
+    assert.ok(streams[0].analytic.maximumGap < 26);
+  }
+});
