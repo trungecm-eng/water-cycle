@@ -44,7 +44,10 @@ export function generateHeightmap(data = mapData) {
         const distance = Math.hypot(dx, dz) * (1 + 0.18 * Math.sin(3 * angle + peak.z / 90)
           + 0.1 * Math.sin(5 * angle + peak.x / 60));
         const shoulder = Math.max(0, 1 - distance);
-        height = Math.max(height, data.plain.base + peak.height * shoulder ** 1.5
+        // A broad lower flank carries the narrow summit. Using only the
+        // summit envelope produces isolated spires with almost vertical feet.
+        height = Math.max(height, data.plain.base + peak.height * (0.55 * Math.max(0, 1 - distance / 1.65) ** 1.1
+          + 0.45 * shoulder ** 2.5)
           + 80 * ridge * Math.sin(Math.PI * Math.min(1, shoulder)));
       }
       heights[index] = height + noise;

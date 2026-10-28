@@ -98,3 +98,15 @@ test('mountain shoulders form a continuous elevated range between summits', () =
     assert.ok(heightAt(map, 150, z) > 85, `disconnected shoulder at z=${z}`);
   }
 });
+
+
+test('northern mountain retains a broad middle slope below its sharp summit', () => {
+  const map = generateHeightmap();
+  // Isolate the northern massif, away from the neighboring summits. The old
+  // narrow envelope covered only 8,228 square units above this contour.
+  let area = 0;
+  for (let z = 50; z < 250; z += 2) for (let x = 0; x < 200; x += 2) {
+    if (heightAt(map, x, z) > 120) area += 4;
+  }
+  assert.ok(area >= 11000, `narrow middle slope: ${area} square units`);
+});
